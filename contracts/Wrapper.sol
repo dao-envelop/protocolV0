@@ -41,6 +41,7 @@ contract Wraped721 is ERC721 {
     }
 
     function unWrap721( uint256 tokenId) external {
+        require(ownerOf(tokenId) == msg.sender, 'Only owner can unwrap it!');
         //storoge did not work because there is no this var after delete
         NFT memory nft = wrappedTokens[tokenId];
 
@@ -48,10 +49,15 @@ contract Wraped721 is ERC721 {
         _burn(tokenId);
         IERC721(nft.tokenContract).transferFrom(address(this), msg.sender, nft.tokenId);
         delete wrappedTokens[tokenId];
-        //if  (nft.backedValue > 0) {
+        //Return backed ether
+        if  (nft.backedValue > 0) {
             address payable toPayable = payable(msg.sender);
             toPayable.transfer(nft.backedValue);
-        //}
+        }
+        //Return backed tokens
+        if  (nft.backedTokens > 0) {
+            IERC20(projectToken).transfer(msg.sender, nft.backedTokens);
+        }
     }
 
     function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override {

@@ -3,4 +3,4 @@ __pycache__
 .hypothesis/
 build/
 reports/
-logdo
+logdo.md

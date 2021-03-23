@@ -60,7 +60,7 @@ def test_ether_wrap(accounts, erc721mock, wrapper):
     assert erc721mock.balanceOf(accounts[0]) == 0
     assert erc721mock.ownerOf(0) == wrapper.address 
     assert wrapper.balance() == '1 ether' 
-    assert  wrapper.getTokenValue(wrapper.ourId()) == ('1 ether', 0)    
+    assert wrapper.getTokenValue(wrapper.ourId()) == ('1 ether', 0)    
 
 def test_ether_unwrap(accounts, erc721mock, wrapper):
     #Give approve
