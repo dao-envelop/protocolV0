@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Gearbox. Uncollateralized protocol for margin trading
+// NIFTSY protocol for NFT
 pragma solidity ^0.7.4;
 
 import "OpenZeppelin/openzeppelin-contracts@3.4.0/contracts/token/ERC20/ERC20.sol";

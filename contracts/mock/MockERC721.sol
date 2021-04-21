@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Gearbox. Uncollateralized protocol for margin trading
+// NIFTSY protocol for NFT
 pragma solidity ^0.7.4;
 
 import "./ERC721URIStorage.sol";
@@ -32,6 +32,6 @@ contract Token721Mock is ERC721URIStorage, Ownable {
     }
 
     function baseURI() public view  override returns (string memory) {
-        return 'https://nft.iber.group/';
+        return 'https://nft.iber.group/degenfarm/V1/creatures/';
     }
 }

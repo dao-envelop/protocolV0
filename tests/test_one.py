@@ -38,7 +38,7 @@ def test_check_uri(accounts, erc721mock, wrapper, niftsy20):
 
     assert wrapper.tokenURI(wrapper.ourId()) ==  erc721mock.tokenURI(0) 
     #Aprrove for transfer
-    niftsy20.approve(wrapper.address, 1e25,  {'from':accounts[0]})
+    #niftsy20.approve(wrapper.address, 1e25,  {'from':accounts[0]})
     #Aprrove for mint (Transfer from zero)
     #niftsy20.approve(wrapper.address, 1e25,  {'from':accounts[1]})
     #transfer wrapped "LP" to accounts[0] with erc20 fee
@@ -61,20 +61,35 @@ def test_ether_wrap(accounts, erc721mock, wrapper):
     assert erc721mock.balanceOf(accounts[0]) == 0
     assert erc721mock.ownerOf(0) == wrapper.address 
     assert wrapper.balance() == '1 ether' 
-    assert wrapper.getTokenValue(wrapper.ourId()) == ('1 ether', 0)    
+    assert wrapper.getTokenValue(wrapper.ourId()) == ('1 ether', 0)
+    logging.info('URI from wrapped {}'.format(
+        wrapper.tokenURI(wrapper.ourId())
+    ))    
 
-def test_ether_unwrap(accounts, erc721mock, wrapper):
-    #Give approve
+def test_ether_unwrap(accounts, erc721mock, wrapper, niftsy20):
+    niftsy20.transfer(accounts[1], 1e21,  {'from':accounts[0]})
+    wrapper.transferFrom(accounts[0], accounts[1], 2, {'from':accounts[0]})
+    wrapper.transferFrom(accounts[1], accounts[0], 2, {'from':accounts[1]})
+    wrapper.transferFrom(accounts[0], accounts[1], 2, {'from':accounts[0]})
+    wrapper.transferFrom(accounts[1], accounts[0], 2, {'from':accounts[1]})
 
     ethBefore = accounts[0].balance()
-    logging.info('user Ether before unwrapp {}'.format(ethBefore))
-    logging.info('Token value (eth, token) {}'.format(
-        wrapper.getTokenValue(wrapper.ourId())
+    logging.info('user Ether before unwrapp {}'.format(
+        Wei(ethBefore).to('ether')
     ))
     
+    token_value = wrapper.getTokenValue(wrapper.ourId())
+    logging.info('Token collateral before Unwrap (eth={}, token= {}'.format(
+        Wei(token_value[0]).to('ether'),
+        Wei(token_value[1]).to('ether')
+    ))
+    niftsy20_balance_Before_unwrap = niftsy20.balanceOf(accounts[0])
     wrapper.unWrap721(wrapper.ourId(), {'from':accounts[0]})
-    logging.info('user Ether After unwrapp {}'.format((accounts[0].balance() - ethBefore)))
+    logging.info('user Ether After unwrapp {}'.format(
+        Wei((accounts[0].balance() - ethBefore)).to('ether')
+    ))
     assert erc721mock.balanceOf(accounts[0]) == 1
     assert erc721mock.ownerOf(0) == accounts[0]
     assert wrapper.balance() == 0
-    assert (accounts[0].balance() - ethBefore) == 1e18     
+    assert (accounts[0].balance() - ethBefore) == 1e18 
+    assert  niftsy20.balanceOf(accounts[0]) - niftsy20_balance_Before_unwrap == 8e18  

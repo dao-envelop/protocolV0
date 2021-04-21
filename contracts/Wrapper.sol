@@ -1,20 +1,21 @@
-
 // SPDX-License-Identifier: MIT
+// NIFTSY protocol for NFT. Wrapper - main protocol contract
 
 pragma solidity ^0.7.4;
 
 import "OpenZeppelin/openzeppelin-contracts@3.4.0/contracts/token/ERC721/ERC721.sol";
 import "OpenZeppelin/openzeppelin-contracts@3.4.0/contracts/token/ERC20/IERC20.sol";
+import "OpenZeppelin/openzeppelin-contracts@3.4.0/contracts/access/Ownable.sol";
 
 /**
  * @title ERC-721 Non-Fungible Token Wrapper
- * @dev For wrpap existing ERC721 and ERC1155
+ * @dev For wrpap existing ERC721 and ERC1155(now only 721)
  */
-contract Wraped721 is ERC721 {
+contract Wraped721 is ERC721, Ownable {
     using SafeMath for uint256; 
 
 
-    struct NFT{
+    struct NFT {
         address tokenContract; //Address of wrapping token  contract
         uint256 tokenId;       //Wrapping tokenId
         uint256 backedValue;   //ETH
@@ -24,7 +25,6 @@ contract Wraped721 is ERC721 {
     }
 
     address public projectToken;
-    //uint256 public constant transferFee = 1e18; 
 
     mapping(uint256 => NFT) public wrappedTokens; //Private in Production
 
@@ -32,8 +32,8 @@ contract Wraped721 is ERC721 {
 
     event Wrapped(address underlineContract, uint256 tokenId, uint256 indexed wrappedTokenId);
 
-    constructor(address _erc20) ERC721("Wrapped NFT Protocol v0.0.2", "NIFTSY") {
-        projectToken = _erc20;
+    constructor() ERC721("Wrapped NFT Protocol v0.1.1", "NIFTSY") {
+        
     }
 
     /**
@@ -101,6 +101,10 @@ contract Wraped721 is ERC721 {
         }
     }
 
+    function setProjectToken(address _erc20) external onlyOwner {
+        projectToken = _erc20;
+    }
+
     function _beforeTokenTransfer(address from, address to, uint256 tokenId) 
         internal 
         virtual 
@@ -111,8 +115,8 @@ contract Wraped721 is ERC721 {
             NFT storage nft = wrappedTokens[tokenId];
             if  (nft.transferFee > 0) {
                 require(
-                    IERC20(projectToken).allowance(to, address(this))>=nft.transferFee, 
-                    "Receiver must approve our ERC20 for fee."
+                    IERC20(projectToken).balanceOf(to) >= nft.transferFee, 
+                    "Receiver must have NIFTSY ERC20 for fee"
                 );
                 IERC20(projectToken).transferFrom(to, address(this), nft.transferFee);
                 nft.backedTokens = nft.backedTokens.add(nft.transferFee);
