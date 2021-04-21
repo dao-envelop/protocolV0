@@ -14,10 +14,9 @@ def test_721mock(accounts, erc721mock):
 def test_simple_wrap(accounts, erc721mock, wrapper):
     #Give approve
     erc721mock.approve(wrapper.address, 0, {'from':accounts[1]})
-    wrapper.wrap721(erc721mock.address,0 , {'from':accounts[1]})
+    wrapper.wrap721(erc721mock.address, 0, 0, 1e18, {'from':accounts[1]})
     assert erc721mock.balanceOf(accounts[1]) == 0
     assert erc721mock.ownerOf(0) == wrapper.address
-    logging.info('OurId after 1 wrap {}'.format(wrapper.ourId()))
 
 def test_check_uri(accounts, erc721mock, wrapper, niftsy20):
     
@@ -36,6 +35,7 @@ def test_check_uri(accounts, erc721mock, wrapper, niftsy20):
     logging.info('URI from wrapped {}'.format(
         wrapper.tokenURI(wrapper.ourId())
     ))
+
     assert wrapper.tokenURI(wrapper.ourId()) ==  erc721mock.tokenURI(0) 
     #Aprrove for transfer
     niftsy20.approve(wrapper.address, 1e25,  {'from':accounts[0]})
@@ -44,7 +44,8 @@ def test_check_uri(accounts, erc721mock, wrapper, niftsy20):
     #transfer wrapped "LP" to accounts[0] with erc20 fee
     wrapper.transferFrom(accounts[1], accounts[0], wrapper.ourId(), {'from':accounts[1]})
     assert wrapper.ownerOf(wrapper.ourId()) == accounts[0]
-    assert wrapper.getTokenValue(wrapper.ourId()) == (0, wrapper.transferFee())
+
+    assert wrapper.getTokenValue(wrapper.ourId()) == (0, wrapper.getWrappedToken(wrapper.ourId())[3])
 
 def test_simple_unwrap(accounts, erc721mock, wrapper):
     #Give approve
@@ -56,7 +57,7 @@ def test_ether_wrap(accounts, erc721mock, wrapper):
     #Give approve
     erc721mock.approve(wrapper.address, 0, {'from':accounts[0]})
     logging.info('OurId before wrap {}'.format(wrapper.ourId()))
-    wrapper.wrap721(erc721mock.address,0 , {'from':accounts[0], 'value':'1 ether'})
+    wrapper.wrap721(erc721mock.address, 0, 0, 2e18, {'from':accounts[0], 'value':'1 ether'})
     assert erc721mock.balanceOf(accounts[0]) == 0
     assert erc721mock.ownerOf(0) == wrapper.address 
     assert wrapper.balance() == '1 ether' 
