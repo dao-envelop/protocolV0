@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: MIT
 // NIFTSY protocol for NFT. Wrapper - main protocol contract
 
-pragma solidity ^0.7.4;
+pragma solidity ^0.8.2;
 
-import "OpenZeppelin/openzeppelin-contracts@3.4.0/contracts/token/ERC721/ERC721.sol";
-import "OpenZeppelin/openzeppelin-contracts@3.4.0/contracts/token/ERC20/IERC20.sol";
-import "OpenZeppelin/openzeppelin-contracts@3.4.0/contracts/access/Ownable.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC721/ERC721.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/IERC20.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
 
 /**
  * @title ERC-721 Non-Fungible Token Wrapper
  * @dev For wrpap existing ERC721 and ERC1155(now only 721)
  */
 contract Wraped721 is ERC721, Ownable {
-    using SafeMath for uint256; 
+    //using SafeMath for uint256; 
 
 
     struct NFT {
@@ -60,7 +60,7 @@ contract Wraped721 is ERC721, Ownable {
             "Please call approve in your NFT contract."
         );
         IERC721(_underlineContract).transferFrom(msg.sender, address(this), _tokenId);
-        ourId = ourId.add(1);
+        ourId += 1;
         _mint(msg.sender, ourId);
         wrappedTokens[ourId] = NFT(
             _underlineContract, 
@@ -119,7 +119,7 @@ contract Wraped721 is ERC721, Ownable {
                     "Receiver must have NIFTSY ERC20 for fee"
                 );
                 IERC20(projectToken).transferFrom(to, address(this), nft.transferFee);
-                nft.backedTokens = nft.backedTokens.add(nft.transferFee);
+                nft.backedTokens = nft.backedTokens + nft.transferFee;
             }
         }
     }

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 // NIFTSY protocol ERC20
-pragma solidity ^0.7.4;
+pragma solidity ^0.8.2;
 
-import "OpenZeppelin/openzeppelin-contracts@3.4.0/contracts/token/ERC20/ERC20.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/ERC20.sol";
 import "./MinterRole.sol";
 
 contract Niftsy is ERC20, MinterRole {
-	using SafeMath for uint256;
+	//using SafeMath for uint256;
 
     uint256 constant MAX_SUPPLY = 500000000e18;
 
@@ -19,7 +19,7 @@ contract Niftsy is ERC20, MinterRole {
     }
 
     function mint(address to, uint256 amount ) external onlyMinter {
-        require(totalSupply() <= MAX_SUPPLY.sub(amount), "MAX_SUPPLY amount exceed");
+        require(totalSupply() <= MAX_SUPPLY - amount, "MAX_SUPPLY amount exceed");
         _mint(to, amount);
     }
 

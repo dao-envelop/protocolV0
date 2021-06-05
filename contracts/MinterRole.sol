@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.7.4;
+pragma solidity ^0.8.2;
 
 /**
  * @title Roles
@@ -49,7 +49,7 @@ contract MinterRole  {
 
     Roles.Role private _minters;
 
-    constructor(address sender) public  {
+    constructor(address sender)   {
         if (!isMinter(sender)) {
             _addMinter(sender);
         }
