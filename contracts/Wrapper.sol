@@ -43,8 +43,15 @@ contract Wrapper721 is ERC721, Ownable {
     event Wrapped(
         address underlineContract, 
         uint256 tokenId, 
-        uint256 indexed wrappedTokenId);
+        uint256 indexed wrappedTokenId
+    );
     event NewFee(uint256 feeAmount, uint256 startDate);
+    event NiftsyProtocolTransfer(
+        uint256 tokenId, 
+        uint256 transferFee, 
+        uint256 royalty, 
+        address royaltyBeneficiary
+    );
 
     constructor(address _erc20) ERC721("Wrapped NFT Protocol v0.2.0", "NIFTSY") {
         projectToken = _erc20; 
@@ -101,11 +108,14 @@ contract Wrapper721 is ERC721, Ownable {
             "Too much threshold"
         );
         //////////////////////////////////////////////////////
-        //Protokol fee can be not zero in the future
-        require(
-            _chargeFee(msg.sender, _getProtokolFeeAmount()), 
-            "Cant charge protokol fee"
-        );
+        //Protokol fee can be not zero in the future       //
+        if  (_getProtokolFeeAmount() > 0) {
+            require(
+                _chargeFee(msg.sender, _getProtokolFeeAmount()), 
+                "Cant charge protokol fee"
+            );
+        }
+
         ////////////////////////
         ///   WRAP LOGIC    ////
         IERC721(_underlineContract).transferFrom(msg.sender, address(this), _tokenId);
@@ -179,8 +189,6 @@ contract Wrapper721 is ERC721, Ownable {
     }
 
 
-
-
     /////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////
@@ -194,10 +202,21 @@ contract Wrapper721 is ERC721, Ownable {
         //Not for mint and burn
         if (to != address(0) && from !=address(0)) {
             NFT storage nft = wrappedTokens[tokenId];
+            //Transfer fee charge
             if  (nft.transferFee > 0) {
+                uint256 rAmount;
                 if (_chargeFee(from, nft.transferFee) == true) {
-                    nft.backedTokens += nft.transferFee;
+                    //Royalty send   
+                    if  (nft.royaltyPercent > 0 ) {
+                        rAmount = nft.royaltyPercent * nft.transferFee / 100;
+                        IERC20(projectToken).transfer(
+                            nft.royaltyBeneficiary,
+                            rAmount
+                        );
+                    }
+                    nft.backedTokens += nft.transferFee - rAmount;
                 }
+                emit NiftsyProtocolTransfer(tokenId, nft.transferFee, rAmount, nft.royaltyBeneficiary);
             }
         }
     }
