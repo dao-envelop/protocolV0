@@ -1,12 +1,9 @@
 // SPDX-License-Identifier: MIT
 // NIFTSY protocol for NFT. Wrapper - main protocol contract
-
 pragma solidity ^0.8.4;
-
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/IERC20.sol";
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
-
 /**
  * @title ERC-721 Non-Fungible Token Wrapper
  * @dev For wrpap existing ERC721 and ERC1155(now only 721)

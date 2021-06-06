@@ -2,11 +2,12 @@
 // NIFTSY protocol ERC20
 pragma solidity ^0.8.4;
 
-import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/ERC20.sol";
 import "./MinterRole.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/ERC20.sol";
+
 
 contract Niftsy is ERC20, MinterRole {
-	//using SafeMath for uint256;
+    //using SafeMath for uint256;
 
     uint256 constant MAX_SUPPLY = 500000000e18;
 

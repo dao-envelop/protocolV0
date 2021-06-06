@@ -1,0 +1,873 @@
+[
+    {
+        'inputs': [
+            {
+                'internalType': "address",
+                'name': "_erc20",
+                'type': "address"
+            }
+        ],
+        'name': "constructor",
+        'stateMutability': "nonpayable",
+        'type': "constructor"
+    },
+    {
+        'anonymous': False,
+        'inputs': [
+            {
+                'indexed': True,
+                'internalType': "address",
+                'name': "owner",
+                'type': "address"
+            },
+            {
+                'indexed': True,
+                'internalType': "address",
+                'name': "approved",
+                'type': "address"
+            },
+            {
+                'indexed': True,
+                'internalType': "uint256",
+                'name': "tokenId",
+                'type': "uint256"
+            }
+        ],
+        'name': "Approval",
+        'type': "event"
+    },
+    {
+        'anonymous': False,
+        'inputs': [
+            {
+                'indexed': True,
+                'internalType': "address",
+                'name': "owner",
+                'type': "address"
+            },
+            {
+                'indexed': True,
+                'internalType': "address",
+                'name': "operator",
+                'type': "address"
+            },
+            {
+                'indexed': False,
+                'internalType': "bool",
+                'name': "approved",
+                'type': "bool"
+            }
+        ],
+        'name': "ApprovalForAll",
+        'type': "event"
+    },
+    {
+        'anonymous': False,
+        'inputs': [
+            {
+                'indexed': False,
+                'internalType': "uint256",
+                'name': "feeAmount",
+                'type': "uint256"
+            },
+            {
+                'indexed': False,
+                'internalType': "uint256",
+                'name': "startDate",
+                'type': "uint256"
+            }
+        ],
+        'name': "NewFee",
+        'type': "event"
+    },
+    {
+        'anonymous': False,
+        'inputs': [
+            {
+                'indexed': True,
+                'internalType': "uint256",
+                'name': "wrappedTokenId",
+                'type': "uint256"
+            },
+            {
+                'indexed': True,
+                'internalType': "address",
+                'name': "royaltyBeneficiary",
+                'type': "address"
+            },
+            {
+                'indexed': False,
+                'internalType': "uint256",
+                'name': "transferFee",
+                'type': "uint256"
+            },
+            {
+                'indexed': False,
+                'internalType': "uint256",
+                'name': "royalty",
+                'type': "uint256"
+            }
+        ],
+        'name': "NiftsyProtocolTransfer",
+        'type': "event"
+    },
+    {
+        'anonymous': False,
+        'inputs': [
+            {
+                'indexed': True,
+                'internalType': "address",
+                'name': "previousOwner",
+                'type': "address"
+            },
+            {
+                'indexed': True,
+                'internalType': "address",
+                'name': "newOwner",
+                'type': "address"
+            }
+        ],
+        'name': "OwnershipTransferred",
+        'type': "event"
+    },
+    {
+        'anonymous': False,
+        'inputs': [
+            {
+                'indexed': True,
+                'internalType': "address",
+                'name': "from",
+                'type': "address"
+            },
+            {
+                'indexed': True,
+                'internalType': "address",
+                'name': "to",
+                'type': "address"
+            },
+            {
+                'indexed': True,
+                'internalType': "uint256",
+                'name': "tokenId",
+                'type': "uint256"
+            }
+        ],
+        'name': "Transfer",
+        'type': "event"
+    },
+    {
+        'anonymous': False,
+        'inputs': [
+            {
+                'indexed': False,
+                'internalType': "address",
+                'name': "underlineContract",
+                'type': "address"
+            },
+            {
+                'indexed': False,
+                'internalType': "uint256",
+                'name': "tokenId",
+                'type': "uint256"
+            },
+            {
+                'indexed': True,
+                'internalType': "uint256",
+                'name': "wrappedTokenId",
+                'type': "uint256"
+            }
+        ],
+        'name': "Wrapped",
+        'type': "event"
+    },
+    {
+        'inputs': [],
+        'name': "MAX_FEE_THRESHOLD_PERCENT",
+        'outputs': [
+            {
+                'internalType': "uint256",
+                'name': "",
+                'type': "uint256"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [],
+        'name': "MAX_ROYALTY_PERCENT",
+        'outputs': [
+            {
+                'internalType': "uint256",
+                'name': "",
+                'type': "uint256"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [],
+        'name': "MAX_TIME_TO_UNWRAP",
+        'outputs': [
+            {
+                'internalType': "uint256",
+                'name': "",
+                'type': "uint256"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [
+            {
+                'internalType': "uint256",
+                'name': "_wrappedTokenId",
+                'type': "uint256"
+            }
+        ],
+        'name': "addNativeCollateral",
+        'outputs': [],
+        'stateMutability': "payable",
+        'type': "function"
+    },
+    {
+        'inputs': [
+            {
+                'internalType': "address",
+                'name': "to",
+                'type': "address"
+            },
+            {
+                'internalType': "uint256",
+                'name': "tokenId",
+                'type': "uint256"
+            }
+        ],
+        'name': "approve",
+        'outputs': [],
+        'stateMutability': "nonpayable",
+        'type': "function"
+    },
+    {
+        'inputs': [
+            {
+                'internalType': "address",
+                'name': "owner",
+                'type': "address"
+            }
+        ],
+        'name': "balanceOf",
+        'outputs': [
+            {
+                'internalType': "uint256",
+                'name': "",
+                'type': "uint256"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [],
+        'name': "chargeFeeAfter",
+        'outputs': [
+            {
+                'internalType': "uint256",
+                'name': "",
+                'type': "uint256"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [
+            {
+                'internalType': "uint256",
+                'name': "tokenId",
+                'type': "uint256"
+            }
+        ],
+        'name': "getApproved",
+        'outputs': [
+            {
+                'internalType': "address",
+                'name': "",
+                'type': "address"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [
+            {
+                'internalType': "uint256",
+                'name': "tokenId",
+                'type': "uint256"
+            }
+        ],
+        'name': "getTokenValue",
+        'outputs': [
+            {
+                'internalType': "uint256",
+                'name': "",
+                'type': "uint256"
+            },
+            {
+                'internalType': "uint256",
+                'name': "",
+                'type': "uint256"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [
+            {
+                'internalType': "uint256",
+                'name': "tokenId",
+                'type': "uint256"
+            }
+        ],
+        'name': "getWrappedToken",
+        'outputs': [
+            {
+                'components': [
+                    {
+                        'internalType': "address",
+                        'name': "tokenContract",
+                        'type': "address"
+                    },
+                    {
+                        'internalType': "uint256",
+                        'name': "tokenId",
+                        'type': "uint256"
+                    },
+                    {
+                        'internalType': "uint256",
+                        'name': "backedValue",
+                        'type': "uint256"
+                    },
+                    {
+                        'internalType': "uint256",
+                        'name': "backedTokens",
+                        'type': "uint256"
+                    },
+                    {
+                        'internalType': "uint256",
+                        'name': "unwrapAfter",
+                        'type': "uint256"
+                    },
+                    {
+                        'internalType': "uint256",
+                        'name': "transferFee",
+                        'type': "uint256"
+                    },
+                    {
+                        'internalType': "address",
+                        'name': "royaltyBeneficiary",
+                        'type': "address"
+                    },
+                    {
+                        'internalType': "uint256",
+                        'name': "royaltyPercent",
+                        'type': "uint256"
+                    },
+                    {
+                        'internalType': "uint256",
+                        'name': "unwraptFeeThreshold",
+                        'type': "uint256"
+                    }
+                ],
+                'internalType': "struct Wrapper721.NFT",
+                'name': "",
+                'type': "tuple"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [
+            {
+                'internalType': "address",
+                'name': "owner",
+                'type': "address"
+            },
+            {
+                'internalType': "address",
+                'name': "operator",
+                'type': "address"
+            }
+        ],
+        'name': "isApprovedForAll",
+        'outputs': [
+            {
+                'internalType': "bool",
+                'name': "",
+                'type': "bool"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [],
+        'name': "lastWrappedNFTId",
+        'outputs': [
+            {
+                'internalType': "uint256",
+                'name': "",
+                'type': "uint256"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [],
+        'name': "name",
+        'outputs': [
+            {
+                'internalType': "string",
+                'name': "",
+                'type': "string"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [],
+        'name': "owner",
+        'outputs': [
+            {
+                'internalType': "address",
+                'name': "",
+                'type': "address"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [
+            {
+                'internalType': "uint256",
+                'name': "tokenId",
+                'type': "uint256"
+            }
+        ],
+        'name': "ownerOf",
+        'outputs': [
+            {
+                'internalType': "address",
+                'name': "",
+                'type': "address"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [],
+        'name': "projectToken",
+        'outputs': [
+            {
+                'internalType': "address",
+                'name': "",
+                'type': "address"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [],
+        'name': "protokolFee",
+        'outputs': [
+            {
+                'internalType': "uint256",
+                'name': "",
+                'type': "uint256"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [],
+        'name': "protokolFeeRaised",
+        'outputs': [
+            {
+                'internalType': "uint256",
+                'name': "",
+                'type': "uint256"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [],
+        'name': "renounceOwnership",
+        'outputs': [],
+        'stateMutability': "nonpayable",
+        'type': "function"
+    },
+    {
+        'inputs': [
+            {
+                'internalType': "address",
+                'name': "from",
+                'type': "address"
+            },
+            {
+                'internalType': "address",
+                'name': "to",
+                'type': "address"
+            },
+            {
+                'internalType': "uint256",
+                'name': "tokenId",
+                'type': "uint256"
+            }
+        ],
+        'name': "safeTransferFrom",
+        'outputs': [],
+        'stateMutability': "nonpayable",
+        'type': "function"
+    },
+    {
+        'inputs': [
+            {
+                'internalType': "address",
+                'name': "from",
+                'type': "address"
+            },
+            {
+                'internalType': "address",
+                'name': "to",
+                'type': "address"
+            },
+            {
+                'internalType': "uint256",
+                'name': "tokenId",
+                'type': "uint256"
+            },
+            {
+                'internalType': "bytes",
+                'name': "_data",
+                'type': "bytes"
+            }
+        ],
+        'name': "safeTransferFrom",
+        'outputs': [],
+        'stateMutability': "nonpayable",
+        'type': "function"
+    },
+    {
+        'inputs': [
+            {
+                'internalType': "address",
+                'name': "operator",
+                'type': "address"
+            },
+            {
+                'internalType': "bool",
+                'name': "approved",
+                'type': "bool"
+            }
+        ],
+        'name': "setApprovalForAll",
+        'outputs': [],
+        'stateMutability': "nonpayable",
+        'type': "function"
+    },
+    {
+        'inputs': [
+            {
+                'internalType': "uint256",
+                'name': "_fee",
+                'type': "uint256"
+            },
+            {
+                'internalType': "uint256",
+                'name': "_startDate",
+                'type': "uint256"
+            }
+        ],
+        'name': "setFee",
+        'outputs': [],
+        'stateMutability': "nonpayable",
+        'type': "function"
+    },
+    {
+        'inputs': [
+            {
+                'internalType': "bytes4",
+                'name': "interfaceId",
+                'type': "bytes4"
+            }
+        ],
+        'name': "supportsInterface",
+        'outputs': [
+            {
+                'internalType': "bool",
+                'name': "",
+                'type': "bool"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [],
+        'name': "symbol",
+        'outputs': [
+            {
+                'internalType': "string",
+                'name': "",
+                'type': "string"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [
+            {
+                'internalType': "uint256",
+                'name': "index",
+                'type': "uint256"
+            }
+        ],
+        'name': "tokenByIndex",
+        'outputs': [
+            {
+                'internalType': "uint256",
+                'name': "",
+                'type': "uint256"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [
+            {
+                'internalType': "address",
+                'name': "owner",
+                'type': "address"
+            },
+            {
+                'internalType': "uint256",
+                'name': "index",
+                'type': "uint256"
+            }
+        ],
+        'name': "tokenOfOwnerByIndex",
+        'outputs': [
+            {
+                'internalType': "uint256",
+                'name': "",
+                'type': "uint256"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [
+            {
+                'internalType': "uint256",
+                'name': "tokenId",
+                'type': "uint256"
+            }
+        ],
+        'name': "tokenURI",
+        'outputs': [
+            {
+                'internalType': "string",
+                'name': "",
+                'type': "string"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [],
+        'name': "totalSupply",
+        'outputs': [
+            {
+                'internalType': "uint256",
+                'name': "",
+                'type': "uint256"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    },
+    {
+        'inputs': [
+            {
+                'internalType': "address",
+                'name': "from",
+                'type': "address"
+            },
+            {
+                'internalType': "address",
+                'name': "to",
+                'type': "address"
+            },
+            {
+                'internalType': "uint256",
+                'name': "tokenId",
+                'type': "uint256"
+            }
+        ],
+        'name': "transferFrom",
+        'outputs': [],
+        'stateMutability': "nonpayable",
+        'type': "function"
+    },
+    {
+        'inputs': [
+            {
+                'internalType': "address",
+                'name': "newOwner",
+                'type': "address"
+            }
+        ],
+        'name': "transferOwnership",
+        'outputs': [],
+        'stateMutability': "nonpayable",
+        'type': "function"
+    },
+    {
+        'inputs': [
+            {
+                'internalType': "uint256",
+                'name': "_tokenId",
+                'type': "uint256"
+            }
+        ],
+        'name': "unWrap721",
+        'outputs': [],
+        'stateMutability': "nonpayable",
+        'type': "function"
+    },
+    {
+        'inputs': [
+            {
+                'internalType': "address",
+                'name': "_underlineContract",
+                'type': "address"
+            },
+            {
+                'internalType': "uint256",
+                'name': "_tokenId",
+                'type': "uint256"
+            },
+            {
+                'internalType': "uint256",
+                'name': "_unwrapAfter",
+                'type': "uint256"
+            },
+            {
+                'internalType': "uint256",
+                'name': "_transferFee",
+                'type': "uint256"
+            },
+            {
+                'internalType': "address",
+                'name': "_royaltyBeneficiary",
+                'type': "address"
+            },
+            {
+                'internalType': "uint256",
+                'name': "_royaltyPercent",
+                'type': "uint256"
+            },
+            {
+                'internalType': "uint256",
+                'name': "_unwraptFeeThreshold",
+                'type': "uint256"
+            }
+        ],
+        'name': "wrap721",
+        'outputs': [
+            {
+                'internalType': "uint256",
+                'name': "",
+                'type': "uint256"
+            }
+        ],
+        'stateMutability': "payable",
+        'type': "function"
+    },
+    {
+        'inputs': [
+            {
+                'internalType': "uint256",
+                'name': "",
+                'type': "uint256"
+            }
+        ],
+        'name': "wrappedTokens",
+        'outputs': [
+            {
+                'internalType': "address",
+                'name': "tokenContract",
+                'type': "address"
+            },
+            {
+                'internalType': "uint256",
+                'name': "tokenId",
+                'type': "uint256"
+            },
+            {
+                'internalType': "uint256",
+                'name': "backedValue",
+                'type': "uint256"
+            },
+            {
+                'internalType': "uint256",
+                'name': "backedTokens",
+                'type': "uint256"
+            },
+            {
+                'internalType': "uint256",
+                'name': "unwrapAfter",
+                'type': "uint256"
+            },
+            {
+                'internalType': "uint256",
+                'name': "transferFee",
+                'type': "uint256"
+            },
+            {
+                'internalType': "address",
+                'name': "royaltyBeneficiary",
+                'type': "address"
+            },
+            {
+                'internalType': "uint256",
+                'name': "royaltyPercent",
+                'type': "uint256"
+            },
+            {
+                'internalType': "uint256",
+                'name': "unwraptFeeThreshold",
+                'type': "uint256"
+            }
+        ],
+        'stateMutability': "view",
+        'type': "function"
+    }
+]

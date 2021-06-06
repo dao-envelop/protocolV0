@@ -1,11 +1,16 @@
 import pytest
 import logging
-from brownie import Wei, reverts
+from brownie import Wei, reverts, chain
 LOGGER = logging.getLogger(__name__)
 
 # def test_first(pool_repo):
 # 	assert pool_repo.getPoolsCount() == '1'
 ORIGINAL_NFT_IDs = [10000,11111,22222]
+START_NATIVE_COLLATERAL = '1 ether'
+ADD_NATIVE_COLLATERAL = '2 ether'
+TRANSFER_FEE = '2 ether'
+ROAYLTY_PERCENT = 10
+UNWRAP_FEE_THRESHOLD = 6e18
 
 def test_721mock(accounts, erc721mock):
     assert erc721mock.balanceOf(accounts[0]) == 1
@@ -13,6 +18,7 @@ def test_721mock(accounts, erc721mock):
     assert erc721mock.balanceOf(accounts[1]) == 1
     [erc721mock.mint(x, {'from':accounts[0]})  for x in ORIGINAL_NFT_IDs]
     erc721mock.transferFrom(accounts[0], accounts[1], ORIGINAL_NFT_IDs[0], {'from':accounts[0]})
+    erc721mock.transferFrom(accounts[0], accounts[1], ORIGINAL_NFT_IDs[2], {'from':accounts[0]})
 
 def test_simple_wrap(accounts, erc721mock, wrapper):
     #Give approve
@@ -50,6 +56,8 @@ def test_check_uri(accounts, erc721mock, wrapper, niftsy20):
     #transfer wrapped "LP" to accounts[0] with erc20 fee
     with reverts('insufficient NIFTSY balance for fee'):
         wrapper.transferFrom(accounts[1], accounts[0], wrapper.lastWrappedNFTId(), {'from':accounts[1]})
+    
+
     niftsy20.transfer(accounts[1], 10e18,  {'from':accounts[0]})
     wrapper.transferFrom(accounts[1], accounts[0], wrapper.lastWrappedNFTId(), {'from':accounts[1]})    
     assert wrapper.ownerOf(wrapper.lastWrappedNFTId()) == accounts[0]
@@ -84,6 +92,14 @@ def test_ether_wrap(accounts, erc721mock, wrapper):
     logging.info('getWrappedToken {}'.format(
         wrapper.getWrappedToken(wrapper.lastWrappedNFTId())
     ))
+
+def test_add_collateral(accounts, wrapper):
+    native_collateral_before = wrapper.getWrappedToken(wrapper.lastWrappedNFTId())[2]
+    tx = wrapper.addNativeCollateral(wrapper.lastWrappedNFTId(), {'from':accounts[0], 'value': ADD_NATIVE_COLLATERAL})
+    logging.info('getWrappedToken {}'.format(
+        wrapper.getWrappedToken(wrapper.lastWrappedNFTId())
+    ))
+    assert Wei(wrapper.getWrappedToken(wrapper.lastWrappedNFTId())[2] - native_collateral_before) == Wei(ADD_NATIVE_COLLATERAL)
         
 
 def test_ether_unwrap(accounts, erc721mock, wrapper, niftsy20):
@@ -104,6 +120,7 @@ def test_ether_unwrap(accounts, erc721mock, wrapper, niftsy20):
         Wei(token_value[1]).to('ether')
     ))
     niftsy20_balance_Before_unwrap = niftsy20.balanceOf(accounts[0])
+    collateral = wrapper.getWrappedToken(wrapper.lastWrappedNFTId())[2]
     wrapper.unWrap721(wrapper.lastWrappedNFTId(), {'from':accounts[0]})
     logging.info('user Ether After unwrapp {}'.format(
         Wei((accounts[0].balance() - ethBefore)).to('ether')
@@ -111,5 +128,44 @@ def test_ether_unwrap(accounts, erc721mock, wrapper, niftsy20):
     #assert erc721mock.balanceOf(accounts[0]) == 1
     assert erc721mock.ownerOf(ORIGINAL_NFT_IDs[1]) == accounts[0]
     assert wrapper.balance() == 0
-    assert (accounts[0].balance() - ethBefore) == 1e18 
-    assert  niftsy20.balanceOf(accounts[0]) - niftsy20_balance_Before_unwrap == 8e18  
+    assert (accounts[0].balance() - ethBefore) == collateral 
+    assert  niftsy20.balanceOf(accounts[0]) - niftsy20_balance_Before_unwrap == 8e18
+
+
+def test_advanced_wrap(accounts, erc721mock, wrapper, niftsy20):
+    erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[2], {'from':accounts[1]})
+    tx = wrapper.wrap721(
+        erc721mock.address, 
+        ORIGINAL_NFT_IDs[2], 
+        chain.time() + 100, #unwrapAfter
+        TRANSFER_FEE, 
+        accounts[2], #_royaltyBeneficiary
+        ROAYLTY_PERCENT, #_royaltyPercent
+        UNWRAP_FEE_THRESHOLD, 
+        {'from':accounts[1], 'value':START_NATIVE_COLLATERAL}
+    )
+    logging.info('getWrappedToken {}'.format(
+        wrapper.getWrappedToken(wrapper.lastWrappedNFTId())
+    ))
+    wrapper.transferFrom(accounts[1], accounts[0], wrapper.lastWrappedNFTId(), {'from':accounts[1]})
+    with reverts("Cant unwrap before day X"):
+        wrapper.unWrap721(wrapper.lastWrappedNFTId(), {'from':accounts[0]})
+    
+    logging.info('Time machine running.....+100 sec...............')
+    chain.sleep(100)
+    chain.mine()
+    logging.info('Chain time {}'.format( chain.time()))
+    with reverts("Cant unwrap due Fee Threshold"):
+        wrapper.unWrap721(wrapper.lastWrappedNFTId(), {'from':accounts[0]})    
+    wrapper.addNativeCollateral(wrapper.lastWrappedNFTId(), {'from':accounts[0], 'value': ADD_NATIVE_COLLATERAL})
+    wrapper.transferFrom(accounts[0], accounts[1], wrapper.lastWrappedNFTId(), {'from':accounts[0]})
+    wrapper.transferFrom(accounts[1], accounts[0], wrapper.lastWrappedNFTId(), {'from':accounts[1]})
+    tx = wrapper.transferFrom(accounts[0], accounts[3], wrapper.lastWrappedNFTId(), {'from':accounts[0]})
+    logging.info('NiftsyProtocolTransfer={}'.format(tx.events['NiftsyProtocolTransfer']))
+    token_before_unwrap = wrapper.getWrappedToken(wrapper.lastWrappedNFTId())
+    logging.info('getWrappedToken {}'.format(token_before_unwrap))
+    ethBefore = accounts[3].balance()
+    wrapper.unWrap721(wrapper.lastWrappedNFTId(), {'from':accounts[3]})
+    assert token_before_unwrap[3] == niftsy20.balanceOf(accounts[3])
+    assert accounts[3].balance() == Wei(ethBefore) + Wei(START_NATIVE_COLLATERAL) + Wei(ADD_NATIVE_COLLATERAL)
+
