@@ -13,14 +13,22 @@ import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
  */
 contract Wrapper721 is ERC721, Ownable {
 
+    
     struct NFT {
-        address tokenContract; //Address of wrapping token  contract
-        uint256 tokenId;       //Wrapping tokenId
-        uint256 backedValue;   //ETH
-        uint256 backedTokens;  //native project tokens
-        uint256 unwrapAfter;   //Freez date
-        uint256 transferFee;   //transferFee amount with decimals i.e. 20e18
+        address tokenContract;      //Address of wrapping token  contract
+        uint256 tokenId;            //Wrapping tokenId
+        uint256 backedValue;        //ETH
+        uint256 backedTokens;       //native project tokens
+        uint256 unwrapAfter;        //Freez date
+        uint256 transferFee;        //transferFee amount with decimals i.e. 20e18
+        address royaltyBeneficiary; //Royalty payments receiver
+        uint256 royaltyPercent;     //% from transferFee
+        uint256 unwraptFeeThreshold;//unwrap possiple only after backedTokens achive this amount
     }
+
+    uint256 constant public MAX_ROYALTY_PERCENT = 50;
+    uint256 constant public MAX_TIME_TO_UNWRAP = 365 days;
+    uint256 constant public MAX_FEE_THRESHOLD_PERCENT = 10; //percent from project token tottallSypply
 
     uint256 public protokolFee = 0;
     uint256 public chargeFeeAfter = type(uint256).max;
@@ -55,23 +63,51 @@ contract Wrapper721 is ERC721, Ownable {
         address _underlineContract, 
         uint256 _tokenId, 
         uint256 _unwrapAfter,
-        uint256 _transferFee
+        uint256 _transferFee,
+        address _royaltyBeneficiary,
+        uint256 _royaltyPercent,
+        uint256 _unwraptFeeThreshold
     ) 
         external 
         payable
         returns (uint256) 
     {
+        
+        /////////////////Sanity checks////////////////////////
+        //1. ERC allowance
         require(
             IERC721(_underlineContract).getApproved(_tokenId) == address(this), 
             "Please call approve in your NFT contract"
         );
 
+        //2. Logik around transfer fee
+        if  (_transferFee > 0) {
+            require(_royaltyPercent <= MAX_ROYALTY_PERCENT, "Royalty percent too big");     
+
+        } else {
+            require(_royaltyPercent == 0, "Royalty source is transferFee");
+            require(_royaltyBeneficiary == address(0), "No Royalty without transferFee");
+        }
+
+        //3. MAX time to UNWRAP
+        require( _unwrapAfter <= block.timestamp + MAX_TIME_TO_UNWRAP,
+            "Too long Wrap"
+        );
+
+        //4. 
+        require(
+            _unwraptFeeThreshold  <
+            IERC20(projectToken).totalSupply() * MAX_FEE_THRESHOLD_PERCENT / 100,
+            "Too much threshold"
+        );
+        //////////////////////////////////////////////////////
         //Protokol fee can be not zero in the future
         require(
             _chargeFee(msg.sender, _getProtokolFeeAmount()), 
             "Cant charge protokol fee"
         );
-
+        ////////////////////////
+        ///   WRAP LOGIC    ////
         IERC721(_underlineContract).transferFrom(msg.sender, address(this), _tokenId);
         lastWrappedNFTId += 1;
         _mint(msg.sender, lastWrappedNFTId);
@@ -81,7 +117,10 @@ contract Wrapper721 is ERC721, Ownable {
             msg.value, 
             0, 
             _unwrapAfter, 
-            _transferFee
+            _transferFee,
+            _royaltyBeneficiary,
+            _royaltyPercent,
+            _unwraptFeeThreshold
         );
         emit Wrapped(_underlineContract, _tokenId, lastWrappedNFTId);
         return lastWrappedNFTId;
@@ -113,10 +152,6 @@ contract Wrapper721 is ERC721, Ownable {
             IERC20(projectToken).transfer(msg.sender, nft.backedTokens);
         }
     }
-
-    
-
-    
 
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         NFT storage nft = wrappedTokens[tokenId];
