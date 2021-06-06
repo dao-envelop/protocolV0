@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // NIFTSY protocol for NFT. Wrapper - main protocol contract
 
-pragma solidity ^0.8.2;
+pragma solidity ^0.8.4;
 
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC721/ERC721.sol";
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/IERC20.sol";
@@ -11,9 +11,7 @@ import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
  * @title ERC-721 Non-Fungible Token Wrapper
  * @dev For wrpap existing ERC721 and ERC1155(now only 721)
  */
-contract Wraped721 is ERC721, Ownable {
-    //using SafeMath for uint256; 
-
+contract Wrapper721 is ERC721, Ownable {
 
     struct NFT {
         address tokenContract; //Address of wrapping token  contract
@@ -24,20 +22,28 @@ contract Wraped721 is ERC721, Ownable {
         uint256 transferFee;   //transferFee amount with decimals i.e. 20e18
     }
 
+    uint256 public protokolFee = 0;
+    uint256 public chargeFeeAfter = type(uint256).max;
+    uint256 public protokolFeeRaised;
+
     address public projectToken;
 
     mapping(uint256 => NFT) public wrappedTokens; //Private in Production
 
-    uint256 public ourId; //Private in Production...will think
+    uint256 public lastWrappedNFTId; //Private in Production...will think
 
-    event Wrapped(address underlineContract, uint256 tokenId, uint256 indexed wrappedTokenId);
+    event Wrapped(
+        address underlineContract, 
+        uint256 tokenId, 
+        uint256 indexed wrappedTokenId);
+    event NewFee(uint256 feeAmount, uint256 startDate);
 
-    constructor() ERC721("Wrapped NFT Protocol v0.1.1", "NIFTSY") {
-        
+    constructor(address _erc20) ERC721("Wrapped NFT Protocol v0.2.0", "NIFTSY") {
+        projectToken = _erc20; 
     }
 
     /**
-     * @dev Function for wrap existing ERC721 and ERC1155 token
+     * @dev Function for wrap existing ERC721 
      *
      * @param _underlineContract address of native NFT contract
      * @param _tokenId id of NFT that need to be wraped
@@ -57,12 +63,19 @@ contract Wraped721 is ERC721, Ownable {
     {
         require(
             IERC721(_underlineContract).getApproved(_tokenId) == address(this), 
-            "Please call approve in your NFT contract."
+            "Please call approve in your NFT contract"
         );
+
+        //Protokol fee can be not zero in the future
+        require(
+            _chargeFee(msg.sender, _getProtokolFeeAmount()), 
+            "Cant charge protokol fee"
+        );
+
         IERC721(_underlineContract).transferFrom(msg.sender, address(this), _tokenId);
-        ourId += 1;
-        _mint(msg.sender, ourId);
-        wrappedTokens[ourId] = NFT(
+        lastWrappedNFTId += 1;
+        _mint(msg.sender, lastWrappedNFTId);
+        wrappedTokens[lastWrappedNFTId] = NFT(
             _underlineContract, 
             _tokenId, 
             msg.value, 
@@ -70,8 +83,8 @@ contract Wraped721 is ERC721, Ownable {
             _unwrapAfter, 
             _transferFee
         );
-        emit Wrapped(_underlineContract, _tokenId, ourId);
-        return ourId;
+        emit Wrapped(_underlineContract, _tokenId, lastWrappedNFTId);
+        return lastWrappedNFTId;
     }
 
     /**
@@ -101,28 +114,9 @@ contract Wraped721 is ERC721, Ownable {
         }
     }
 
-    function setProjectToken(address _erc20) external onlyOwner {
-        projectToken = _erc20;
-    }
+    
 
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId) 
-        internal 
-        virtual 
-        override 
-    {
-        //Not for mint and burn
-        if (to != address(0) && from !=address(0)) {
-            NFT storage nft = wrappedTokens[tokenId];
-            if  (nft.transferFee > 0) {
-                require(
-                    IERC20(projectToken).balanceOf(to) >= nft.transferFee, 
-                    "Receiver must have NIFTSY ERC20 for fee"
-                );
-                IERC20(projectToken).transferFrom(to, address(this), nft.transferFee);
-                nft.backedTokens = nft.backedTokens + nft.transferFee;
-            }
-        }
-    }
+    
 
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         NFT storage nft = wrappedTokens[tokenId];
@@ -138,4 +132,56 @@ contract Wraped721 is ERC721, Ownable {
         NFT storage nft = wrappedTokens[tokenId];
         return (nft.backedValue, nft.backedTokens, nft.unwrapAfter, nft.transferFee);
     }
+
+    
+    /////////////////////////////////////////////////////////////////////
+    //                    Admin functions                              //
+    /////////////////////////////////////////////////////////////////////
+    function setFee(uint256 _fee, uint256 _startDate) external onlyOwner {
+        protokolFee = _fee;
+        chargeFeeAfter = _startDate;
+        emit NewFee(_fee, _startDate);
+    }
+
+
+
+
+    /////////////////////////////////////////////////////////////////////
+
+    /////////////////////////////////////////////////////////////////////
+    /////////////   Internals     ///////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId) 
+        internal 
+        virtual 
+        override 
+    {
+        //Not for mint and burn
+        if (to != address(0) && from !=address(0)) {
+            NFT storage nft = wrappedTokens[tokenId];
+            if  (nft.transferFee > 0) {
+                if (_chargeFee(from, nft.transferFee) == true) {
+                    nft.backedTokens += nft.transferFee;
+                }
+            }
+        }
+    }
+
+    function _chargeFee(address _payer, uint256 _amount) internal returns(bool) {
+        require(
+            IERC20(projectToken).balanceOf(_payer) >= _amount, 
+                    "insufficient NIFTSY balance for fee"
+        );
+        IERC20(projectToken).transferFrom(_payer, address(this), _amount);
+        return true;
+    }
+
+    function _getProtokolFeeAmount() internal view returns (uint256) {
+        if (block.timestamp >= chargeFeeAfter) {
+            return protokolFee;
+        } else {
+            return 0;
+        }
+    }
+
 }

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // NIFTSY protocol for NFT
-pragma solidity ^0.8.2;
+pragma solidity ^0.8.4;
 
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
@@ -18,10 +18,14 @@ contract Token721Mock is ERC721URIStorage, Ownable {
         address to, 
         uint256 tokenId, 
         string memory _tokenURI 
-    ) external onlyOwner {
+    ) external {
         
         _mint(to, tokenId);
         _setTokenURI(tokenId, _tokenURI);
+    }
+
+    function mint(uint256 tokenId) external {
+        _mint(msg.sender, tokenId);
     }
     
     //TODO Remove if not usefull

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // NIFTSY protocol ERC20
-pragma solidity ^0.8.2;
+pragma solidity ^0.8.4;
 
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/ERC20.sol";
 import "./MinterRole.sol";
@@ -10,9 +10,9 @@ contract Niftsy is ERC20, MinterRole {
 
     uint256 constant MAX_SUPPLY = 500000000e18;
 
-    constructor(address protocol)
+    constructor()
     ERC20("NIFTSY protocol token", "NIFTSY")
-    MinterRole(protocol)
+    MinterRole(msg.sender)
     { 
         //Initial supply mint  - review before PROD
         _mint(msg.sender, MAX_SUPPLY);
