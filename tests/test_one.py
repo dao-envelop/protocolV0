@@ -17,7 +17,15 @@ def test_721mock(accounts, erc721mock):
 def test_simple_wrap(accounts, erc721mock, wrapper):
     #Give approve
     erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[0], {'from':accounts[1]})
-    wrapper.wrap721(erc721mock.address, ORIGINAL_NFT_IDs[0], 0, 1e18, {'from':accounts[1]})
+    wrapper.wrap721(
+        erc721mock.address, 
+        ORIGINAL_NFT_IDs[0], 
+        0, 
+        1e18,
+        '0x0000000000000000000000000000000000000000',
+        0,
+        0, 
+        {'from':accounts[1]})
     assert erc721mock.ownerOf(ORIGINAL_NFT_IDs[0]) == wrapper.address
 
 def test_check_uri(accounts, erc721mock, wrapper, niftsy20):
@@ -57,14 +65,26 @@ def test_ether_wrap(accounts, erc721mock, wrapper):
     #Give approve
     erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[1], {'from':accounts[0]})
     logging.info('lastWrappedNFTId before wrap {}'.format(wrapper.lastWrappedNFTId()))
-    wrapper.wrap721(erc721mock.address, ORIGINAL_NFT_IDs[1], 0, 2e18, {'from':accounts[0], 'value':'1 ether'})
+    wrapper.wrap721(
+        erc721mock.address, 
+        ORIGINAL_NFT_IDs[1], 
+        0, 
+        2e18,
+        '0x0000000000000000000000000000000000000000',
+        0,
+        0, 
+        {'from':accounts[0], 'value':'1 ether'})
     #assert erc721mock.balanceOf(accounts[0]) == 0
     assert erc721mock.ownerOf(ORIGINAL_NFT_IDs[1]) == wrapper.address 
     assert wrapper.balance() == '1 ether' 
     assert wrapper.getTokenValue(wrapper.lastWrappedNFTId()) == ('1 ether', 0)
     logging.info('URI from wrapped {}'.format(
         wrapper.tokenURI(wrapper.lastWrappedNFTId())
-    ))    
+    ))
+    logging.info('getWrappedToken {}'.format(
+        wrapper.getWrappedToken(wrapper.lastWrappedNFTId())
+    ))
+        
 
 def test_ether_unwrap(accounts, erc721mock, wrapper, niftsy20):
     niftsy20.transfer(accounts[1], 1e21,  {'from':accounts[0]})

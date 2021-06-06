@@ -3,7 +3,7 @@
 
 pragma solidity ^0.8.4;
 
-import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC721/ERC721.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/IERC20.sol";
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
 
@@ -11,7 +11,7 @@ import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
  * @title ERC-721 Non-Fungible Token Wrapper
  * @dev For wrpap existing ERC721 and ERC1155(now only 721)
  */
-contract Wrapper721 is ERC721, Ownable {
+contract Wrapper721 is ERC721Enumerable, Ownable {
 
     
     struct NFT {
@@ -47,10 +47,10 @@ contract Wrapper721 is ERC721, Ownable {
     );
     event NewFee(uint256 feeAmount, uint256 startDate);
     event NiftsyProtocolTransfer(
-        uint256 tokenId, 
+        uint256 indexed wrappedTokenId, 
+        address indexed royaltyBeneficiary,
         uint256 transferFee, 
-        uint256 royalty, 
-        address royaltyBeneficiary
+        uint256 royalty 
     );
 
     constructor(address _erc20) ERC721("Wrapped NFT Protocol v0.2.0", "NIFTSY") {
@@ -137,6 +137,20 @@ contract Wrapper721 is ERC721, Ownable {
     }
 
     /**
+     * @dev Function add native(eth, bnb) collateral to wrapped token
+     *
+     * @param _wrappedTokenId id of protocol token fo add
+     */
+    function addNativeCollateral(uint256 _wrappedTokenId) external payable {
+        require(
+            ownerOf(_wrappedTokenId) == msg.sender, 
+            "Only current owner can add collateral"
+        );
+        NFT storage nft = wrappedTokens[_wrappedTokenId];
+        nft.backedValue += msg.value;
+    }
+
+    /**
      * @dev Function for unwrap protocol token
      *
      * @param _tokenId id of protocol token to unwrapp
@@ -146,7 +160,11 @@ contract Wrapper721 is ERC721, Ownable {
         //storoge did not work because there is no this var after delete
         NFT memory nft = wrappedTokens[_tokenId];
         if  (nft.unwrapAfter != 0) {
-            require(nft.unwrapAfter <= block.timestamp, "Can't unwrap before day X");    
+            require(nft.unwrapAfter <= block.timestamp, "Cant unwrap before day X");    
+        }
+
+        if (nft.unwraptFeeThreshold > 0){
+            require(nft.backedTokens >= nft.unwraptFeeThreshold, "Cant unwrap due Fee Threshold");
         }
         
         _burn(_tokenId);
@@ -173,9 +191,8 @@ contract Wrapper721 is ERC721, Ownable {
         return (nft.backedValue, nft.backedTokens);
     }
 
-    function getWrappedToken(uint256 tokenId) external view returns (uint256, uint256, uint256, uint256) {
-        NFT storage nft = wrappedTokens[tokenId];
-        return (nft.backedValue, nft.backedTokens, nft.unwrapAfter, nft.transferFee);
+    function getWrappedToken(uint256 tokenId) external view returns (NFT memory) {
+        return wrappedTokens[tokenId];
     }
 
     
@@ -216,7 +233,7 @@ contract Wrapper721 is ERC721, Ownable {
                     }
                     nft.backedTokens += nft.transferFee - rAmount;
                 }
-                emit NiftsyProtocolTransfer(tokenId, nft.transferFee, rAmount, nft.royaltyBeneficiary);
+                emit NiftsyProtocolTransfer(tokenId, nft.royaltyBeneficiary, nft.transferFee, rAmount);
             }
         }
     }
