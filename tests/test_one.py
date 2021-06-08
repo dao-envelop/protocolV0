@@ -8,6 +8,7 @@ LOGGER = logging.getLogger(__name__)
 ORIGINAL_NFT_IDs = [10000,11111,22222]
 START_NATIVE_COLLATERAL = '1 ether'
 ADD_NATIVE_COLLATERAL = '2 ether'
+ERC20_COLLATERAL_AMOUNT = 2e17;
 TRANSFER_FEE = '2 ether'
 ROAYLTY_PERCENT = 10
 UNWRAP_FEE_THRESHOLD = 6e18
@@ -132,7 +133,7 @@ def test_ether_unwrap(accounts, erc721mock, wrapper, niftsy20):
     assert  niftsy20.balanceOf(accounts[0]) - niftsy20_balance_Before_unwrap == 8e18
 
 
-def test_advanced_wrap(accounts, erc721mock, wrapper, niftsy20):
+def test_advanced_wrap(accounts, erc721mock, wrapper, niftsy20, dai):
     erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[2], {'from':accounts[1]})
     tx = wrapper.wrap721(
         erc721mock.address, 
@@ -158,6 +159,11 @@ def test_advanced_wrap(accounts, erc721mock, wrapper, niftsy20):
     with reverts("Cant unwrap due Fee Threshold"):
         wrapper.unWrap721(wrapper.lastWrappedNFTId(), {'from':accounts[0]})    
     wrapper.addNativeCollateral(wrapper.lastWrappedNFTId(), {'from':accounts[0], 'value': ADD_NATIVE_COLLATERAL})
+    dai.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {'from':accounts[0]})
+    niftsy20.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {'from':accounts[0]})
+    wrapper.addERC20Collateral(wrapper.lastWrappedNFTId(),niftsy20.address, ERC20_COLLATERAL_AMOUNT ,{'from':accounts[0]})
+    wrapper.addERC20Collateral(wrapper.lastWrappedNFTId(),dai.address, ERC20_COLLATERAL_AMOUNT ,{'from':accounts[0]})
+    logging.info(wrapper.getERC20Collateral(wrapper.lastWrappedNFTId())) 
     wrapper.transferFrom(accounts[0], accounts[1], wrapper.lastWrappedNFTId(), {'from':accounts[0]})
     wrapper.transferFrom(accounts[1], accounts[0], wrapper.lastWrappedNFTId(), {'from':accounts[1]})
     tx = wrapper.transferFrom(accounts[0], accounts[3], wrapper.lastWrappedNFTId(), {'from':accounts[0]})
@@ -166,6 +172,6 @@ def test_advanced_wrap(accounts, erc721mock, wrapper, niftsy20):
     logging.info('getWrappedToken {}'.format(token_before_unwrap))
     ethBefore = accounts[3].balance()
     wrapper.unWrap721(wrapper.lastWrappedNFTId(), {'from':accounts[3]})
-    assert token_before_unwrap[3] == niftsy20.balanceOf(accounts[3])
+    assert token_before_unwrap[3] == niftsy20.balanceOf(accounts[3]) - ERC20_COLLATERAL_AMOUNT
     assert accounts[3].balance() == Wei(ethBefore) + Wei(START_NATIVE_COLLATERAL) + Wei(ADD_NATIVE_COLLATERAL)
 
