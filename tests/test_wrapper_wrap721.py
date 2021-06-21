@@ -9,7 +9,7 @@ ORIGINAL_NFT_IDs = [10000,11111,22222]
 START_NATIVE_COLLATERAL = '1 ether'
 ADD_NATIVE_COLLATERAL = '2 ether'
 ERC20_COLLATERAL_AMOUNT = 2e17;
-TRANSFER_FEE = '2 ether'
+TRANSFER_FEE = 2e18
 ROAYLTY_PERCENT = 10
 UNWRAP_FEE_THRESHOLD = 6e18
 protokolFee = 10
@@ -128,7 +128,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			0,
 			0, 
 			{'from':accounts[1]})
-
+	#wrap simple nft
 	niftsy20.transfer(accounts[1], protokolFee, {"from": accounts[0]})
 	wrapper.wrap721(
 		erc721mock.address, 
@@ -139,9 +139,51 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 		0,
 		0, 
 		{'from':accounts[1]})
-
+	assert niftsy20.balanceOf(accounts[1]) == 0
+	assert niftsy20.balanceOf(wrapper.address) == protokolFee
 	assert wrapper.lastWrappedNFTId() == 1
-	checkWrapedNFT(wrapper, wrapper.lastWrappedNFTId(), erc721mock.address, ORIGINAL_NFT_IDs[0], 0, 0, 0, 0, zero_address, 0, 0)
+	assert erc721mock.ownerOf(ORIGINAL_NFT_IDs[0]) == wrapper.address
+	assert wrapper.ownerOf(wrapper.lastWrappedNFTId()) == accounts[1]
+	checkWrapedNFT(wrapper, 
+		wrapper.lastWrappedNFTId(), 
+		erc721mock.address, 
+		ORIGINAL_NFT_IDs[0], 
+		0, 
+		0, 
+		0, 
+		0, 
+		zero_address, 
+		0, 
+		0)
 
+	#wrap difficult nft
+	erc721mock.transferFrom(accounts[0], accounts[1], ORIGINAL_NFT_IDs[1], {'from':accounts[0]})
+	niftsy20.transfer(accounts[1], protokolFee, {"from": accounts[0]})
+	unwrapAfter = chain.time() + 10
 
-
+	erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[1], {'from':accounts[1]})
+	wrapper.wrap721(
+		erc721mock.address, 
+		ORIGINAL_NFT_IDs[1], 
+		unwrapAfter,
+		TRANSFER_FEE,
+		royaltyBeneficiary,
+		ROAYLTY_PERCENT,
+		UNWRAP_FEE_THRESHOLD, 
+		{'from':accounts[1], 'value':START_NATIVE_COLLATERAL})
+	assert niftsy20.balanceOf(accounts[1]) == 0
+	assert niftsy20.balanceOf(wrapper.address) == 2 * protokolFee
+	assert wrapper.lastWrappedNFTId() == 2
+	assert erc721mock.ownerOf(ORIGINAL_NFT_IDs[1]) == wrapper.address
+	assert wrapper.ownerOf(wrapper.lastWrappedNFTId()) == accounts[1]
+	checkWrapedNFT(wrapper, 
+		wrapper.lastWrappedNFTId(), 
+		erc721mock.address, 
+		ORIGINAL_NFT_IDs[1], 
+		START_NATIVE_COLLATERAL, 
+		0,  
+		unwrapAfter, 
+		TRANSFER_FEE, 
+		royaltyBeneficiary, 
+		ROAYLTY_PERCENT, 
+		UNWRAP_FEE_THRESHOLD)
