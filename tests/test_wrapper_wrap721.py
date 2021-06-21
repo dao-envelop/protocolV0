@@ -2,6 +2,7 @@ import pytest
 import logging
 from brownie import Wei, reverts, chain
 from makeTestData import makeNFTForTest
+from checkData import checkWrapedNFT
 
 LOGGER = logging.getLogger(__name__)
 ORIGINAL_NFT_IDs = [10000,11111,22222]
@@ -13,6 +14,8 @@ ROAYLTY_PERCENT = 10
 UNWRAP_FEE_THRESHOLD = 6e18
 protokolFee = 10
 chargeFeeAfter = 10
+royaltyBeneficiary = '0xbd7e5fb7525ed8583893ce1b1f93e21cc0cf02f6'
+zero_address = '0x0000000000000000000000000000000000000000'
 
 def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 	#make test data
@@ -22,11 +25,11 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
     #bad _underlineContract
 	with reverts(""):
 		wrapper.wrap721(
-			'0x0000000000000000000000000000000000000000', 
+			zero_address, 
 			ORIGINAL_NFT_IDs[0], 
 			0, 
 			1e18,
-			'0x0000000000000000000000000000000000000000',
+			zero_address,
 			0,
 			0, 
 			{'from':accounts[1]})
@@ -37,7 +40,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			1, 
 			0, 
 			1e18,
-			'0x0000000000000000000000000000000000000000',
+			zero_address,
 			0,
 			0, 
 			{'from':accounts[1]})
@@ -48,7 +51,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			ORIGINAL_NFT_IDs[0], 
 			0, 
 			1e18,
-			'0x0000000000000000000000000000000000000000',
+			zero_address,
 			0,
 			0, 
 			{'from':accounts[1]})
@@ -60,7 +63,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			ORIGINAL_NFT_IDs[0], 
 			0, 
 			1e18,
-			'0x0000000000000000000000000000000000000000',
+			zero_address,
 			wrapper.MAX_ROYALTY_PERCENT() + 1,
 			0, 
 			{'from':accounts[1]})
@@ -72,7 +75,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			ORIGINAL_NFT_IDs[0], 
 			0, 
 			0,
-			'0x0000000000000000000000000000000000000000',
+			zero_address,
 			wrapper.MAX_ROYALTY_PERCENT(),
 			0, 
 			{'from':accounts[1]})
@@ -84,7 +87,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			ORIGINAL_NFT_IDs[0], 
 			0, 
 			0,
-			'0xbd7e5fb7525ed8583893ce1b1f93e21cc0cf02f6',
+			royaltyBeneficiary,
 			0,
 			0, 
 			{'from':accounts[1]})
@@ -94,21 +97,21 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 		wrapper.wrap721(
 			erc721mock.address, 
 			ORIGINAL_NFT_IDs[0], 
-			chain.time() + wrapper.MAX_TIME_TO_UNWRAP() + 1,
+			chain.time() + wrapper.MAX_TIME_TO_UNWRAP() + 10,
 			0,
-			'0x0000000000000000000000000000000000000000',
+			zero_address,
 			0,
 			0, 
 			{'from':accounts[1]})
 
-	#check _unwrapAfter
+	#check _unwraptFeeThreshold
 	with reverts("Too much threshold"):
 		wrapper.wrap721(
 			erc721mock.address, 
 			ORIGINAL_NFT_IDs[0], 
 			0,
 			0,
-			'0x0000000000000000000000000000000000000000',
+			zero_address,
 			0,
 			niftsy20.totalSupply() * wrapper.MAX_FEE_THRESHOLD_PERCENT() / 100 + 1, 
 			{'from':accounts[1]})
@@ -121,7 +124,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			ORIGINAL_NFT_IDs[0], 
 			0,
 			0,
-			'0x0000000000000000000000000000000000000000',
+			zero_address,
 			0,
 			0, 
 			{'from':accounts[1]})
@@ -132,8 +135,13 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 		ORIGINAL_NFT_IDs[0], 
 		0,
 		0,
-		'0x0000000000000000000000000000000000000000',
+		zero_address,
 		0,
 		0, 
 		{'from':accounts[1]})
+
+	assert wrapper.lastWrappedNFTId() == 1
+	checkWrapedNFT(wrapper, wrapper.lastWrappedNFTId(), erc721mock.address, ORIGINAL_NFT_IDs[0], 0, 0, 0, 0, zero_address, 0, 0)
+
+
 
