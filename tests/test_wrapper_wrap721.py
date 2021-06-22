@@ -159,18 +159,16 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 	#wrap difficult nft
 	erc721mock.transferFrom(accounts[0], accounts[1], ORIGINAL_NFT_IDs[1], {'from':accounts[0]})
 	niftsy20.transfer(accounts[1], protokolFee, {"from": accounts[0]})
+	logging.info(' chain.time() in test = {}'.format( chain.time()))
 	unwrapAfter = chain.time() + 10
-
-	logging.info('body chain.time() = {}'.format(chain.time()))
-	logging.info('body unwrapAfter = {}'.format(unwrapAfter))
+	logging.info('unwrapAfter in test = {}'.format(unwrapAfter))
 
 	erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[1], {'from':accounts[1]})
 	
-	makeWrapNFT(wrapper, erc721mock, ['originalTokenId', 'unwrapAfter'], [ORIGINAL_NFT_IDs[1], unwrapAfter], accounts[1])
+	makeWrapNFT(wrapper, erc721mock, ['originalTokenId'], [ORIGINAL_NFT_IDs[1]], accounts[1])
 	assert niftsy20.balanceOf(accounts[1]) == 0
 	assert niftsy20.balanceOf(wrapper.address) == 2 * protokolFee
 	assert wrapper.lastWrappedNFTId() == 2
-	logging.info('body unwrapAfter1 = {}'.format(unwrapAfter))
 	checkWrapedNFT(wrapper, 
 		wrapper.lastWrappedNFTId(), 
 		erc721mock.address, 
