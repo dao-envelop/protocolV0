@@ -1,7 +1,7 @@
 import pytest
 import logging
 from brownie import Wei, reverts, chain
-from makeTestData import makeNFTForTest
+from makeTestData import makeNFTForTest, makeWrapNFT
 from checkData import checkWrapedNFT
 
 LOGGER = logging.getLogger(__name__)
@@ -161,21 +161,16 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 	niftsy20.transfer(accounts[1], protokolFee, {"from": accounts[0]})
 	unwrapAfter = chain.time() + 10
 
+	logging.info('body chain.time() = {}'.format(chain.time()))
+	logging.info('body unwrapAfter = {}'.format(unwrapAfter))
+
 	erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[1], {'from':accounts[1]})
-	wrapper.wrap721(
-		erc721mock.address, 
-		ORIGINAL_NFT_IDs[1], 
-		unwrapAfter,
-		TRANSFER_FEE,
-		royaltyBeneficiary,
-		ROAYLTY_PERCENT,
-		UNWRAP_FEE_THRESHOLD, 
-		{'from':accounts[1], 'value':START_NATIVE_COLLATERAL})
+	
+	makeWrapNFT(wrapper, erc721mock, ['originalTokenId', 'unwrapAfter'], [ORIGINAL_NFT_IDs[1], unwrapAfter], accounts[1])
 	assert niftsy20.balanceOf(accounts[1]) == 0
 	assert niftsy20.balanceOf(wrapper.address) == 2 * protokolFee
 	assert wrapper.lastWrappedNFTId() == 2
-	assert erc721mock.ownerOf(ORIGINAL_NFT_IDs[1]) == wrapper.address
-	assert wrapper.ownerOf(wrapper.lastWrappedNFTId()) == accounts[1]
+	logging.info('body unwrapAfter1 = {}'.format(unwrapAfter))
 	checkWrapedNFT(wrapper, 
 		wrapper.lastWrappedNFTId(), 
 		erc721mock.address, 
