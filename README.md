@@ -3,6 +3,19 @@ Collateral-backed and price discovery cross-chain protocol to provide NFT with
  inner value and liquidity
 
 ### Deployments Info
+
+### Deploy 20210609 Rinkeby v1.0.1
+#### wrapper  
+https://rinkeby.etherscan.io/address/0xfe6d84794169c3794d9842695b2969db96cb19ee#code
+
+#### Niftsy ERC20
+https://rinkeby.etherscan.io/address/0x1E991eA872061103560700683991A6cF88BA0028#code
+
+#### ERC721MOck
+https://rinkeby.etherscan.io/address/0xB71e481C0EB22A3f6Bb54C11128bC673C47a68E5#code
+
+
+
 #### 20210421 Testnet Binance Smart Chain
 ##### wrapper
 https://testnet.bscscan.com/address/0x45198c41fb63Ad4119E52587ACc968944633254D#code

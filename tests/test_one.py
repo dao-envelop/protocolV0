@@ -102,6 +102,15 @@ def test_add_collateral(accounts, wrapper):
     ))
     assert Wei(wrapper.getWrappedToken(wrapper.lastWrappedNFTId())[2] - native_collateral_before) == Wei(ADD_NATIVE_COLLATERAL)
         
+def test_enumerable_features(accounts, wrapper):
+    logging.info('tokenByIndex {}'.format(
+      wrapper.tokenByIndex(0)
+    ))
+    logging.info('tokenOfOwnerByIndex {}'.format(
+      wrapper.tokenOfOwnerByIndex(accounts[0], 0)
+    ))
+    
+
 
 def test_ether_unwrap(accounts, erc721mock, wrapper, niftsy20):
     niftsy20.transfer(accounts[1], 1e21,  {'from':accounts[0]})

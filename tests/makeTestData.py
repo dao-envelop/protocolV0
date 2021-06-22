@@ -14,7 +14,8 @@ protokolFee_ = 10
 chargeFeeAfter_ = 10
 ROYALTYBENEFICIARY_= '0xbd7e5fb7525ed8583893ce1b1f93e21cc0cf02f6'
 zero_address_ = '0x0000000000000000000000000000000000000000'
-UNWRAPAFTER_ = chain.time() + 10
+#UNWRAPAFTER_ = chain.time() + 10
+UNWRAPAFTER_ = 0
 
 logging.info('make UNWRAPAFTER_ = {}'.format(UNWRAPAFTER_))
 
@@ -34,7 +35,7 @@ def makeWrapNFT(wrapper, erc721mock, fields, values, account):
 	global chargeFeeAfter_
 	global ROYALTYBENEFICIARY_
 	global zero_address_
-	global UNWRAPAFTER_
+	UNWRAPAFTER_ = chain.time() + 10
 
 	logging.info('make UNWRAPAFTER_ = {}'.format(UNWRAPAFTER_))
 	
