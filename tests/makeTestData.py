@@ -14,9 +14,10 @@ protokolFee_ = 10
 chargeFeeAfter_ = 10
 ROYALTYBENEFICIARY_= '0xbd7e5fb7525ed8583893ce1b1f93e21cc0cf02f6'
 zero_address_ = '0x0000000000000000000000000000000000000000'
-UNWRAPAFTER_ = chain.time() + 10
+UNWRAPAFTER_ = 0
 
-logging.info('make UNWRAPAFTER_ = {}'.format(UNWRAPAFTER_))
+
+#logging.info('make UNWRAPAFTER_ = {}'.format(UNWRAPAFTER_))
 
 def makeNFTForTest(accounts, erc721mock, original_nft_ids):
     [erc721mock.mint(x, {'from':accounts[0]})  for x in original_nft_ids]
@@ -36,10 +37,10 @@ def makeWrapNFT(wrapper, erc721mock, fields, values, account):
 	global zero_address_
 	global UNWRAPAFTER_
 
-	logging.info('make UNWRAPAFTER_ = {}'.format(UNWRAPAFTER_))
+	#logging.info('make UNWRAPAFTER_ = {}'.format(UNWRAPAFTER_))
 	
 	UNDERLINECONTRACT_ = erc721mock.address
-
+	UNWRAPAFTER_ = chain.time() + 10
 	for i in range(len(fields)):
 		if fields[i] ==  'originalTokenId':
 			ORIGINAL_NFT_IDs_ = []
