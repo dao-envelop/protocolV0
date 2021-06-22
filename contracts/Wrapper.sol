@@ -2,10 +2,10 @@
 // NIFTSY protocol for NFT. Wrapper - main protocol contract
 pragma solidity ^0.8.4;
 
-import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/IERC20.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/utils/SafeERC20.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/IERC20.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/utils/SafeERC20.sol";
 /**
  * @title ERC-721 Non-Fungible Token Wrapper
  * @dev For wrpap existing ERC721 and ERC1155(now only 721)
@@ -33,7 +33,7 @@ contract Wrapper721 is ERC721Enumerable, Ownable {
 
     uint256 constant public MAX_ROYALTY_PERCENT = 50;
     uint256 constant public MAX_TIME_TO_UNWRAP = 365 days;
-    uint256 constant public MAX_FEE_THRESHOLD_PERCENT = 10; //percent from project token tottallSypply
+    uint256 constant public MAX_FEE_THRESHOLD_PERCENT = 1; //percent from project token tottallSypply - 1% need
     uint8   constant public MAX_ERC20_COUNT = 25; //max coins type count in collateral  
 
     uint256 public protokolFee = 0;
@@ -301,6 +301,7 @@ contract Wrapper721 is ERC721Enumerable, Ownable {
         virtual 
         override 
     {
+        super._beforeTokenTransfer(from, to, tokenId);
         //Not for mint and burn
         if (to != address(0) && from !=address(0)) {
             NFT storage nft = wrappedTokens[tokenId];
@@ -321,6 +322,8 @@ contract Wrapper721 is ERC721Enumerable, Ownable {
                 emit NiftsyProtocolTransfer(tokenId, nft.royaltyBeneficiary, nft.transferFee, rAmount);
             }
         }
+
+
     }
 
     function _chargeFee(address _payer, uint256 _amount) internal returns(bool) {
