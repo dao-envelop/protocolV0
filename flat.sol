@@ -1239,12 +1239,6 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
     }
 }
 
-// File: Wrapper.sol
-
-/**
- * @title ERC-721 Non-Fungible Token Wrapper
- * @dev For wrpap existing ERC721 and ERC1155(now only 721)
- */
 contract Wrapper721 is ERC721Enumerable, Ownable {
     using SafeERC20 for IERC20;
 
@@ -1268,7 +1262,7 @@ contract Wrapper721 is ERC721Enumerable, Ownable {
 
     uint256 constant public MAX_ROYALTY_PERCENT = 50;
     uint256 constant public MAX_TIME_TO_UNWRAP = 365 days;
-    uint256 constant public MAX_FEE_THRESHOLD_PERCENT = 10; //percent from project token tottallSypply
+    uint256 constant public MAX_FEE_THRESHOLD_PERCENT = 1; //percent from project token tottallSypply 
     uint8   constant public MAX_ERC20_COUNT = 25; //max coins type count in collateral  
 
     uint256 public protokolFee = 0;
@@ -1395,6 +1389,7 @@ contract Wrapper721 is ERC721Enumerable, Ownable {
      * @param _wrappedTokenId id of protocol token fo add
      */
     function addNativeCollateral(uint256 _wrappedTokenId) external payable {
+        require(ownerOf(_wrappedTokenId) != address(0));
         NFT storage nft = wrappedTokens[_wrappedTokenId];
         nft.backedValue += msg.value;
     }
@@ -1402,11 +1397,12 @@ contract Wrapper721 is ERC721Enumerable, Ownable {
     /**
      * @dev Function for add arbitrary ERC20 collaterals 
      *
-     * @param _wrappedId  NFT id from thgis contarct
+     * @param _wrappedTokenId  NFT id from thgis contarct
      * @param _erc20 address of erc20 collateral for add
      * @param _amount amount erc20 collateral for add  
      */
-    function addERC20Collateral(uint256 _wrappedId, address _erc20, uint256 _amount) external {
+    function addERC20Collateral(uint256 _wrappedTokenId, address _erc20, uint256 _amount) external {
+        require(ownerOf(_wrappedTokenId) != address(0));
         require(
             IERC20(_erc20).balanceOf(msg.sender) >= _amount,
             "Low balance for add collateral"
@@ -1418,7 +1414,7 @@ contract Wrapper721 is ERC721Enumerable, Ownable {
 
         IERC20(_erc20).safeTransferFrom(msg.sender, address(this), _amount);
 
-        ERC20Collateral[] storage e = erc20Collateral[_wrappedId];
+        ERC20Collateral[] storage e = erc20Collateral[_wrappedTokenId];
         for (uint256 i = 0; i < e.length; i ++) {
             if (e[i].erc20Token == _erc20) {
                 e[i].amount += _amount;
