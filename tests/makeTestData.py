@@ -4,17 +4,6 @@ from brownie import chain
 LOGGER = logging.getLogger(__name__)
 
 ORIGINAL_NFT_IDs_ = []
-START_NATIVE_COLLATERAL_ = '1 ether'
-ADD_NATIVE_COLLATERAL_ = '2 ether'
-ERC20_COLLATERAL_AMOUNT_ = 2e17;
-TRANSFER_FEE_ = 2e18
-ROAYLTY_PERCENT_ = 10
-UNWRAP_FEE_THRESHOLD_ = 6e18
-protokolFee_ = 10
-chargeFeeAfter_ = 10
-ROYALTYBENEFICIARY_= '0xbd7e5fb7525ed8583893ce1b1f93e21cc0cf02f6'
-zero_address_ = '0x0000000000000000000000000000000000000000'
-UNWRAPAFTER_ = 0
 
 
 #logging.info('make UNWRAPAFTER_ = {}'.format(UNWRAPAFTER_))
@@ -24,18 +13,19 @@ def makeNFTForTest(accounts, erc721mock, original_nft_ids):
     erc721mock.transferFrom(accounts[0], accounts[1], original_nft_ids[0], {'from':accounts[0]})
 
 def makeWrapNFT(wrapper, erc721mock, fields, values, account):
-	global ORIGINAL_NFT_IDs_
-	global START_NATIVE_COLLATERAL_ 
-	global ADD_NATIVE_COLLATERAL_
-	global ERC20_COLLATERAL_AMOUNT_
-	global TRANSFER_FEE_
-	global ROAYLTY_PERCENT_
-	global UNWRAP_FEE_THRESHOLD_
-	global protokolFee_
-	global chargeFeeAfter_
-	global ROYALTYBENEFICIARY_
-	global zero_address_
+	START_NATIVE_COLLATERAL_ = '1 ether'
+	ADD_NATIVE_COLLATERAL_ = '2 ether'
+	ERC20_COLLATERAL_AMOUNT_ = 2e17;
+	TRANSFER_FEE_ = 2e18
+	ROAYLTY_PERCENT_ = 10
+	UNWRAP_FEE_THRESHOLD_ = 6e18
+	protokolFee_ = 10
+	chargeFeeAfter_ = 10
+	ROYALTYBENEFICIARY_= '0xbd7e5fb7525ed8583893ce1b1f93e21cc0cf02f6'
+	zero_address_ = '0x0000000000000000000000000000000000000000'
 	UNWRAPAFTER_ = chain.time() + 10
+
+	#logging.info('TRANSFER_FEE_ from make 1= {}'.format(TRANSFER_FEE_))
 
 	#logging.info('make UNWRAPAFTER_ = {}'.format(UNWRAPAFTER_))
 	
@@ -57,6 +47,7 @@ def makeWrapNFT(wrapper, erc721mock, fields, values, account):
 			START_NATIVE_COLLATERAL_ = values[i]
 		else: #result
 			UNWRAP_FEE_THRESHOLD_ = values[i]
+	#logging.info('TRANSFER_FEE_ from make 2= {}'.format(TRANSFER_FEE_))
 
 	erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs_[0], {'from':account})
 	wrapper.wrap721(
