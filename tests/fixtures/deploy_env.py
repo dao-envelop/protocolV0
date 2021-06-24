@@ -7,6 +7,11 @@ def dai(accounts, TokenMock):
     yield dai
 
 @pytest.fixture(scope="module")
+def weth(accounts, TokenMock):
+    weth = accounts[0].deploy(TokenMock,"WETH MOCK Token", "WETH")
+    yield weth
+
+@pytest.fixture(scope="module")
 def erc721mock(accounts, Token721Mock):
     """
     Simple NFT with URI
