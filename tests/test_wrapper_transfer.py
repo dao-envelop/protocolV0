@@ -129,8 +129,8 @@ def test_wrapper_transfer_transferFee_3(accounts, erc721mock, wrapper, niftsy20,
 	#make test data
 	erc721mock.transferFrom(accounts[0], accounts[1], ORIGINAL_NFT_IDs[2], {'from':accounts[0]})
 	erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[2], {'from':accounts[1]})
-	logging.info('niftsy20.balanceOf(wrapper.address) = {}'.format(niftsy20.balanceOf(wrapper.address)))
-	logging.info('niftsy20.balanceOf(royaltyBeneficiary) = {}'.format(niftsy20.balanceOf(royaltyBeneficiary)))
+	logging.info('balanceOf(wrapper.address) = {}'.format(niftsy20.balanceOf(wrapper.address)))
+	logging.info('balanceOf(royaltyBeneficiary) = {}'.format(niftsy20.balanceOf(royaltyBeneficiary)))
 	#wrap difficult nft
 
 	niftsy20.transfer(accounts[1], protokolFee, {"from": accounts[0]})
@@ -162,8 +162,8 @@ def test_wrapper_transfer_transferFee_3(accounts, erc721mock, wrapper, niftsy20,
 	before_balance = niftsy20.balanceOf(wrapper.address) 
 	niftsy20.transfer(accounts[1].address, TRANSFER_FEE, {"from": accounts[0]}) #add niftsy tokens to pay transfer fee
 	wrapper.transferFrom(accounts[1].address, accounts[2].address, tokenId, {"from": accounts[3]})
-	logging.info('niftsy20.balanceOf(wrapper.address) = {}'.format(niftsy20.balanceOf(wrapper.address)))
-	logging.info('niftsy20.balanceOf(royaltyBeneficiary) = {}'.format(niftsy20.balanceOf(royaltyBeneficiary)))
+	logging.info('balanceOf(wrapper.address) = {}'.format(niftsy20.balanceOf(wrapper.address)))
+	logging.info('balanceOf(royaltyBeneficiary) = {}'.format(niftsy20.balanceOf(royaltyBeneficiary)))
 
 	nft = wrapper.getWrappedToken(tokenId)
 	logging.info('nft2 = {}'.format(nft))
@@ -195,8 +195,8 @@ def test_wrapper_transfer_transferFee_3(accounts, erc721mock, wrapper, niftsy20,
 	assert niftsy20.balanceOf(accounts[1]) == 0
 	assert niftsy20.balanceOf(wrapper.address) == before_balance + TRANSFER_FEE - nft[5]*nft[7]/100
 	assert niftsy20.balanceOf(royaltyBeneficiary) == before_balance_royalty + nft[5]*nft[7]/100
-	logging.info('niftsy20.balanceOf(wrapper.address) = {}'.format(niftsy20.balanceOf(wrapper.address)))
-	logging.info('niftsy20.balanceOf(royaltyBeneficiary) = {}'.format(niftsy20.balanceOf(royaltyBeneficiary)))
+	logging.info('balanceOf(wrapper.address) = {}'.format(niftsy20.balanceOf(wrapper.address)))
+	logging.info('balanceOf(royaltyBeneficiary) = {}'.format(niftsy20.balanceOf(royaltyBeneficiary)))
 	checkWrappedNFT(wrapper, 
 		tokenId, 
 		erc721mock.address, 
@@ -209,14 +209,14 @@ def test_wrapper_transfer_transferFee_3(accounts, erc721mock, wrapper, niftsy20,
 		ROAYLTY_PERCENT, 
 		UNWRAP_FEE_THRESHOLD)
 
-#transferFee > 0, royalty_percent > 0
+#transferFee = 1, royalty_percent = 1 - very small
 #there are transferFee, royalty_percent
 def test_wrapper_transfer_transferFee_4(accounts, erc721mock, wrapper, niftsy20, dai, weth):
 	#make test data
 	erc721mock.transferFrom(accounts[0], accounts[1], ORIGINAL_NFT_IDs[3], {'from':accounts[0]})
 	erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[3], {'from':accounts[1]})
-	logging.info('niftsy20.balanceOf(wrapper.address) = {}'.format(niftsy20.balanceOf(wrapper.address)))
-	logging.info('niftsy20.balanceOf(royaltyBeneficiary) = {}'.format(niftsy20.balanceOf(royaltyBeneficiary)))
+	logging.info('balanceOf(wrapper.address) = {}'.format(niftsy20.balanceOf(wrapper.address)))
+	logging.info('balanceOf(royaltyBeneficiary) = {}'.format(niftsy20.balanceOf(royaltyBeneficiary)))
 	#wrap difficult nft
 
 	niftsy20.transfer(accounts[1], protokolFee, {"from": accounts[0]})
@@ -249,8 +249,8 @@ def test_wrapper_transfer_transferFee_4(accounts, erc721mock, wrapper, niftsy20,
 	before_balance_royalty = niftsy20.balanceOf(royaltyBeneficiary) 
 	niftsy20.transfer(accounts[1].address, 1, {"from": accounts[0]}) #add niftsy tokens to pay transfer fee
 	wrapper.transferFrom(accounts[1].address, accounts[2].address, tokenId, {"from": accounts[3]})
-	logging.info('niftsy20.balanceOf(wrapper.address) = {}'.format(niftsy20.balanceOf(wrapper.address)))
-	logging.info('niftsy20.balanceOf(royaltyBeneficiary) = {}'.format(niftsy20.balanceOf(royaltyBeneficiary)))
+	logging.info('balanceOf(wrapper.address) = {}'.format(niftsy20.balanceOf(wrapper.address)))
+	logging.info('balanceOf(royaltyBeneficiary) = {}'.format(niftsy20.balanceOf(royaltyBeneficiary)))
 
 	nft = wrapper.getWrappedToken(tokenId)
 	logging.info('nft3 = {}'.format(nft))
