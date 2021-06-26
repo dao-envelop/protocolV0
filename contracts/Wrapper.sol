@@ -284,9 +284,7 @@ contract Wrapper721 is ERC721Enumerable, Ownable {
         return erc20Collateral[_wrappedId];
     } 
 
-    function is721(address _conatrct) public view returns (bool) {
-        IERC721(_conatrct)
-    }
+    
     /////////////////////////////////////////////////////////////////////
     //                    Admin functions                              //
     /////////////////////////////////////////////////////////////////////
