@@ -112,6 +112,8 @@ contract Wrapper721 is ERC721Enumerable, Ownable {
         } else {
             require(_royaltyPercent == 0, "Royalty source is transferFee");
             require(_royaltyBeneficiary == address(0), "No Royalty without transferFee");
+            require(_unwraptFeeThreshold == 0, "Cant set Threshold without transferFee");
+
         }
 
         //3. MAX time to UNWRAP
@@ -282,7 +284,9 @@ contract Wrapper721 is ERC721Enumerable, Ownable {
         return erc20Collateral[_wrappedId];
     } 
 
-    
+    function is721(address _conatrct) public view returns (bool) {
+        IERC721(_conatrct)
+    }
     /////////////////////////////////////////////////////////////////////
     //                    Admin functions                              //
     /////////////////////////////////////////////////////////////////////
