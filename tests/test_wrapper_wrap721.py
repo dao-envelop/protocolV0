@@ -2,7 +2,7 @@ import pytest
 import logging
 from brownie import Wei, reverts, chain
 from makeTestData import makeNFTForTest, makeWrapNFT
-from checkData import checkWrapedNFT
+from checkData import checkWrappedNFT
 
 LOGGER = logging.getLogger(__name__)
 ORIGINAL_NFT_IDs = [10000,11111,22222]
@@ -20,7 +20,6 @@ zero_address = '0x0000000000000000000000000000000000000000'
 def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 	#make test data
 	makeNFTForTest(accounts, erc721mock, ORIGINAL_NFT_IDs)
-    #Give approve
 
     #bad _underlineContract
 	with reverts(""):
@@ -144,7 +143,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 	assert wrapper.lastWrappedNFTId() == 1
 	assert erc721mock.ownerOf(ORIGINAL_NFT_IDs[0]) == wrapper.address
 	assert wrapper.ownerOf(wrapper.lastWrappedNFTId()) == accounts[1]
-	checkWrapedNFT(wrapper, 
+	checkWrappedNFT(wrapper, 
 		wrapper.lastWrappedNFTId(), 
 		erc721mock.address, 
 		ORIGINAL_NFT_IDs[0], 
@@ -159,9 +158,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 	#wrap difficult nft
 	erc721mock.transferFrom(accounts[0], accounts[1], ORIGINAL_NFT_IDs[1], {'from':accounts[0]})
 	niftsy20.transfer(accounts[1], protokolFee, {"from": accounts[0]})
-	logging.info(' chain.time() in test = {}'.format( chain.time()))
 	unwrapAfter = chain.time() + 10
-	logging.info('unwrapAfter in test = {}'.format(unwrapAfter))
 
 	erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[1], {'from':accounts[1]})
 	
@@ -169,7 +166,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 	assert niftsy20.balanceOf(accounts[1]) == 0
 	assert niftsy20.balanceOf(wrapper.address) == 2 * protokolFee
 	assert wrapper.lastWrappedNFTId() == 2
-	checkWrapedNFT(wrapper, 
+	checkWrappedNFT(wrapper, 
 		wrapper.lastWrappedNFTId(), 
 		erc721mock.address, 
 		ORIGINAL_NFT_IDs[1], 
