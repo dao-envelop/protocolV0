@@ -216,16 +216,34 @@ contract WrapperBase is ERC721Enumerable, Ownable {
         );
     }
 
-    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+    
+    /**
+     * @dev Function returns tokenURI of **underline original token** 
+     *
+     * @param _tokenId id of protocol token (new wrapped token)
+     */
+    function tokenURI(uint256 _tokenId) public view override returns (string memory) {
         NFT storage nft = wrappedTokens[tokenId];
         return IERC721Metadata(nft.tokenContract).tokenURI(nft.tokenId);
     }
 
+    /**
+     * @dev Function returns tuple with accumulated amounts of 
+     * native chain collateral(eth, bnb,..) and transfer Fee 
+     *
+     * @param _tokenId id of protocol token (new wrapped token)
+     */
     function getTokenValue(uint256 tokenId) external view returns (uint256, uint256) {
         NFT storage nft = wrappedTokens[tokenId];
         return (nft.backedValue, nft.backedTokens);
     }
 
+    /**
+     * @dev Function returns structure with all data about
+     * new protocol token
+     *
+     * @param _tokenId id of protocol token (new wrapped token)
+     */
     function getWrappedToken(uint256 tokenId) external view returns (NFT memory) {
         return wrappedTokens[tokenId];
     }
@@ -274,6 +292,12 @@ contract WrapperBase is ERC721Enumerable, Ownable {
         }
     }
 
+    /**
+     * @dev Function charge fee in project token  
+     *
+     * @param _payer fee payer, must have non zero balance in project token
+     * @param _amount fee amount for charge 
+     */
     function _chargeFee(address _payer, uint256 _amount) internal returns(bool) {
         require(
             IERC20(projectToken).balanceOf(_payer) >= _amount, 
