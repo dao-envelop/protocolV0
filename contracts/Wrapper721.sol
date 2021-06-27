@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 // NIFTSY protocol for NFT. Wrapper - main protocol contract
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.6;
 
 import "./WrapperBase.sol";
 /**
  * @title ERC-721 Non-Fungible Token Wrapper 
  * @dev For wrpap existing ERC721 with ability add ERC20 collateral
  */
-contract Wrapper721 is WrapperBase {
+contract WrapperWithERC20Collateral is WrapperBase {
     using SafeERC20 for IERC20;
 
     struct ERC20Collateral {
