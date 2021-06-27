@@ -112,6 +112,8 @@ contract Wrapper721 is ERC721Enumerable, Ownable {
         } else {
             require(_royaltyPercent == 0, "Royalty source is transferFee");
             require(_royaltyBeneficiary == address(0), "No Royalty without transferFee");
+            require(_unwraptFeeThreshold == 0, "Cant set Threshold without transferFee");
+
         }
 
         //3. MAX time to UNWRAP
