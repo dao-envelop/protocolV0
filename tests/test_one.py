@@ -189,3 +189,8 @@ def test_advanced_wrap(accounts, erc721mock, wrapper, niftsy20, dai):
     assert dai.balanceOf(wrapper) == 0
     assert dai.balanceOf(accounts[3]) == ERC20_COLLATERAL_AMOUNT
 
+
+def test_ERC165_helper(accounts, erc721mock, wrapper):
+    assert wrapper.isERC721(wrapper.address, 0x80ac58cd)
+    assert wrapper.isERC721(wrapper.address, 0x5b5e139f)
+    assert wrapper.isERC721(erc721mock.address, 0x80ac58cd)
