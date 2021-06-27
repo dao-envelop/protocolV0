@@ -180,7 +180,12 @@ def test_advanced_wrap(accounts, erc721mock, wrapper, niftsy20, dai):
     token_before_unwrap = wrapper.getWrappedToken(wrapper.lastWrappedNFTId())
     logging.info('getWrappedToken {}'.format(token_before_unwrap))
     ethBefore = accounts[3].balance()
-    wrapper.unWrap721(wrapper.lastWrappedNFTId(), {'from':accounts[3]})
-    assert token_before_unwrap[3] == niftsy20.balanceOf(accounts[3]) - ERC20_COLLATERAL_AMOUNT
+    tx = wrapper.unWrap721(wrapper.lastWrappedNFTId(), {'from':accounts[3]})
+    logging.info('wrapper.unWrap721 Transfer events={}'.format(tx.events))
+    logging.info('Niftsy20 balance of Wrapper={}'.format(niftsy20.balanceOf(wrapper)))
+    assert niftsy20.balanceOf(accounts[3]) == token_before_unwrap[3] + ERC20_COLLATERAL_AMOUNT
     assert accounts[3].balance() == Wei(ethBefore) + Wei(START_NATIVE_COLLATERAL) + Wei(ADD_NATIVE_COLLATERAL)
+    assert niftsy20.balanceOf(wrapper) == 0
+    assert dai.balanceOf(wrapper) == 0
+    assert dai.balanceOf(accounts[3]) == ERC20_COLLATERAL_AMOUNT
 

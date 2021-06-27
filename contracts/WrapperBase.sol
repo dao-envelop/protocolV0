@@ -10,7 +10,7 @@ import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/utils/Sa
  * @title ERC-721 Non-Fungible Token Wrapper
  * @dev For wrpap existing ERC721 and ERC1155(now only 721)
  */
-contract Wrapper721 is ERC721Enumerable, Ownable {
+contract WrapperBase is ERC721Enumerable, Ownable {
     using SafeERC20 for IERC20;
 
     
@@ -26,15 +26,10 @@ contract Wrapper721 is ERC721Enumerable, Ownable {
         uint256 unwraptFeeThreshold;//unwrap possiple only after backedTokens achive this amount
     }
 
-    struct ERC20Collateral {
-        address erc20Token;
-        uint256 amount;
-    }
-
+    
     uint256 constant public MAX_ROYALTY_PERCENT = 50;
     uint256 constant public MAX_TIME_TO_UNWRAP = 365 days;
     uint256 constant public MAX_FEE_THRESHOLD_PERCENT = 1; //percent from project token tottallSypply 
-    uint8   constant public MAX_ERC20_COUNT = 25; //max coins type count in collateral  
 
     uint256 public protokolFee = 0;
     uint256 public chargeFeeAfter = type(uint256).max;
@@ -44,9 +39,6 @@ contract Wrapper721 is ERC721Enumerable, Ownable {
     
     // Map from wrapped token id => NFT record 
     mapping(uint256 => NFT) public wrappedTokens; //Private in Production
-
-    //Map from wrapped token id to array  with erc20 collateral balances
-    mapping(uint256 => ERC20Collateral[]) public erc20Collateral;
 
     uint256 public lastWrappedNFTId; 
 
@@ -69,9 +61,8 @@ contract Wrapper721 is ERC721Enumerable, Ownable {
         uint256 transferFee, 
         uint256 royalty 
     );
-    event PartialUnWrapp(uint256 wrappedId, address owner);
 
-    constructor(address _erc20) ERC721("Wrapped NFT Protocol v1.0.1", "NIFTSY") {
+    constructor(address _erc20) ERC721("Niftsy NFT Wrapper Protocol ALFA", "NIFTSY") {
         projectToken = _erc20; 
     }
 
@@ -168,84 +159,43 @@ contract Wrapper721 is ERC721Enumerable, Ownable {
     }
 
     /**
-     * @dev Function for add arbitrary ERC20 collaterals 
-     *
-     * @param _wrappedTokenId  NFT id from thgis contarct
-     * @param _erc20 address of erc20 collateral for add
-     * @param _amount amount erc20 collateral for add  
-     */
-    function addERC20Collateral(uint256 _wrappedTokenId, address _erc20, uint256 _amount) external {
-        require(ownerOf(_wrappedTokenId) != address(0));
-        require(
-            IERC20(_erc20).balanceOf(msg.sender) >= _amount,
-            "Low balance for add collateral"
-        );
-        require(
-            IERC20(_erc20).allowance(msg.sender, address(this)) >= _amount,
-            "Please approve first"
-        );
-
-        IERC20(_erc20).safeTransferFrom(msg.sender, address(this), _amount);
-
-        ERC20Collateral[] storage e = erc20Collateral[_wrappedTokenId];
-        for (uint256 i = 0; i < e.length; i ++) {
-            if (e[i].erc20Token == _erc20) {
-                e[i].amount += _amount;
-                return;
-            }
-        }
-        //We can add more tokens if limit not exccedd
-        if (e.length < MAX_ERC20_COUNT){
-            e.push(ERC20Collateral({
-              erc20Token: _erc20, 
-              amount: _amount
-            }));
-        }
-        
-    }
-
-    /**
      * @dev Function for unwrap protocol token. If wrapped  NFT
      * has many erc20 collateral tokens it possible call this method
      * more than once, until unwrapped
      *
      * @param _tokenId id of protocol token to unwrapp
      */
-    function unWrap721( uint256 _tokenId) external {
+    function unWrap721(uint256 _tokenId) external {
+
+        ///////////////////////////////////////////////
+        ////    Base Protocol checks                ///
+        ///////////////////////////////////////////////
+        //1. Only token owner can UnWrap
         require(ownerOf(_tokenId) == msg.sender, 'Only owner can unwrap it!');
         //storoge did not work because there is no this var after delete
         NFT memory nft = wrappedTokens[_tokenId];
+        
+        //2. Time lock check
         if  (nft.unwrapAfter != 0) {
             require(nft.unwrapAfter <= block.timestamp, "Cant unwrap before day X");    
         }
-
+        
+        //3. Fee accumulated check
         if (nft.unwraptFeeThreshold > 0){
             require(nft.backedTokens >= nft.unwraptFeeThreshold, "Cant unwrap due Fee Threshold");
         }
-
-        //First we need release erc20 collateral, because erc20 transfers are
-        // can be expencive
-        ERC20Collateral[] storage e = erc20Collateral[_tokenId];
-        if (e.length > 0) { 
-            uint256 n = _getTransferBatchCount();
-            if (e.length <= n) {
-                n = e.length;
-            } 
-            
-            for (uint256 i = n; i > 0; i --){
-                IERC20(e[i-1].erc20Token).safeTransfer(msg.sender,  e[i-1].amount);
-                e.pop();
-            }
-
-            // If not all erc20 collateral were transfered
-            // we just exit.  User can finish unwrap with next tx
-            if  (e.length > 0 ) {
-                emit PartialUnWrapp(_tokenId, msg.sender);
-                return;
-            }
-        }
-        /////////////////////////////////////////////// 
         
+        ///////////////////////////////////////////////
+        ///  Place for hook                        ////
+        ///////////////////////////////////////////////
+
+        if (!_beforeUnWrapHook(_tokenId)) {
+            return;
+        }
+        
+        /////////////////////////////////////////////// 
+        ///  Main UnWrap Logic                   //////
+        ///////////////////////////////////////////////
         _burn(_tokenId);
         IERC721(nft.tokenContract).transferFrom(address(this), msg.sender, nft.tokenId);
         delete wrappedTokens[_tokenId];
@@ -280,11 +230,7 @@ contract Wrapper721 is ERC721Enumerable, Ownable {
         return wrappedTokens[tokenId];
     }
 
-    function getERC20Collateral(uint256 _wrappedId) external view returns (ERC20Collateral[] memory) {
-        return erc20Collateral[_wrappedId];
-    } 
-
-    
+        
     /////////////////////////////////////////////////////////////////////
     //                    Admin functions                              //
     /////////////////////////////////////////////////////////////////////
@@ -326,8 +272,6 @@ contract Wrapper721 is ERC721Enumerable, Ownable {
                 emit NiftsyProtocolTransfer(tokenId, nft.royaltyBeneficiary, nft.transferFee, rAmount);
             }
         }
-
-
     }
 
     function _chargeFee(address _payer, uint256 _amount) internal returns(bool) {
@@ -339,17 +283,24 @@ contract Wrapper721 is ERC721Enumerable, Ownable {
         return true;
     }
 
+    /**
+     * @dev This hook may be overriden in inheritor contracts for extend
+     * base functionality.
+     *
+     * @param _tokenId -wrapped token
+     * 
+     * must returna true for success unwrapping enable 
+     */
+    function _beforeUnWrapHook(uint256 _tokenId) internal virtual returns (bool){
+        return true;
+    }
+
     function _getProtokolFeeAmount() internal view returns (uint256) {
         if (block.timestamp >= chargeFeeAfter) {
             return protokolFee;
         } else {
             return 0;
         }
-    }
-
-    function _getTransferBatchCount() internal view returns (uint256){
-        // It can be modified in future protocol version
-        return block.gaslimit / 50000; //average erc20 transfer cost 
     }
 
 }
