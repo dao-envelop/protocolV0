@@ -62,7 +62,12 @@ contract WrapperWithERC20Collateral is WrapperBase {
         
     }
 
-
+     /**
+     * @dev Function returns array with info about ERC20 
+     * colleteral of wrapped token 
+     *
+     * @param _wrappedId  new protocol NFT id from this contarct
+     */
     function getERC20Collateral(uint256 _wrappedId) external view returns (ERC20Collateral[] memory) {
         return erc20Collateral[_wrappedId];
     } 
@@ -72,11 +77,28 @@ contract WrapperWithERC20Collateral is WrapperBase {
     /////////////   Internals     ///////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     
-
+    /**
+     * @dev This hook may be overriden in inheritor contracts for extend
+     * base functionality.
+     *
+     * @param _tokenId -wrapped token
+     * 
+     * must returna true for success unwrapping enable 
+     */
     function _beforeUnWrapHook(uint256 _tokenId) internal virtual override(WrapperBase) returns (bool){
         return _returnERC20Collateral(_tokenId);
     }
 
+    /**
+     * @dev Function returns all ERC20 collateral to user who unWrap 
+     * protocol token. Returns true if all tokens are transfered.
+     * Otherwise returns false. In that case  need just call unWrap721
+     * one more time
+     * 
+     *
+     * @param _tokenId -wrapped token
+     * 
+     */
     function _returnERC20Collateral(uint256 _tokenId) internal returns (bool) {
         //First we need release erc20 collateral, because erc20 transfers are
         // can be expencive
@@ -103,6 +125,12 @@ contract WrapperWithERC20Collateral is WrapperBase {
 
     }
 
+     /**
+     * @dev Function returns max ERC20 transfers count before exceeds
+     * block gas limit. Function use very approximate estimation.
+     * There is NO RISK  becouse we have MAX_ERC20_COUNT limitation
+     * 
+     */
     function _getTransferBatchCount() internal view returns (uint256){
         // It can be modified in future protocol version
         return block.gaslimit / 50000; //average erc20 transfer cost 
