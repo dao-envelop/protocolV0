@@ -1,9 +1,1 @@
-compiler:
-    evm_version: null
-    solc:
-        version: '0.8.4'
-        optimizer:
-            enabled: true
-            runs: 200
-    vyper:
-        version: null
+dotenv: .env
