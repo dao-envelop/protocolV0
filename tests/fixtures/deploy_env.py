@@ -33,6 +33,10 @@ def wrapper(accounts, WrapperWithERC20Collateral, niftsy20):
     niftsy20.addMinter(t.address, {'from':accounts[0]})
     yield t 
 
+@pytest.fixture(scope="module")
+def mockHacker(accounts, MaliciousTokenMock):
+    h = accounts[0].deploy(MaliciousTokenMock,"Hacker Malicious Token", "KLR")
+    yield h
  
 
 

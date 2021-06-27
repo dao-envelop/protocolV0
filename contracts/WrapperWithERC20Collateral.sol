@@ -23,6 +23,7 @@ contract WrapperWithERC20Collateral is WrapperBase {
     mapping(uint256 => ERC20Collateral[]) public erc20Collateral;
 
     event PartialUnWrapp(uint256 wrappedId, address owner);
+    event SuspiciousFail(address failERC20, uint256 amount);
 
     constructor (address _erc20) WrapperBase(_erc20) {} 
 
@@ -150,7 +151,12 @@ contract WrapperWithERC20Collateral is WrapperBase {
             } 
             
             for (uint256 i = n; i > 0; i --){
-                IERC20(e[i-1].erc20Token).safeTransfer(msg.sender,  e[i-1].amount);
+                try 
+                    IERC20(e[i-1].erc20Token).transfer(msg.sender,  e[i-1].amount)
+                {}
+                catch {
+                    emit SuspiciousFail(e[i-1].erc20Token, e[i-1].amount);
+                }    
                 e.pop();
             }
 
