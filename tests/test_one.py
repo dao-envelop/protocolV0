@@ -194,3 +194,41 @@ def test_ERC165_helper(accounts, erc721mock, wrapper):
     assert wrapper.isERC721(wrapper.address, 0x80ac58cd)
     assert wrapper.isERC721(wrapper.address, 0x5b5e139f)
     assert wrapper.isERC721(erc721mock.address, 0x80ac58cd)
+
+
+def test_hacker_ok(accounts, mockHacker):
+    mockHacker.setFailSender(accounts[0], {'from':accounts[0]})
+    with reverts('Hack your Wrapper'):
+        mockHacker.transfer(accounts[1], 1)    
+
+def test_add_hacker_collateral(accounts, mockHacker, erc721mock, wrapper, niftsy20, dai):
+    mockHacker.setFailSender(wrapper.address, {'from':accounts[0]})
+    erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[2], {'from':accounts[3]})
+    tx = wrapper.wrap721(
+        erc721mock.address, 
+        ORIGINAL_NFT_IDs[2], 
+        0, #unwrapAfter
+        TRANSFER_FEE, 
+        accounts[2], #_royaltyBeneficiary
+        ROAYLTY_PERCENT, #_royaltyPercent
+        0,#UNWRAP_FEE_THRESHOLD, 
+        {'from':accounts[3], 'value':START_NATIVE_COLLATERAL}
+    )
+    wrapper.transferFrom(accounts[3], accounts[0], wrapper.lastWrappedNFTId(), {'from':accounts[3]})
+    wrapper.addNativeCollateral(wrapper.lastWrappedNFTId(), {'from':accounts[0], 'value': ADD_NATIVE_COLLATERAL})
+    dai.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {'from':accounts[0]})
+    mockHacker.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {'from':accounts[0]})
+    wrapper.addERC20Collateral(wrapper.lastWrappedNFTId(),mockHacker.address, ERC20_COLLATERAL_AMOUNT ,{'from':accounts[0]})
+    wrapper.addERC20Collateral(wrapper.lastWrappedNFTId(),dai.address, ERC20_COLLATERAL_AMOUNT ,{'from':accounts[0]})
+    logging.info(wrapper.getERC20Collateral(wrapper.lastWrappedNFTId())) 
+    wrapper.transferFrom(accounts[0], accounts[1], wrapper.lastWrappedNFTId(), {'from':accounts[0]})
+    wrapper.transferFrom(accounts[1], accounts[0], wrapper.lastWrappedNFTId(), {'from':accounts[1]})
+    tx = wrapper.transferFrom(accounts[0], accounts[3], wrapper.lastWrappedNFTId(), {'from':accounts[0]})
+    logging.info('NiftsyProtocolTransfer={}'.format(tx.events['NiftsyProtocolTransfer']))
+    token_before_unwrap = wrapper.getWrappedToken(wrapper.lastWrappedNFTId())
+    logging.info('getWrappedToken {}'.format(token_before_unwrap))
+    ethBefore = accounts[3].balance()
+    tx = wrapper.unWrap721(wrapper.lastWrappedNFTId(), {'from':accounts[3]})
+    logging.info('wrapper.unWrap721 Transfer events={}'.format(tx.events))
+    assert dai.balanceOf(wrapper) == 0
+    assert mockHacker.balanceOf(wrapper) == ERC20_COLLATERAL_AMOUNT
