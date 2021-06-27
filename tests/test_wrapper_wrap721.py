@@ -104,7 +104,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			{'from':accounts[1]})
 
 	#check _unwraptFeeThreshold
-	with reverts("Too much threshold"):
+	with reverts("Cant set Threshold without transferFee"):
 		wrapper.wrap721(
 			erc721mock.address, 
 			ORIGINAL_NFT_IDs[0], 
