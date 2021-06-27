@@ -101,7 +101,7 @@ def test_wrapper_unWrap721_1(accounts, erc721mock, wrapper, niftsy20, dai, weth)
 		wrapper.unWrap721(tokenId, {"from": accounts[1]})
 
 #transferFee > 0, royalty_percent = 0 
-def test_wrapper_transfer_transferFee_2(accounts, erc721mock, wrapper, niftsy20, dai, weth):
+def test_wrapper_unWrap721_2(accounts, erc721mock, wrapper, niftsy20, dai, weth):
 	tokenId = wrapper.lastWrappedNFTId()
 	#transfer several time
 	c = round(UNWRAP_FEE_THRESHOLD/TRANSFER_FEE) + 1
@@ -145,7 +145,7 @@ def test_wrapper_transfer_transferFee_2(accounts, erc721mock, wrapper, niftsy20,
 
 #transferFee > 0, royalty_percent > 0
 #there are transferFee, royalty_percent
-def test_wrapper_transfer_transferFee_3(accounts, erc721mock, wrapper, niftsy20, dai, weth):
+def test_wrapper_unWrap721_3(accounts, erc721mock, wrapper, niftsy20, dai, weth):
 	#make test data
 	erc721mock.transferFrom(accounts[0], accounts[1], ORIGINAL_NFT_IDs[2], {'from':accounts[0]})
 	erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[2], {'from':accounts[1]})
