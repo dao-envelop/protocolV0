@@ -29,7 +29,7 @@ def test_wrapper_transfer_1(accounts, erc721mock, wrapper, niftsy20, dai, weth):
 
 	erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[0], {'from':accounts[1]})
 	
-	makeWrapNFT(wrapper, erc721mock, ['originalTokenId', 'transferFee', 'royaltyBeneficiary', 'royaltyPercent'], [ORIGINAL_NFT_IDs[0], 0, zero_address, 0], accounts[1])
+	makeWrapNFT(wrapper, erc721mock, ['originalTokenId', 'transferFee', 'royaltyBeneficiary', 'royaltyPercent', 'unwraptFeeThreshold'], [ORIGINAL_NFT_IDs[0], 0, zero_address, 0, 0], accounts[1])
 	tokenId = wrapper.lastWrappedNFTId()
 
 	assert niftsy20.balanceOf(accounts[1]) == 0
@@ -45,7 +45,7 @@ def test_wrapper_transfer_1(accounts, erc721mock, wrapper, niftsy20, dai, weth):
 		0, 
 		zero_address, 
 		0, 
-		UNWRAP_FEE_THRESHOLD)
+		0)
 
 	#non exists token
 	with reverts("ERC721: operator query for nonexistent token"):

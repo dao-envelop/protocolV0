@@ -67,6 +67,19 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			0, 
 			{'from':accounts[1]})
 
+	#check _unwraptFeeThreshold
+	erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[0], {'from':accounts[1]})
+	with reverts("Cant set Threshold without transferFee"):
+		wrapper.wrap721(
+			erc721mock.address, 
+			ORIGINAL_NFT_IDs[0], 
+			0, 
+			0,
+			zero_address,
+			0,
+			1, 
+			{'from':accounts[1]})
+
 	#check ROYALTY_PERCENT again
 	with reverts("Royalty source is transferFee"):
 		wrapper.wrap721(
@@ -109,7 +122,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			erc721mock.address, 
 			ORIGINAL_NFT_IDs[0], 
 			0,
-			0,
+			1,
 			zero_address,
 			0,
 			niftsy20.totalSupply() * wrapper.MAX_FEE_THRESHOLD_PERCENT() / 100 + 1, 
