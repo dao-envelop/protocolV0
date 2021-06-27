@@ -18,7 +18,7 @@ royaltyBeneficiary = '0xbd7e5fb7525ed8583893ce1b1f93e21cc0cf02f6'
 zero_address = '0x0000000000000000000000000000000000000000'
 
 #unwrap 
-def test_wrapper_unWrap721_1(accounts, erc721mock, wrapper, niftsy20, dai, weth):
+def test_wrapper_unWrap721_1(accounts, erc721mock, wrapper, niftsy20, dai, weth, TokenMock):
 	#make test data
 	makeNFTForTest(accounts, erc721mock, ORIGINAL_NFT_IDs)
 	wrapper.setFee(protokolFee, chargeFeeAfter, {"from": accounts[0]})
@@ -55,6 +55,43 @@ def test_wrapper_unWrap721_1(accounts, erc721mock, wrapper, niftsy20, dai, weth)
 	logging.info('nft2 = {}'.format(nft))
 	assert nft[3] == backedTokens
 
+	#add ERC20Collateral
+	dai1 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI1")
+	dai2 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI2")
+	dai3 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI3")
+	dai4 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI4")
+	dai5 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI5")
+	
+	dai1.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
+	dai2.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
+	dai3.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
+	dai4.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
+	dai5.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
+
+	dai1.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
+	dai2.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
+	dai3.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
+	dai4.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
+	dai5.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
+
+	wrapper.addERC20Collateral(tokenId, dai1.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
+	wrapper.addERC20Collateral(tokenId, dai2.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
+	wrapper.addERC20Collateral(tokenId, dai3.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
+	wrapper.addERC20Collateral(tokenId, dai4.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
+	wrapper.addERC20Collateral(tokenId, dai5.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
+	assert dai1.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
+	assert dai2.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
+	assert dai3.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
+	assert dai4.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
+	assert dai5.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
+	assert dai1.balanceOf(accounts[1].address) == 0
+	assert dai2.balanceOf(accounts[1].address) == 0
+	assert dai3.balanceOf(accounts[1].address) == 0
+	assert dai4.balanceOf(accounts[1].address) == 0
+	assert dai5.balanceOf(accounts[1].address) == 0
+	assert len(wrapper.getERC20Collateral(tokenId)) == 5
+	logging.info('wrapper.getERC20Collateral(tokenId) = {}'.format(wrapper.getERC20Collateral(tokenId)))
+	
 	#move date 
 	chain.sleep(100)
 	chain.mine()
@@ -85,3 +122,17 @@ def test_wrapper_unWrap721_1(accounts, erc721mock, wrapper, niftsy20, dai, weth)
 	logging.info('niftsy20.balanceOf(wrapper.address) = {}'.format(niftsy20.balanceOf(wrapper.address)))
 	with reverts("ERC721: owner query for nonexistent token"):
 		wrapper.ownerOf(tokenId)
+
+	assert dai1.balanceOf(wrapper.address) == 0
+	assert dai2.balanceOf(wrapper.address) == 0
+	assert dai3.balanceOf(wrapper.address) == 0
+	assert dai4.balanceOf(wrapper.address) == 0
+	assert dai5.balanceOf(wrapper.address) == 0
+	assert dai1.balanceOf(accounts[i+2].address) == ERC20_COLLATERAL_AMOUNT
+	assert dai2.balanceOf(accounts[i+2].address) == ERC20_COLLATERAL_AMOUNT
+	assert dai3.balanceOf(accounts[i+2].address) == ERC20_COLLATERAL_AMOUNT
+	assert dai4.balanceOf(accounts[i+2].address) == ERC20_COLLATERAL_AMOUNT
+	assert dai5.balanceOf(accounts[i+2].address) == ERC20_COLLATERAL_AMOUNT
+
+	assert len(wrapper.getERC20Collateral(tokenId)) == 0
+	logging.info('wrapper.getERC20Collateral(tokenId) = {}'.format(wrapper.getERC20Collateral(tokenId)))
