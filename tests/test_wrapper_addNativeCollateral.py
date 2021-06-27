@@ -52,7 +52,6 @@ def test_wrapper_addNativeCollateral(accounts, erc721mock, wrapper, niftsy20):
 	#nonexist tokenId
 	with reverts("ERC721: owner query for nonexistent token"):
 		wrapper.addNativeCollateral(100, {"from": accounts[2], "value": ADD_NATIVE_COLLATERAL})
-	logging.info('wrapper.getWrappedToken(100) = {}'.format(wrapper.getWrappedToken(100)))
 	#not owner calls addNativeCollateral
 	wrapper.addNativeCollateral(wrapper.lastWrappedNFTId(), {"from": accounts[2], "value": ADD_NATIVE_COLLATERAL})
 	#owner calls addNativeCollateral
