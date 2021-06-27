@@ -223,7 +223,7 @@ contract WrapperBase is ERC721Enumerable, Ownable {
      * @param _tokenId id of protocol token (new wrapped token)
      */
     function tokenURI(uint256 _tokenId) public view override returns (string memory) {
-        NFT storage nft = wrappedTokens[tokenId];
+        NFT storage nft = wrappedTokens[_tokenId];
         return IERC721Metadata(nft.tokenContract).tokenURI(nft.tokenId);
     }
 
@@ -233,8 +233,8 @@ contract WrapperBase is ERC721Enumerable, Ownable {
      *
      * @param _tokenId id of protocol token (new wrapped token)
      */
-    function getTokenValue(uint256 tokenId) external view returns (uint256, uint256) {
-        NFT storage nft = wrappedTokens[tokenId];
+    function getTokenValue(uint256 _tokenId) external view returns (uint256, uint256) {
+        NFT storage nft = wrappedTokens[_tokenId];
         return (nft.backedValue, nft.backedTokens);
     }
 
@@ -244,8 +244,8 @@ contract WrapperBase is ERC721Enumerable, Ownable {
      *
      * @param _tokenId id of protocol token (new wrapped token)
      */
-    function getWrappedToken(uint256 tokenId) external view returns (NFT memory) {
-        return wrappedTokens[tokenId];
+    function getWrappedToken(uint256 _tokenId) external view returns (NFT memory) {
+        return wrappedTokens[_tokenId];
     }
 
         
