@@ -86,7 +86,7 @@ def test_wrapper_unWrap721_1(accounts, erc721mock, wrapper, niftsy20, dai, weth)
 	assert nft[3] == 0 #check backedTokens'''
 
 #transferFee > 0
-def test_wrapper_transfer_transferFee_2(accounts, erc721mock, wrapper, niftsy20, dai, weth):
+'''def test_wrapper_transfer_transferFee_2(accounts, erc721mock, wrapper, niftsy20, dai, weth):
 	#make test data
 	erc721mock.transferFrom(accounts[0], accounts[1], ORIGINAL_NFT_IDs[1], {'from':accounts[0]})
 	erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[1], {'from':accounts[1]})
