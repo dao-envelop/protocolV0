@@ -17,8 +17,8 @@ chargeFeeAfter = 10
 royaltyBeneficiary = '0xbd7e5fb7525ed8583893ce1b1f93e21cc0cf02f6'
 zero_address = '0x0000000000000000000000000000000000000000'
 
-#transferFee = 0
-def test_wrapper_transfer_1(accounts, erc721mock, wrapper, niftsy20, dai, weth):
+#revert cases
+def test_wrapper_unWrap721_1(accounts, erc721mock, wrapper, niftsy20, dai, weth):
 	#make test data
 	makeNFTForTest(accounts, erc721mock, ORIGINAL_NFT_IDs)
 	wrapper.setFee(protokolFee, chargeFeeAfter, {"from": accounts[0]})
@@ -47,15 +47,35 @@ def test_wrapper_transfer_1(accounts, erc721mock, wrapper, niftsy20, dai, weth):
 		0, 
 		UNWRAP_FEE_THRESHOLD)
 
+	#unwrap
+
 	#non exists token
-	with reverts("ERC721: operator query for nonexistent token"):
-		wrapper.transferFrom(accounts[1].address, accounts[2].address, 100, {"from": accounts[3]})
+	with reverts("ERC721: owner query for nonexistent token"):
+		wrapper.unWrap721(100, {"from": accounts[1]})
 
-	#not owner tries to transfer token
-	with reverts("ERC721: transfer caller is not owner nor approved"):
-		wrapper.transferFrom(accounts[1].address, accounts[2].address, tokenId, {"from": accounts[3]})
+	#not owner tries to unwrap token
+	with reverts("Only owner can unwrap it!"):
+		wrapper.unWrap721(tokenId, {"from": accounts[3]})
 
-	wrapper.approve(accounts[3].address, tokenId, {"from": accounts[1]})
+	#date of unwrap has not happened
+	with reverts("Cant unwrap before day X"):
+		wrapper.unWrap721(tokenId, {"from": accounts[1]})
+
+	#move date 
+	chain.sleep(100)
+	chain.mine()
+
+	#unwraptFeeThreshold is not collected
+	with reverts("Cant unwrap due Fee Threshold"):
+		wrapper.unWrap721(tokenId, {"from": accounts[1]})
+
+
+
+
+
+
+
+	'''wrapper.approve(accounts[3].address, tokenId, {"from": accounts[1]})
 	wrapper.transferFrom(accounts[1].address, accounts[2].address, tokenId, {"from": accounts[3]})
 	assert wrapper.ownerOf(tokenId) == accounts[2].address
 	#return tokenId - owner transfer
@@ -63,11 +83,9 @@ def test_wrapper_transfer_1(accounts, erc721mock, wrapper, niftsy20, dai, weth):
 	assert wrapper.ownerOf(tokenId) == accounts[1].address
 
 	nft = wrapper.getWrappedToken(tokenId)
-	assert nft[3] == 0 #check backedTokens
+	assert nft[3] == 0 #check backedTokens'''
 
 #transferFee > 0
-#not enough balance for transferFee
-#there is transferFee, no royalty_percent
 def test_wrapper_transfer_transferFee_2(accounts, erc721mock, wrapper, niftsy20, dai, weth):
 	#make test data
 	erc721mock.transferFrom(accounts[0], accounts[1], ORIGINAL_NFT_IDs[1], {'from':accounts[0]})
@@ -267,4 +285,4 @@ def test_wrapper_transfer_transferFee_4(accounts, erc721mock, wrapper, niftsy20,
 		1, 
 		royaltyBeneficiary, 
 		1, 
-		UNWRAP_FEE_THRESHOLD)
+		UNWRAP_FEE_THRESHOLD)'''
