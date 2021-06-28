@@ -128,6 +128,8 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			niftsy20.totalSupply() * wrapper.MAX_FEE_THRESHOLD_PERCENT() / 100 + 1, 
 			{'from':accounts[1]})
 
+	with reverts("Ownable: caller is not the owner"):
+		wrapper.setFee(protokolFee, chargeFeeAfter, {"from": accounts[1]})
 	wrapper.setFee(protokolFee, chargeFeeAfter, {"from": accounts[0]})
 	#does not have niftsi token for protokol fee
 	with reverts("insufficient NIFTSY balance for fee"):
