@@ -61,3 +61,16 @@ def makeWrapNFT(wrapper, erc721mock, fields, values, account):
 		{'from':account, 'value':START_NATIVE_COLLATERAL_})
 	assert erc721mock.ownerOf(ORIGINAL_NFT_IDs_[0]) == wrapper.address
 	assert wrapper.ownerOf(wrapper.lastWrappedNFTId()) == account
+
+def _addErc20Collateral(account0, account1, wrapper, amount, tokenId , TokenMock):
+	dai = account0.deploy(TokenMock,"DAI MOCK Token", "DAI")
+	dai.approve(wrapper.address, amount, {"from": account1})
+	dai.transfer(account1, amount, {"from": account0})
+	wrapper.addERC20Collateral(tokenId, dai.address, amount, {"from": account1})
+	assert dai.balanceOf(wrapper.address) == amount
+	#logging.info('dai.balanceOf(account.address) = {}'.format(dai.balanceOf(account1.address)))
+	assert dai.balanceOf(account1.address) == 0
+	return dai
+
+	
+	

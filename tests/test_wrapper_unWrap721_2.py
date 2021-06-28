@@ -1,7 +1,7 @@
 import pytest
 import logging
 from brownie import Wei, reverts, chain
-from makeTestData import makeNFTForTest, makeWrapNFT
+from makeTestData import makeNFTForTest, makeWrapNFT, _addErc20Collateral
 from checkData import checkWrappedNFT
 
 LOGGER = logging.getLogger(__name__)
@@ -56,150 +56,283 @@ def test_wrapper_unWrap721_1(accounts, erc721mock, wrapper, niftsy20, dai, weth,
 	assert nft[3] == backedTokens
 
 	#add ERC20Collateral
-	dai1 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI1")
-	dai2 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI2")
-	dai3 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI3")
-	dai4 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI4")
-	dai5 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI5")
-	dai6 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI6")
-	dai7 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI7")
-	dai8 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI8")
-	dai9 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI9")
-	dai10 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI10")
-	dai11 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI11")
-	dai12 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI12")
-	dai13 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI13")
-	dai14 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI14")
-	dai15 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI15")
-	dai16 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI16")
-	dai17 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI17")
-	dai18 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI18")
-	dai19 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI19")
-	dai20 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI20")
-	dai21 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI21")
-	dai22 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI22")
-	dai23 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI23")
+	'''t = 200
+	while t < 400:
+		logging.info('	dai' + str(t) + '= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)') 
+		t += 1'''
+	dai1= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai2= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai3= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai4= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai5= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai6= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai7= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai8= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai9= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai10= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai11= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai12= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai13= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai14= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai15= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai16= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai17= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai18= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai19= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai20= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai21= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai22= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai23= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai24= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai25= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai26= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai27= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai28= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai29= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai30= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai31= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai32= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai33= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai34= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai35= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai36= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai37= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai38= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai39= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai40= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai41= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai42= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai43= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai44= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai45= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai46= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai47= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai48= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai49= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai50= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai51= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai52= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai53= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai54= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai55= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai56= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai57= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai58= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai59= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai60= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai61= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai62= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai63= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai64= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai65= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai66= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai67= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai68= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai69= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai70= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai71= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai72= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai73= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai74= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai75= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai76= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai77= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai78= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai79= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai80= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai81= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai82= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai83= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai84= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai85= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai86= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai87= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai88= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai89= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai90= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai91= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai92= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai93= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai94= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai95= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai96= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai97= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai98= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai99= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai100= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai101= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai102= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai103= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai104= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai105= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai106= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai107= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai108= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai109= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai110= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai111= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai112= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai113= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai114= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai115= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai116= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai117= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai118= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai119= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai120= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai121= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai122= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai123= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai124= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai125= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai126= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai127= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai128= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai129= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai130= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai131= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai132= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai133= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai134= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai135= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai136= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai137= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai138= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai139= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai140= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai141= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai142= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai143= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai144= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai145= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai146= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai147= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai148= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai149= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai150= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai151= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai152= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai153= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai154= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai155= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai156= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai157= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai158= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai159= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai160= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai161= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai162= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai163= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai164= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai165= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai166= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai167= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai168= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai169= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai170= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai171= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai172= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai173= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai174= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai175= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai176= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai177= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai178= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai179= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai180= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai181= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai182= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai183= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai184= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai185= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai186= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai187= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai188= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai189= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai190= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai191= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai192= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai193= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai194= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai195= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai196= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai197= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai198= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai199= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai200= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai201= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai202= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai203= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai204= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai205= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai206= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai207= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai208= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai209= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai210= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai211= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai212= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai213= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai214= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai215= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai216= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai217= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai218= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai219= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai220= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai221= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai222= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai223= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai224= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai225= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai226= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai227= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai228= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai229= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai230= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai231= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai232= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai233= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai234= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai235= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai236= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai237= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai238= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai239= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai240= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai241= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai242= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai243= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai244= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai245= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai246= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai247= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai248= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai249= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai250= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai251= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai252= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai253= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai254= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai255= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai256= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai257= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai258= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai259= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai260= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai261= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai262= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai263= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai264= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai265= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai266= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai267= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai268= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai269= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+	dai270= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
+
 	
-	dai1.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai2.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai3.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai4.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai5.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai6.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai7.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai8.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai9.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai10.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai11.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai12.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai13.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai14.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai15.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai16.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai17.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai18.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai19.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai20.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai21.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai22.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-	dai23.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-
-	dai1.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai2.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai3.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai4.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai5.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai6.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai7.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai8.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai9.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai10.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai11.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai12.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai13.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai14.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai15.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai16.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai17.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai18.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai19.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai20.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai21.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai22.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	dai23.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-
-	wrapper.addERC20Collateral(tokenId, dai1.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai2.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai3.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai4.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai5.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai6.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai7.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai8.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai9.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai10.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai11.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai12.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai13.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai14.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai15.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai16.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai17.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai18.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai19.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai20.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai21.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai22.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(tokenId, dai23.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	
-	assert dai1.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai2.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai3.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai4.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai5.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai6.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai7.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai8.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai9.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai10.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai11.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai12.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai13.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai14.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai15.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai16.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai17.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai18.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai19.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai20.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai21.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai22.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai23.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-
-	assert dai1.balanceOf(accounts[1].address) == 0
-	assert dai2.balanceOf(accounts[1].address) == 0
-	assert dai3.balanceOf(accounts[1].address) == 0
-	assert dai4.balanceOf(accounts[1].address) == 0
-	assert dai5.balanceOf(accounts[1].address) == 0
-	assert dai6.balanceOf(accounts[1].address) == 0
-	assert dai7.balanceOf(accounts[1].address) == 0
-	assert dai8.balanceOf(accounts[1].address) == 0
-	assert dai9.balanceOf(accounts[1].address) == 0
-	assert dai10.balanceOf(accounts[1].address) == 0
-	assert dai11.balanceOf(accounts[1].address) == 0
-	assert dai12.balanceOf(accounts[1].address) == 0
-	assert dai13.balanceOf(accounts[1].address) == 0
-	assert dai14.balanceOf(accounts[1].address) == 0
-	assert dai15.balanceOf(accounts[1].address) == 0
-	assert dai16.balanceOf(accounts[1].address) == 0
-	assert dai17.balanceOf(accounts[1].address) == 0
-	assert dai18.balanceOf(accounts[1].address) == 0
-	assert dai19.balanceOf(accounts[1].address) == 0
-	assert dai20.balanceOf(accounts[1].address) == 0
-	assert dai21.balanceOf(accounts[1].address) == 0
-	assert dai22.balanceOf(accounts[1].address) == 0
-	assert dai23.balanceOf(accounts[1].address) == 0
-	assert len(wrapper.getERC20Collateral(tokenId)) == 23
+	assert len(wrapper.getERC20Collateral(tokenId)) == 270
 	logging.info('wrapper.getERC20Collateral(tokenId) = {}'.format(wrapper.getERC20Collateral(tokenId)))
 	
 	#move date 
@@ -216,7 +349,11 @@ def test_wrapper_unWrap721_1(accounts, erc721mock, wrapper, niftsy20, dai, weth,
 	balance_erc20_owner = niftsy20.balanceOf(accounts[i+2].address)
 	logging.info('********************AFTER UNWRAP*************')
 	#unwrap
+	tx = wrapper.unWrap721(tokenId, {"from": accounts[i+2]})
+	logging.info('event = {}'.format(tx.events['PartialUnWrapp']))
+	#unwrap again
 	wrapper.unWrap721(tokenId, {"from": accounts[i+2]})
+	assert len(wrapper.getERC20Collateral(tokenId)) == 0
 	assert wrapper.totalSupply() == 0
 	assert wrapper.balanceOf(accounts[i+2].address) == 0
 	assert niftsy20.balanceOf(accounts[i+2].address) == balance_erc20_owner + backedTokens
@@ -224,6 +361,12 @@ def test_wrapper_unWrap721_1(accounts, erc721mock, wrapper, niftsy20, dai, weth,
 	assert accounts[i+2].balance() == balance_eth + nft[2]
 	assert niftsy20.balanceOf(wrapper.address) == balance_erc20 - backedTokens
 	assert niftsy20.balanceOf(royaltyBeneficiary) == royalty_tokens
+	
+	logging.info('wrapper.getERC20Collateral(tokenId) = {}'.format(wrapper.getERC20Collateral(tokenId)))
+	assert dai1.balanceOf(accounts[i+2]) == ERC20_COLLATERAL_AMOUNT
+	assert dai270.balanceOf(accounts[i+2]) == ERC20_COLLATERAL_AMOUNT
+	assert dai1.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
+	assert dai270.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
 
 	logging.info('accounts[i+2].balance() = {}'.format(accounts[i+2].balance()))
 	logging.info('wrapper.balanceOf(accounts[i+2]) = {}'.format(wrapper.balanceOf(accounts[i+2])))
@@ -233,16 +376,4 @@ def test_wrapper_unWrap721_1(accounts, erc721mock, wrapper, niftsy20, dai, weth,
 	with reverts("ERC721: owner query for nonexistent token"):
 		wrapper.ownerOf(tokenId)
 
-	'''assert dai1.balanceOf(wrapper.address) == 0
-	assert dai2.balanceOf(wrapper.address) == 0
-	assert dai3.balanceOf(wrapper.address) == 0
-	assert dai4.balanceOf(wrapper.address) == 0
-	assert dai5.balanceOf(wrapper.address) == 0
-	assert dai1.balanceOf(accounts[i+2].address) == ERC20_COLLATERAL_AMOUNT
-	assert dai2.balanceOf(accounts[i+2].address) == ERC20_COLLATERAL_AMOUNT
-	assert dai3.balanceOf(accounts[i+2].address) == ERC20_COLLATERAL_AMOUNT
-	assert dai4.balanceOf(accounts[i+2].address) == ERC20_COLLATERAL_AMOUNT
-	assert dai5.balanceOf(accounts[i+2].address) == ERC20_COLLATERAL_AMOUNT'''
-
-	assert len(wrapper.getERC20Collateral(tokenId)) == 0
 	logging.info('wrapper.getERC20Collateral(tokenId) = {}'.format(wrapper.getERC20Collateral(tokenId)))
