@@ -17,7 +17,7 @@ contract WrapperWithERC20Collateral is WrapperBase {
         uint256 amount;
     }
 
-    uint8 constant public MAX_ERC20_COUNT = 25; //max coins type count in collateral  
+    uint16 constant public MAX_ERC20_COUNT = 400; //max coins type count in collateral  
 
     //Map from wrapped token id to array  with erc20 collateral balances
     mapping(uint256 => ERC20Collateral[]) public erc20Collateral;
