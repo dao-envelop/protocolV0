@@ -18,7 +18,7 @@ royaltyBeneficiary = '0xbd7e5fb7525ed8583893ce1b1f93e21cc0cf02f6'
 zero_address = '0x0000000000000000000000000000000000000000'
 
 #unwrap 
-def test_wrapper_unWrap721_1(accounts, erc721mock, wrapper, niftsy20, dai, weth, TokenMock):
+def test_wrapper_unWrap721_batch(accounts, erc721mock, wrapper, niftsy20, dai, weth, TokenMock):
 	#make test data
 	makeNFTForTest(accounts, erc721mock, ORIGINAL_NFT_IDs)
 	wrapper.setFee(protokolFee, chargeFeeAfter, {"from": accounts[0]})
@@ -456,7 +456,6 @@ def test_wrapper_unWrap721_1(accounts, erc721mock, wrapper, niftsy20, dai, weth,
 	logging.info('dai268 wr = {}'.format(dai268.balanceOf(wrapper.address)))
 	logging.info('dai269 wr = {}'.format(dai269.balanceOf(wrapper.address)))
 	logging.info('dai270 wr = {}'.format(dai270.balanceOf(wrapper.address)))
-	logging.info('event fail = {}'.format(tx.events['SuspiciousFail']))
 	assert len(wrapper.getERC20Collateral(tokenId)) == 0
 	assert wrapper.totalSupply() == 0
 	assert wrapper.balanceOf(accounts[i+2].address) == 0
@@ -469,8 +468,8 @@ def test_wrapper_unWrap721_1(accounts, erc721mock, wrapper, niftsy20, dai, weth,
 	logging.info('wrapper.getERC20Collateral(tokenId) = {}'.format(wrapper.getERC20Collateral(tokenId)))
 	assert dai1.balanceOf(accounts[i+2]) == ERC20_COLLATERAL_AMOUNT
 	assert dai270.balanceOf(accounts[i+2]) == ERC20_COLLATERAL_AMOUNT
-	assert dai1.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
-	assert dai270.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
+	assert dai1.balanceOf(wrapper.address) == 0
+	assert dai270.balanceOf(wrapper.address) == 0
 
 	logging.info('accounts[i+2].balance() = {}'.format(accounts[i+2].balance()))
 	logging.info('wrapper.balanceOf(accounts[i+2]) = {}'.format(wrapper.balanceOf(accounts[i+2])))

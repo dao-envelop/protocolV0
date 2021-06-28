@@ -147,10 +147,13 @@ contract WrapperWithERC20Collateral is WrapperBase {
         if (e.length > 0) { 
             uint256 n = _getTransferBatchCount();
             if (e.length <= n) {
-                n = e.length;
+                n = 0;
+            }
+            else {
+                n = e.length - n;
             } 
             
-            for (uint256 i = n; i > 0; i --){
+            for (uint256 i = e.length; i > n; i --){
                 try 
                     IERC20(e[i-1].erc20Token).transfer(msg.sender,  e[i-1].amount)
                 {}
