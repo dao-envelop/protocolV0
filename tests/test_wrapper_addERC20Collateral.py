@@ -45,27 +45,28 @@ def test_wrapper_addERC20Collateral(accounts, erc721mock, wrapper, niftsy20, dai
 		ROAYLTY_PERCENT, 
 		UNWRAP_FEE_THRESHOLD)
 
-	nft = wrapper.getWrappedToken(wrapper.lastWrappedNFTId())
+	tokenId = wrapper.lastWrappedNFTId()
+	nft = wrapper.getWrappedToken(tokenId)
 	#there is not allowance
 	with reverts("Please approve first"):
-		wrapper.addERC20Collateral(wrapper.lastWrappedNFTId(), dai.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
+		wrapper.addERC20Collateral(tokenId, dai.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
 	dai.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT + 100, {"from": accounts[1]})
 	with reverts("Low balance for add collateral"):
-		wrapper.addERC20Collateral(wrapper.lastWrappedNFTId(), dai.address, ERC20_COLLATERAL_AMOUNT + ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	wrapper.addERC20Collateral(wrapper.lastWrappedNFTId(), dai.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
+		wrapper.addERC20Collateral(tokenId, dai.address, ERC20_COLLATERAL_AMOUNT + ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
+	wrapper.addERC20Collateral(tokenId, dai.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
 	assert dai.balanceOf(wrapper.address) == ERC20_COLLATERAL_AMOUNT
 	assert dai.balanceOf(accounts[1].address) == 0
-	logging.info('coll = {}'.format(wrapper.getERC20Collateral(wrapper.lastWrappedNFTId())))
-	assert wrapper.getERC20Collateral(wrapper.lastWrappedNFTId())[0][0] == dai.address
-	assert wrapper.getERC20Collateral(wrapper.lastWrappedNFTId())[0][1] == ERC20_COLLATERAL_AMOUNT
+	logging.info('coll = {}'.format(wrapper.getERC20Collateral(tokenId)))
+	assert wrapper.getERC20Collateral(tokenId)[0][0] == dai.address
+	assert wrapper.getERC20Collateral(tokenId)[0][1] == ERC20_COLLATERAL_AMOUNT
 
 	#second call
 	dai.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
 	dai.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT + 100, {"from": accounts[1]})
-	wrapper.addERC20Collateral(wrapper.lastWrappedNFTId(), dai.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	assert wrapper.getERC20Collateral(wrapper.lastWrappedNFTId())[0][1] == 2 * ERC20_COLLATERAL_AMOUNT
-	assert len(wrapper.getERC20Collateral(wrapper.lastWrappedNFTId())) == 1
-	logging.info('coll = {}'.format(wrapper.getERC20Collateral(wrapper.lastWrappedNFTId())))
+	wrapper.addERC20Collateral(tokenId, dai.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
+	assert wrapper.getERC20Collateral(tokenId)[0][1] == 2 * ERC20_COLLATERAL_AMOUNT
+	assert len(wrapper.getERC20Collateral(tokenId)) == 1
+	logging.info('coll = {}'.format(wrapper.getERC20Collateral(tokenId)))
 
 
 	#nonexist tokenId
@@ -77,15 +78,26 @@ def test_wrapper_addERC20Collateral(accounts, erc721mock, wrapper, niftsy20, dai
 	#not owner calls addNativeCollateral
 	dai.transfer(accounts[2], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
 	dai.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT + 100, {"from": accounts[2]})
-	wrapper.addERC20Collateral(wrapper.lastWrappedNFTId(), dai.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[2]})
-	assert wrapper.getERC20Collateral(wrapper.lastWrappedNFTId())[0][1] == 3 * ERC20_COLLATERAL_AMOUNT
-	assert len(wrapper.getERC20Collateral(wrapper.lastWrappedNFTId())) == 1
+	wrapper.addERC20Collateral(tokenId, dai.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[2]})
+	assert wrapper.getERC20Collateral(tokenId)[0][1] == 3 * ERC20_COLLATERAL_AMOUNT
+	assert len(wrapper.getERC20Collateral(tokenId)) == 1
 
 	#add second token
 	weth.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
 	weth.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT + 100, {"from": accounts[1]})
 	wrapper.addERC20Collateral(wrapper.lastWrappedNFTId(), weth.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
-	assert len(wrapper.getERC20Collateral(wrapper.lastWrappedNFTId())) == 2
-	assert wrapper.getERC20Collateral(wrapper.lastWrappedNFTId())[1][0] == weth.address
-	assert wrapper.getERC20Collateral(wrapper.lastWrappedNFTId())[1][1] == ERC20_COLLATERAL_AMOUNT
+	assert len(wrapper.getERC20Collateral(tokenId)) == 2
+	assert wrapper.getERC20Collateral(tokenId)[1][0] == weth.address
+	assert wrapper.getERC20Collateral(tokenId)[1][1] == ERC20_COLLATERAL_AMOUNT
+
+	#add third token
+	niftsy20.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
+	niftsy20.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT + 100, {"from": accounts[1]})
+	logging.info('before niftsy20.balanceOf(accounts[1]) = {}'.format(niftsy20.balanceOf(accounts[1])))
+	logging.info('before niftsy20.balanceOf(wrapper.address) = {}'.format(niftsy20.balanceOf(wrapper.address)))
+	wrapper.addERC20Collateral(tokenId, niftsy20.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
+	assert len(wrapper.getERC20Collateral(tokenId)) == 2
+	assert niftsy20.balanceOf(accounts[1]) == ERC20_COLLATERAL_AMOUNT
+	logging.info('after niftsy20.balanceOf(accounts[1]) = {}'.format(niftsy20.balanceOf(accounts[1])))
+	logging.info('after niftsy20.balanceOf(wrapper.address) = {}'.format(niftsy20.balanceOf(wrapper.address)))
 
