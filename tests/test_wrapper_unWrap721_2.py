@@ -393,6 +393,7 @@ def test_wrapper_unWrap721_batch(accounts, erc721mock, wrapper, niftsy20, dai, w
 	#unwrap again
 	logging.info('accounts[i+2].balance() = {}'.format(accounts[i+2].balance()))
 	tx = wrapper.unWrap721(tokenId, {"from": accounts[i+2]})
+	logging.info('********************owner balance*************')
 	logging.info('dai241 = {}'.format(dai241.balanceOf(accounts[i+2])))
 	logging.info('dai242 = {}'.format(dai242.balanceOf(accounts[i+2])))
 	logging.info('dai243 = {}'.format(dai243.balanceOf(accounts[i+2])))
@@ -425,7 +426,7 @@ def test_wrapper_unWrap721_batch(accounts, erc721mock, wrapper, niftsy20, dai, w
 	logging.info('dai270 = {}'.format(dai270.balanceOf(accounts[i+2])))
 
 
-
+	logging.info('********************wrapper.address erc20 token balance*************')
 	logging.info('dai241 wr = {}'.format(dai241.balanceOf(wrapper.address)))
 	logging.info('dai242 wr = {}'.format(dai242.balanceOf(wrapper.address)))
 	logging.info('dai243 wr = {}'.format(dai243.balanceOf(wrapper.address)))
