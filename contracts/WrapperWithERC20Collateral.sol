@@ -17,7 +17,7 @@ contract WrapperWithERC20Collateral is WrapperBase {
         uint256 amount;
     }
 
-    uint16 constant public MAX_ERC20_COUNT = 25; //max coins type count in collateral  
+    uint16 public MAX_ERC20_COUNT = 25; //max coins type count in collateral  
 
     // Map from wrapped token id to array  with erc20 collateral balances
     mapping(uint256 => ERC20Collateral[]) public erc20Collateral;
@@ -76,10 +76,30 @@ contract WrapperWithERC20Collateral is WrapperBase {
         IERC20(_erc20).safeTransferFrom(msg.sender, address(this), _amount); 
     }
 
+
+    ////////////////////////////////////////////////
+    ///// Admin Functions                       //// 
+    ////////////////////////////////////////////////
+    /**
+     * @dev Function for operate Protocol ERC20 Collateral WhiteList 
+     *
+     * @param _erc20 - collateral token address
+     * @param _isEnabled - collateral contract status for Protocol
+     */
     function setCollateralStatus(address _erc20, bool _isEnabled) external onlyOwner {
         require(_erc20 != address(0), "No Zero Address");
         enabledForCollateral[_erc20] = _isEnabled;
     }
+
+    /**
+     * @dev Function set ERC20 Collateral Count Limit 
+     *
+     * @param _count - collateral count limit
+     */
+    function setMaxERC20CollateralCount(uint16 _count) external onlyOwner {
+        MAX_ERC20_COUNT = _count;
+    }
+    ////////////////////////////////////////////////
 
     /**
      * @dev Function returns array with info about ERC20 
