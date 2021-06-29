@@ -4,7 +4,7 @@ Collateral-backed and price discovery cross-chain protocol to provide NFT with
 
 ### Deployments Info
 
-### Deploy 20210627 ALFA
+### Deploy 20210627 Rinkeby ALFA
 #### WrapperWithERC20Collateral  
 https://rinkeby.etherscan.io/address/0x937DbB747f69df066e0BA60cf673feB082c3514a#code
 
