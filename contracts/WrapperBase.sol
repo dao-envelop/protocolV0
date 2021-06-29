@@ -6,11 +6,12 @@ import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/IERC20.sol";
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/utils/SafeERC20.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/security/ReentrancyGuard.sol";
 /**
  * @title ERC-721 Non-Fungible Token Wrapper
  * @dev For wrpap existing ERC721 and ERC1155(now only 721)
  */
-contract WrapperBase is ERC721Enumerable, Ownable {
+contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     
@@ -165,7 +166,7 @@ contract WrapperBase is ERC721Enumerable, Ownable {
      *
      * @param _tokenId id of protocol token to unwrapp
      */
-    function unWrap721(uint256 _tokenId) external {
+    function unWrap721(uint256 _tokenId) external nonReentrant {
 
         ///////////////////////////////////////////////
         ////    Base Protocol checks                ///
