@@ -44,25 +44,31 @@ contract WrapperWithERC20Collateral is WrapperBase {
             IERC20(_erc20).allowance(msg.sender, address(this)) >= _amount,
             "Please approve first"
         );
-
-        IERC20(_erc20).safeTransferFrom(msg.sender, address(this), _amount);
-
-        ERC20Collateral[] storage e = erc20Collateral[_wrappedTokenId];
+        
+        
         //If collateral  with this _erc20 already exist just update
-        for (uint256 i = 0; i < e.length; i ++) {
-            if (e[i].erc20Token == _erc20) {
-                e[i].amount += _amount;
-                return;
-            }
-        }
-        //We can add more tokens if limit not exccedd
-        if (e.length < MAX_ERC20_COUNT){
+        if (getERC20CollateralBalance(_wrappedTokenId, _erc20) > 0) {
+            ERC20Collateral[] storage e = erc20Collateral[_wrappedTokenId];
+            for (uint256 i = 0; i < e.length; i ++) {
+                if (e[i].erc20Token == _erc20) {
+                    e[i].amount += _amount;
+                    break;
+                }
+            }    
+
+        } else {
+            //So if we are here hence there is NO that _erc20 in collateral yet 
+            //We can add more tokens if limit NOT exccedd
+            require(e.length < MAX_ERC20_COUNT, "To much ERC20 tokens in collatteral");
             e.push(ERC20Collateral({
               erc20Token: _erc20, 
               amount: _amount
             }));
+
         }
-        
+
+        //Move collateral to contract balance
+        IERC20(_erc20).safeTransferFrom(msg.sender, address(this), _amount); 
     }
 
     /**
@@ -73,6 +79,15 @@ contract WrapperWithERC20Collateral is WrapperBase {
      */
     function getERC20Collateral(uint256 _wrappedId) external view returns (ERC20Collateral[] memory) {
         return erc20Collateral[_wrappedId];
+    }
+
+    function getERC20CollateralBalance(uint256 _wrappedId, address _erc20) public returns (uint256) {
+        ERC20Collateral[] memory e = erc20Collateral[_wrappedId];
+        for (uint256 i = 0; i < e.length; i ++) {
+            if (e[i].erc20Token == _erc20) {
+                return e[i].amount;
+            }
+        }
     } 
 
     /**
