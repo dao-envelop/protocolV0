@@ -206,7 +206,11 @@ contract WrapperWithERC20Collateral is WrapperBase {
             } 
             
             for (uint256 i = e.length; i > n; i --){
+                // we need this try for protect from malicious 
+                // erc20 contract that  can block unWrap NFT
                 try 
+                    // We dont use SafeTransfer because try works only for  external function call
+                    // https://docs.soliditylang.org/en/v0.8.6/control-structures.html#try-catch
                     IERC20(e[i-1].erc20Token).transfer(msg.sender,  e[i-1].amount)
                 {}
                 catch {
