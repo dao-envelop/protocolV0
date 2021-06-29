@@ -28,9 +28,11 @@ def niftsy20(accounts, Niftsy):
     yield erc20 
 
 @pytest.fixture(scope="module")
-def wrapper(accounts, WrapperWithERC20Collateral, niftsy20):
+def wrapper(accounts, WrapperWithERC20Collateral, niftsy20, dai, weth):
     t = accounts[0].deploy(WrapperWithERC20Collateral, niftsy20.address)
     niftsy20.addMinter(t.address, {'from':accounts[0]})
+    t.setCollateralStatus(dai.address, True)
+    t.setCollateralStatus(weth.address, True)
     yield t 
 
 @pytest.fixture(scope="module")

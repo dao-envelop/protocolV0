@@ -17,15 +17,20 @@ contract WrapperWithERC20Collateral is WrapperBase {
         uint256 amount;
     }
 
-    uint16 constant public MAX_ERC20_COUNT = 2; //max coins type count in collateral  
+    uint16 constant public MAX_ERC20_COUNT = 25; //max coins type count in collateral  
 
-    //Map from wrapped token id to array  with erc20 collateral balances
+    // Map from wrapped token id to array  with erc20 collateral balances
     mapping(uint256 => ERC20Collateral[]) public erc20Collateral;
+
+    // Map from collateral conatrct address to bool(enabled-as-collateral) 
+    mapping(address => bool) public enabledForCollateral;
 
     event PartialUnWrapp(uint256 wrappedId, address owner);
     event SuspiciousFail(address failERC20, uint256 amount);
 
-    constructor (address _erc20) WrapperBase(_erc20) {} 
+    constructor (address _erc20) WrapperBase(_erc20) {
+        enabledForCollateral[projectToken] = true;
+    } 
 
     /**
      * @dev Function for add arbitrary ERC20 collaterals 
@@ -36,6 +41,7 @@ contract WrapperWithERC20Collateral is WrapperBase {
      */
     function addERC20Collateral(uint256 _wrappedTokenId, address _erc20, uint256 _amount) external {
         require(ownerOf(_wrappedTokenId) != address(0));
+        require(enabledForCollateral[_erc20], "This ERC20 is not enabled for collateral");
         require(
             IERC20(_erc20).balanceOf(msg.sender) >= _amount,
             "Low balance for add collateral"
@@ -45,10 +51,9 @@ contract WrapperWithERC20Collateral is WrapperBase {
             "Please approve first"
         );
         
-        
+        ERC20Collateral[] storage e = erc20Collateral[_wrappedTokenId];
         //If collateral  with this _erc20 already exist just update
         if (getERC20CollateralBalance(_wrappedTokenId, _erc20) > 0) {
-            ERC20Collateral[] storage e = erc20Collateral[_wrappedTokenId];
             for (uint256 i = 0; i < e.length; i ++) {
                 if (e[i].erc20Token == _erc20) {
                     e[i].amount += _amount;
@@ -71,6 +76,11 @@ contract WrapperWithERC20Collateral is WrapperBase {
         IERC20(_erc20).safeTransferFrom(msg.sender, address(this), _amount); 
     }
 
+    function setCollateralStatus(address _erc20, bool _isEnabled) external onlyOwner {
+        require(_erc20 != address(0), "No Zero Address");
+        enabledForCollateral[_erc20] = _isEnabled;
+    }
+
     /**
      * @dev Function returns array with info about ERC20 
      * colleteral of wrapped token 
@@ -81,6 +91,13 @@ contract WrapperWithERC20Collateral is WrapperBase {
         return erc20Collateral[_wrappedId];
     }
 
+    /**
+     * @dev Function returns collateral balance of this NFT in _erc20 
+     * colleteral of wrapped token 
+     *
+     * @param _wrappedId  new protocol NFT id from this contarct
+     * @param _erc20 - collateral token address
+     */
     function getERC20CollateralBalance(uint256 _wrappedId, address _erc20) public returns (uint256) {
         ERC20Collateral[] memory e = erc20Collateral[_wrappedId];
         for (uint256 i = 0; i < e.length; i ++) {
