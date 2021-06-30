@@ -1,8 +1,33 @@
 ## NIFTSY protocol
 Collateral-backed and price discovery cross-chain protocol to provide NFT with
- inner value and liquidity
+ inner value and liquidity.
+
+### Protocol Conractcts
+`WrapperBase` - main protocol contract with Wrapp and UnWrapp functionality.  
+Features:
+ - ability add native chain collateral(ETH, BNB, ...);
+ - ability add each-transfer-accumulated fee;
+ - author royalty from each erc721 token transfer;  
+
+`WrapperWithERC20Collateral` - extending for `WrapperBase`, add features for 
+ability add whitelisted ERC20 collateral to wrapped NFT.
 
 ### Deployments Info
+Deploy is very simple. You can find workflow in 
+[fixtures](./tests/fixtures/deploy_env.py) 
+
+### Deploy 20210627 Rinkeby ALFA-2-AUDIT
+#### WrapperWithERC20Collateral  
+https://rinkeby.etherscan.io/address/0xB9401FeB33fd7b13f549a1992A18E771a52A9e65#code
+
+#### Niftsy ERC20
+https://rinkeby.etherscan.io/address/0x1E991eA872061103560700683991A6cF88BA0028#code
+
+#### ERC721MOck
+https://rinkeby.etherscan.io/address/0x50FFDdCA76f4Eba021F701e6c400347A8c4bde55#code
+
+----
+
 
 ### Deploy 20210627 Rinkeby ALFA
 #### WrapperWithERC20Collateral  
