@@ -2,7 +2,7 @@
 Collateral-backed and price discovery cross-chain protocol to provide NFT with
  inner value and liquidity.
 
-### Protocol Conractcts
+### Protocol Conracts
 `WrapperBase` - main protocol contract with Wrapp and UnWrapp functionality.  
 Features:
  - ability add native chain collateral(ETH, BNB, ...);
@@ -11,6 +11,21 @@ Features:
 
 `WrapperWithERC20Collateral` - extending for `WrapperBase`, add features for 
 ability add whitelisted ERC20 collateral to wrapped NFT.
+
+### Tests
+We use Brownie framework for developing and unit test. For run tests
+first please [install it](https://eth-brownie.readthedocs.io/en/stable/install.html)
+
+```bash
+brownie pm install OpenZeppelin/openzeppelin-contracts@4.1.0
+brownie test
+```
+In `./tests` directory you can find test case file `long_test_wrapper_unWrap721_2.py` 
+which **is not** run with `brownie test` command becaus it take  along time (5..10 min).
+But for  run it please use : `brownie test ./tests/long_test_wrapper_unWrap721_2.py`
+
+
+Don't forget [ganache-cli](https://www.npmjs.com/package/ganache-cli)
 
 ### Deployments Info
 Deploy is very simple. You can find workflow in 
@@ -39,7 +54,7 @@ https://rinkeby.etherscan.io/address/0x1E991eA872061103560700683991A6cF88BA0028#
 #### ERC721MOck
 https://rinkeby.etherscan.io/address/0xB71e481C0EB22A3f6Bb54C11128bC673C47a68E5#code
 
-
+---
 
 ### Deploy 20210609 Rinkeby v1.0.1
 #### wrapper  
@@ -51,7 +66,7 @@ https://rinkeby.etherscan.io/address/0x1E991eA872061103560700683991A6cF88BA0028#
 #### ERC721MOck
 https://rinkeby.etherscan.io/address/0xB71e481C0EB22A3f6Bb54C11128bC673C47a68E5#code
 
-
+---
 
 #### 20210421 Testnet Binance Smart Chain
 ##### wrapper
