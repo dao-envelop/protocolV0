@@ -61,7 +61,13 @@ def test_wrapper_unWrap721_1(accounts, erc721mock, wrapper, niftsy20, dai, weth,
 	dai3 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI3")
 	dai4 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI4")
 	dai5 = accounts[0].deploy(TokenMock,"DAI MOCK Token1", "DAI5")
-	
+
+	wrapper.setCollateralStatus(dai1.address, True, {"from": accounts[0]})
+	wrapper.setCollateralStatus(dai2.address, True, {"from": accounts[0]})
+	wrapper.setCollateralStatus(dai3.address, True, {"from": accounts[0]})
+	wrapper.setCollateralStatus(dai4.address, True, {"from": accounts[0]})
+	wrapper.setCollateralStatus(dai5.address, True, {"from": accounts[0]})
+
 	dai1.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
 	dai2.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
 	dai3.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})

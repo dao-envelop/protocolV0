@@ -64,6 +64,7 @@ def makeWrapNFT(wrapper, erc721mock, fields, values, account):
 
 def _addErc20Collateral(account0, account1, wrapper, amount, tokenId , TokenMock):
 	dai = account0.deploy(TokenMock,"DAI MOCK Token", "DAI")
+	wrapper.setCollateralStatus(dai.address, True, {"from": account0})
 	dai.approve(wrapper.address, amount, {"from": account1})
 	dai.transfer(account1, amount, {"from": account0})
 	wrapper.addERC20Collateral(tokenId, dai.address, amount, {"from": account1})

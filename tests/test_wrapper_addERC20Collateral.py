@@ -47,6 +47,8 @@ def test_wrapper_addERC20Collateral(accounts, erc721mock, wrapper, niftsy20, dai
 
 	tokenId = wrapper.lastWrappedNFTId()
 	nft = wrapper.getWrappedToken(tokenId)
+
+	#try to add erc20 collaterals
 	#there is not allowance
 	with reverts("Please approve first"):
 		wrapper.addERC20Collateral(tokenId, dai.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
@@ -90,12 +92,24 @@ def test_wrapper_addERC20Collateral(accounts, erc721mock, wrapper, niftsy20, dai
 	assert wrapper.getERC20Collateral(tokenId)[1][0] == weth.address
 	assert wrapper.getERC20Collateral(tokenId)[1][1] == ERC20_COLLATERAL_AMOUNT
 
-	#add third token
+	#add third token#############################
+	#add erc20 in allowed address
+	with reverts("Ownable: caller is not the owner"):
+		wrapper.setCollateralStatus(niftsy20.address, True, {"from": accounts[1]})
+	wrapper.setCollateralStatus(niftsy20.address, True, {"from": accounts[0]})
+
+	#change MAX_ERC20_COUNT
+	with reverts("Ownable: caller is not the owner"):
+		wrapper.setMaxERC20CollateralCount(2, {"from": accounts[1]})
+	wrapper.setMaxERC20CollateralCount(2, {"from": accounts[0]})
+
 	niftsy20.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
 	niftsy20.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT + 100, {"from": accounts[1]})
 	logging.info('before niftsy20.balanceOf(accounts[1]) = {}'.format(niftsy20.balanceOf(accounts[1])))
 	logging.info('before niftsy20.balanceOf(wrapper.address) = {}'.format(niftsy20.balanceOf(wrapper.address)))
-	wrapper.addERC20Collateral(tokenId, niftsy20.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
+	
+	with reverts("To much ERC20 tokens in collatteral"):
+		wrapper.addERC20Collateral(tokenId, niftsy20.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
 	assert len(wrapper.getERC20Collateral(tokenId)) == 2
 	assert niftsy20.balanceOf(accounts[1]) == ERC20_COLLATERAL_AMOUNT
 	logging.info('after niftsy20.balanceOf(accounts[1]) = {}'.format(niftsy20.balanceOf(accounts[1])))

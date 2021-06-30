@@ -58,6 +58,7 @@ def test_wrapper_unWrap721_mockHacker(accounts, erc721mock, wrapper, niftsy20, d
 	#add hacker's token
 	mockHacker.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
 	mockHacker.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
+	wrapper.setCollateralStatus(mockHacker.address, True, {"from": accounts[0]})
 	wrapper.addERC20Collateral(tokenId, mockHacker.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
 	mockHacker.setFailSender(wrapper.address)
 
