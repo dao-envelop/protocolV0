@@ -55,11 +55,8 @@ def test_wrapper_unWrap721_batch(accounts, erc721mock, wrapper, niftsy20, dai, w
 	logging.info('nft2 = {}'.format(nft))
 	assert nft[3] == backedTokens
 
-	#add ERC20Collateral
-	'''t = 200
-	while t < 400:
-		logging.info('	dai' + str(t) + '= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)') 
-		t += 1'''
+	wrapper.setMaxERC20CollateralCount(270, {"from": accounts[0]})
+
 	dai1= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
 	dai2= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
 	dai3= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)

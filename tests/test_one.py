@@ -218,6 +218,7 @@ def test_add_hacker_collateral(accounts, mockHacker, erc721mock, wrapper, niftsy
     wrapper.addNativeCollateral(wrapper.lastWrappedNFTId(), {'from':accounts[0], 'value': ADD_NATIVE_COLLATERAL})
     dai.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {'from':accounts[0]})
     mockHacker.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT, {'from':accounts[0]})
+    wrapper.setCollateralStatus(mockHacker.address, True, {"from": accounts[0]})
     wrapper.addERC20Collateral(wrapper.lastWrappedNFTId(),mockHacker.address, ERC20_COLLATERAL_AMOUNT ,{'from':accounts[0]})
     wrapper.addERC20Collateral(wrapper.lastWrappedNFTId(),dai.address, ERC20_COLLATERAL_AMOUNT ,{'from':accounts[0]})
     logging.info(wrapper.getERC20Collateral(wrapper.lastWrappedNFTId())) 
