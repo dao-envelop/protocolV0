@@ -5,3 +5,7 @@ build/
 reports/
 logdo.md
 _niftsy_s/
+.env
+flat.sol
+abi/
+forverify/
