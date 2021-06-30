@@ -41,6 +41,23 @@ https://rinkeby.etherscan.io/address/0x1E991eA872061103560700683991A6cF88BA0028#
 #### ERC721MOck
 https://rinkeby.etherscan.io/address/0x50FFDdCA76f4Eba021F701e6c400347A8c4bde55#code
 
+#### Gas Consumption Info
+```
+WrapperWithERC20Collateral <Contract>
+   ├─ constructor                -  avg: 3621979  low: 3621979  high: 3621979
+   ├─ wrap721                    -  avg:  327957  low:   23452  high:  375160
+   ├─ transferFrom               -  avg:  103571  low:   23486  high:  161086
+   ├─ unWrap721                  -  avg:  119225  low:   28401  high:  230525
+   ├─ addERC20Collateral         -  avg:   98746  low:   23263  high:  121598
+   ├─ approve                    -  avg:   46901  low:   46894  high:   46906
+   ├─ setFee                     -  avg:   48896  low:   22665  high:   48896
+   ├─ setCollateralStatus        -  avg:   43090  low:   23055  high:   43897
+   ├─ addNativeCollateral        -  avg:   27730  low:   22525  high:   28430
+   └─ setMaxERC20CollateralCount -  avg:   28255  low:   22535  high:   28255
+
+
+```
+
 ----
 
 
@@ -87,3 +104,5 @@ https://rinkeby.etherscan.io/address/0x510CC3fB0E685Ff20768298d62b231a1A1df35c6#
 
 ##### ERC721MOck
 https://rinkeby.etherscan.io/address/0xB71e481C0EB22A3f6Bb54C11128bC673C47a68E5#code
+
+---
