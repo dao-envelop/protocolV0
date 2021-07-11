@@ -21,7 +21,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 	#make test data
 	makeNFTForTest(accounts, erc721mock, ORIGINAL_NFT_IDs)
 
-    #bad _underlineContract
+	#bad _underlineContract
 	with reverts(""):
 		wrapper.wrap721(
 			zero_address, 
@@ -144,6 +144,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			{'from':accounts[1]})
 	#wrap simple nft
 	niftsy20.transfer(accounts[1], protokolFee, {"from": accounts[0]})
+	niftsy20.approve(wrapper, TRANSFER_FEE, {'from':accounts[1]})
 	wrapper.wrap721(
 		erc721mock.address, 
 		ORIGINAL_NFT_IDs[0], 

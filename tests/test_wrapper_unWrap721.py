@@ -28,7 +28,7 @@ def test_wrapper_unWrap721(accounts, erc721mock, wrapper, niftsy20, dai, weth):
 	unwrapAfter = chain.time() + 10
 
 	erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[0], {'from':accounts[1]})
-	
+	niftsy20.approve(wrapper, TRANSFER_FEE, {'from':accounts[1]})
 	makeWrapNFT(wrapper, erc721mock, ['originalTokenId', 'transferFee', 'royaltyBeneficiary', 'royaltyPercent', 'unwraptFeeThreshold'], [ORIGINAL_NFT_IDs[0], 0, zero_address, 0, 0], accounts[1])
 	tokenId = wrapper.lastWrappedNFTId()
 
@@ -71,6 +71,7 @@ def test_wrapper_unWrap721_1(accounts, erc721mock, wrapper, niftsy20, dai, weth)
 	erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[1], {'from':accounts[1]})
 	
 	before_balance = niftsy20.balanceOf(wrapper.address)
+	niftsy20.approve(wrapper, TRANSFER_FEE, {'from':accounts[1]})
 	makeWrapNFT(wrapper, erc721mock, ['originalTokenId', 'royaltyBeneficiary', 'royaltyPercent'], [ORIGINAL_NFT_IDs[1], zero_address, 0], accounts[1])
 	tokenId = wrapper.lastWrappedNFTId()
 
@@ -110,6 +111,7 @@ def test_wrapper_unWrap721_2(accounts, erc721mock, wrapper, niftsy20, dai, weth)
 	for i in range(c):
 		wrapper.approve(accounts[i+2].address, tokenId, {"from": accounts[i+1]})
 		niftsy20.transfer(accounts[i + 1].address, TRANSFER_FEE, {"from": accounts[0]}) #add niftsy tokens to pay transfer fee
+		niftsy20.approve(wrapper, TRANSFER_FEE, {'from':accounts[i+1]})
 		wrapper.transferFrom(accounts[i+1].address, accounts[i+2].address, tokenId, {"from": accounts[i+2]}) #make transfers
 		transfer_amount += TRANSFER_FEE
 
@@ -157,6 +159,7 @@ def test_wrapper_unWrap721_3(accounts, erc721mock, wrapper, niftsy20, dai, weth)
 	unwrapAfter = chain.time() + 10
 	
 	before_balance = niftsy20.balanceOf(wrapper.address) 
+	niftsy20.approve(wrapper, TRANSFER_FEE, {'from':accounts[1]})
 	makeWrapNFT(wrapper, erc721mock, ['originalTokenId'], [ORIGINAL_NFT_IDs[2]], accounts[1])
 	assert niftsy20.balanceOf(accounts[1]) == 0
 	assert niftsy20.balanceOf(wrapper.address) == before_balance + protokolFee
@@ -172,6 +175,7 @@ def test_wrapper_unWrap721_3(accounts, erc721mock, wrapper, niftsy20, dai, weth)
 	for i in range(c):
 		wrapper.approve(accounts[i+2].address, tokenId, {"from": accounts[i+1]})
 		niftsy20.transfer(accounts[i + 1].address, TRANSFER_FEE, {"from": accounts[0]}) #add niftsy tokens to pay transfer fee
+		niftsy20.approve(wrapper, TRANSFER_FEE, {'from':accounts[i+1]})
 		wrapper.transferFrom(accounts[i+1].address, accounts[i+2].address, tokenId, {"from": accounts[i+2]}) #make transfers
 		royalty_tokens += TRANSFER_FEE*nft[7]/100
 		backedTokens += TRANSFER_FEE - TRANSFER_FEE*nft[7]/100
@@ -221,6 +225,7 @@ def test_wrapper_unWrap721_3(accounts, erc721mock, wrapper, niftsy20, dai, weth)
 	
 	#wrap
 	before_balance = niftsy20.balanceOf(wrapper.address) 
+	niftsy20.approve(wrapper, TRANSFER_FEE, {'from':accounts[1]})
 	makeWrapNFT(wrapper, erc721mock, ['originalTokenId'], [ORIGINAL_NFT_IDs[2]], accounts[1])
 	assert niftsy20.balanceOf(accounts[1]) == 0
 	assert wrapper.balanceOf(accounts[1]) == 1

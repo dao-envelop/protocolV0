@@ -25,9 +25,8 @@ def test_wrapper_addNativeCollateral(accounts, erc721mock, wrapper, niftsy20):
 
 	niftsy20.transfer(accounts[1], protokolFee, {"from": accounts[0]})
 	unwrapAfter = chain.time() + 10
-
+	niftsy20.approve(wrapper, TRANSFER_FEE, {'from':accounts[1]})
 	erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[0], {'from':accounts[1]})
-	
 	makeWrapNFT(wrapper, erc721mock, ['originalTokenId'], [ORIGINAL_NFT_IDs[0]], accounts[1])
 	assert niftsy20.balanceOf(accounts[1]) == 0
 	assert niftsy20.balanceOf(wrapper.address) == protokolFee
