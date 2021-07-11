@@ -64,7 +64,7 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard {
     );
 
     constructor(address _erc20) ERC721("Niftsy NFT Wrapper Protocol ALFA", "NIFTSY") {
-        require(_erc20 != address(0));
+        require(_erc20 != address(0), "ProjectToken cant be zero value");
         projectToken = _erc20; 
     }
 
