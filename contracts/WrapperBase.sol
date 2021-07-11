@@ -32,9 +32,9 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard {
     uint256 constant public MAX_TIME_TO_UNWRAP = 365 days;
     uint256 constant public MAX_FEE_THRESHOLD_PERCENT = 1; //percent from project token tottallSypply 
 
-    uint256 public protokolFee = 0;
+    uint256 public protocolFee = 0;
     uint256 public chargeFeeAfter = type(uint256).max;
-    uint256 public protokolFeeRaised;
+    uint256 public protocolFeeRaised;
 
     address public projectToken;
     
@@ -121,12 +121,13 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard {
             "Too much threshold"
         );
         //////////////////////////////////////////////////////
-        //Protokol fee can be not zero in the future       //
-        if  (_getProtokolFeeAmount() > 0) {
+        //Protocol fee can be not zero in the future       //
+        if  (_getProtocolFeeAmount() > 0) {
             require(
-                _chargeFee(msg.sender, _getProtokolFeeAmount()), 
-                "Cant charge protokol fee"
+                _chargeFee(msg.sender, _getProtocolFeeAmount()), 
+                "Cant charge protocol fee"
             );
+            protocolFeeRaised += _getProtocolFeeAmount();
         }
 
         ////////////////////////
@@ -255,7 +256,7 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard {
     //                    Admin functions                              //
     /////////////////////////////////////////////////////////////////////
     function setFee(uint256 _fee, uint256 _startDate) external onlyOwner {
-        protokolFee = _fee;
+        protocolFee = _fee;
         chargeFeeAfter = _startDate;
         emit NewFee(_fee, _startDate);
     }
@@ -321,9 +322,9 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard {
         return true;
     }
 
-    function _getProtokolFeeAmount() internal view returns (uint256) {
+    function _getProtocolFeeAmount() internal view returns (uint256) {
         if (block.timestamp >= chargeFeeAfter) {
-            return protokolFee;
+            return protocolFee;
         } else {
             return 0;
         }
