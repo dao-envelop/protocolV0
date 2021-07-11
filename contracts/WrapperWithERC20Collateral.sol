@@ -39,7 +39,14 @@ contract WrapperWithERC20Collateral is WrapperBase {
      * @param _erc20 address of erc20 collateral for add
      * @param _amount amount erc20 collateral for add  
      */
-    function addERC20Collateral(uint256 _wrappedTokenId, address _erc20, uint256 _amount) external {
+    function addERC20Collateral(
+        uint256 _wrappedTokenId, 
+        address _erc20, 
+        uint256 _amount
+    ) 
+        external
+        nonReentrant 
+    {
         require(ownerOf(_wrappedTokenId) != address(0));
         require(enabledForCollateral[_erc20], "This ERC20 is not enabled for collateral");
         require(
