@@ -277,7 +277,7 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard {
             //Transfer fee charge
             if  (nft.transferFee > 0) {
                 uint256 rAmount;
-                if (_chargeFee(from, nft.transferFee) == true) {
+                if (_chargeFee(from, nft.transferFee)) {
                     //Royalty send   
                     if  (nft.royaltyPercent > 0 ) {
                         rAmount = nft.royaltyPercent * nft.transferFee / 100;
