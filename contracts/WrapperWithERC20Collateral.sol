@@ -204,15 +204,7 @@ contract WrapperWithERC20Collateral is WrapperBase {
         // can be expencive
         ERC20Collateral[] storage e = erc20Collateral[_tokenId];
         if (e.length > 0) { 
-            uint256 n = _getTransferBatchCount();
-            if (e.length <= n) {
-                n = 0;
-            }
-            else {
-                n = e.length - n;
-            } 
-            
-            for (uint256 i = e.length; i > n; i --){
+            for (uint256 i = e.length; i > 0; i --){
                 // we need this try for protect from malicious 
                 // erc20 contract that  can block unWrap NFT
                 try 
@@ -224,14 +216,12 @@ contract WrapperWithERC20Collateral is WrapperBase {
                     emit SuspiciousFail(e[i-1].erc20Token, e[i-1].amount);
                 }    
                 e.pop();
+                if (gasleft() <= 50000) {
+                    emit PartialUnWrapp(_tokenId, msg.sender);
+                    return false;
+                }
             }
 
-            // If not all erc20 collateral were transfered
-            // we just exit.  User can finish unwrap with next tx
-            if  (e.length > 0 ) {
-                emit PartialUnWrapp(_tokenId, msg.sender);
-                return false;
-            }
         }
         return true;
 
