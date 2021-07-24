@@ -27,6 +27,8 @@ contract WrapperWithERC20Collateral is WrapperBase {
 
     event PartialUnWrapp(uint256 wrappedId, address owner);
     event SuspiciousFail(address failERC20, uint256 amount);
+    event CollateralStatusChanged(address erc20, bool newStatus);
+    event MaxCollateralCountChanged(uint256 oldValue, uint256 newValue);
 
     constructor (address _erc20) WrapperBase(_erc20) {
         enabledForCollateral[projectToken] = true;
@@ -96,6 +98,7 @@ contract WrapperWithERC20Collateral is WrapperBase {
     function setCollateralStatus(address _erc20, bool _isEnabled) external onlyOwner {
         require(_erc20 != address(0), "No Zero Address");
         enabledForCollateral[_erc20] = _isEnabled;
+        emit CollateralStatusChanged(_erc20, _isEnabled);
     }
 
     /**
@@ -105,6 +108,7 @@ contract WrapperWithERC20Collateral is WrapperBase {
      */
     function setMaxERC20CollateralCount(uint16 _count) external onlyOwner {
         MAX_ERC20_COUNT = _count;
+        emit MaxCollateralCountChanged(MAX_ERC20_COUNT, _count);
     }
     ////////////////////////////////////////////////
 
@@ -233,9 +237,9 @@ contract WrapperWithERC20Collateral is WrapperBase {
      * There is NO RISK  becouse we have MAX_ERC20_COUNT limitation
      * 
      */
-    function _getTransferBatchCount() internal view returns (uint256){
-        // It can be modified in future protocol version
-        return block.gaslimit / 50000; //average erc20 transfer cost 
-    }
+    // function _getTransferBatchCount() internal view returns (uint256){
+    //     // It can be modified in future protocol version
+    //     return block.gaslimit / 50000; //average erc20 transfer cost 
+    // }
 
 }
