@@ -22,7 +22,7 @@ def test_wrapper_unWrap721_1(accounts, erc721mock, wrapper, niftsy20, dai, weth,
 	#make test data
 	niftsy20.approve(wrapper, TRANSFER_FEE, {'from':accounts[0]})
 	makeNFTForTest(accounts, erc721mock, ORIGINAL_NFT_IDs)
-	wrapper.setFee(protokolFee, chargeFeeAfter, {"from": accounts[0]})
+	wrapper.setFee(protokolFee, chargeFeeAfter, niftsy20, {"from": accounts[0]})
 	erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[0], {'from':accounts[1]})
 	logging.info('balanceOf(wrapper.address) = {}'.format(niftsy20.balanceOf(wrapper.address)))
 	logging.info('balanceOf(royaltyBeneficiary) = {}'.format(niftsy20.balanceOf(royaltyBeneficiary)))
@@ -33,7 +33,7 @@ def test_wrapper_unWrap721_1(accounts, erc721mock, wrapper, niftsy20, dai, weth,
 	
 	before_balance = niftsy20.balanceOf(wrapper.address) 
 	niftsy20.approve(wrapper, TRANSFER_FEE, {'from':accounts[1]})
-	makeWrapNFT(wrapper, erc721mock, ['originalTokenId'], [ORIGINAL_NFT_IDs[0]], accounts[1])
+	makeWrapNFT(wrapper, erc721mock, ['originalTokenId'], [ORIGINAL_NFT_IDs[0]], accounts[1], niftsy20)
 	assert niftsy20.balanceOf(accounts[1]) == 0
 	assert niftsy20.balanceOf(wrapper.address) == before_balance + protokolFee
 	assert wrapper.lastWrappedNFTId() == 1
@@ -110,9 +110,12 @@ def test_wrapper_unWrap721_1(accounts, erc721mock, wrapper, niftsy20, dai, weth,
 	logging.info('niftsy20.balanceOf(accounts[i+2]) = {}'.format(niftsy20.balanceOf(accounts[i+2])))
 	logging.info('wrapper.balance() = {}'.format(wrapper.balance()))
 	logging.info('niftsy20.balanceOf(wrapper.address) = {}'.format(niftsy20.balanceOf(wrapper.address)))
+	logging.info('niftsy20.balanceOf(wrapper.address) = {}'.format(niftsy20.balanceOf(wrapper.address)))
 	balance_eth = accounts[i+2].balance()
 	balance_erc20 = niftsy20.balanceOf(wrapper.address)
 	balance_erc20_owner = niftsy20.balanceOf(accounts[i+2].address)
+	logging.info('wrapper.getWrappedToken(tokenId) = {}'.format(wrapper.getWrappedToken(tokenId)))
+
 	logging.info('********************AFTER UNWRAP*************')
 	#unwrap
 	wrapper.unWrap721(tokenId, {"from": accounts[i+2]})

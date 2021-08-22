@@ -31,6 +31,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			zero_address,
 			0,
 			0, 
+            niftsy20,
 			{'from':accounts[1]})
 	#nonexist nft
 	with reverts("ERC721: approved query for nonexistent token"):
@@ -42,6 +43,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			zero_address,
 			0,
 			0, 
+            niftsy20,
 			{'from':accounts[1]})
 	#there is not allowance for wrapper.address
 	with reverts("Please call approve in your NFT contract"):
@@ -53,6 +55,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			zero_address,
 			0,
 			0, 
+            niftsy20,
 			{'from':accounts[1]})
 	#check ROYALTY_PERCENT
 	erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[0], {'from':accounts[1]})
@@ -65,6 +68,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			zero_address,
 			wrapper.MAX_ROYALTY_PERCENT() + 1,
 			0, 
+            niftsy20,
 			{'from':accounts[1]})
 
 	#check _unwraptFeeThreshold
@@ -77,7 +81,8 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			0,
 			zero_address,
 			0,
-			1, 
+			1,
+            niftsy20, 
 			{'from':accounts[1]})
 
 	#check ROYALTY_PERCENT again
@@ -90,6 +95,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			zero_address,
 			wrapper.MAX_ROYALTY_PERCENT(),
 			0, 
+            niftsy20,
 			{'from':accounts[1]})
 
 	#check ROYALTY_address 
@@ -102,6 +108,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			royaltyBeneficiary,
 			0,
 			0, 
+            niftsy20,
 			{'from':accounts[1]})
 
 	#check _unwrapAfter
@@ -114,6 +121,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			zero_address,
 			0,
 			0, 
+            niftsy20,
 			{'from':accounts[1]})
 
 	#check _unwraptFeeThreshold
@@ -126,11 +134,12 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			zero_address,
 			0,
 			niftsy20.totalSupply() * wrapper.MAX_FEE_THRESHOLD_PERCENT() / 100 + 1, 
+            niftsy20,
 			{'from':accounts[1]})
 
 	with reverts("Ownable: caller is not the owner"):
-		wrapper.setFee(protokolFee, chargeFeeAfter, {"from": accounts[1]})
-	wrapper.setFee(protokolFee, chargeFeeAfter, {"from": accounts[0]})
+		wrapper.setFee(protokolFee, chargeFeeAfter, niftsy20,{"from": accounts[1]})
+	wrapper.setFee(protokolFee, chargeFeeAfter, niftsy20, {"from": accounts[0]})
 	#does not have niftsi token for protokol fee
 	with reverts("insufficient NIFTSY balance for fee"):
 		wrapper.wrap721(
@@ -141,6 +150,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 			zero_address,
 			0,
 			0, 
+            niftsy20,
 			{'from':accounts[1]})
 	#wrap simple nft
 	niftsy20.transfer(accounts[1], protokolFee, {"from": accounts[0]})
@@ -153,6 +163,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 		zero_address,
 		0,
 		0, 
+        niftsy20,
 		{'from':accounts[1]})
 	assert niftsy20.balanceOf(accounts[1]) == 0
 	assert niftsy20.balanceOf(wrapper.address) == protokolFee
@@ -178,7 +189,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
 
 	erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[1], {'from':accounts[1]})
 	
-	makeWrapNFT(wrapper, erc721mock, ['originalTokenId'], [ORIGINAL_NFT_IDs[1]], accounts[1])
+	makeWrapNFT(wrapper, erc721mock, ['originalTokenId'], [ORIGINAL_NFT_IDs[1]], accounts[1], niftsy20)
 	assert niftsy20.balanceOf(accounts[1]) == 0
 	assert niftsy20.balanceOf(wrapper.address) == 2 * protokolFee
 	assert wrapper.lastWrappedNFTId() == 2

@@ -12,7 +12,7 @@ def makeNFTForTest(accounts, erc721mock, original_nft_ids):
     [erc721mock.mint(x, {'from':accounts[0]})  for x in original_nft_ids]
     erc721mock.transferFrom(accounts[0], accounts[1], original_nft_ids[0], {'from':accounts[0]})
 
-def makeWrapNFT(wrapper, erc721mock, fields, values, account):
+def makeWrapNFT(wrapper, erc721mock, fields, values, account, niftsy20):
     START_NATIVE_COLLATERAL_ = '1 ether'
     ADD_NATIVE_COLLATERAL_ = '2 ether'
     ERC20_COLLATERAL_AMOUNT_ = 2e17;
@@ -59,6 +59,7 @@ def makeWrapNFT(wrapper, erc721mock, fields, values, account):
         ROYALTYBENEFICIARY_,
         ROAYLTY_PERCENT_,
         UNWRAP_FEE_THRESHOLD_, 
+        niftsy20.address,
         {'from':account, 'value':START_NATIVE_COLLATERAL_})
     assert erc721mock.ownerOf(ORIGINAL_NFT_IDs_[0]) == wrapper.address
     assert wrapper.ownerOf(wrapper.lastWrappedNFTId()) == account
