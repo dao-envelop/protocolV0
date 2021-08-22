@@ -120,6 +120,12 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard, IFeeRoyaltyC
     {
         
         /////////////////Sanity checks////////////////////////
+        //0. Check blacklist for wrapping NFT
+        require (
+                !partnersTokenList[_underlineContract].disabledForWrap,
+                "This NFT is blacklisted for wrap" 
+        );
+
         //1. ERC allowance
         require(
             IERC721(_underlineContract).getApproved(_tokenId) == address(this), 
@@ -148,6 +154,11 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard, IFeeRoyaltyC
                 _unwraptFeeThreshold  <
                 IERC20(_transferFeeToken).totalSupply() * MAX_FEE_THRESHOLD_PERCENT / 100,
                 "Too much threshold"
+            );
+
+            require (
+                partnersTokenList[_transferFeeToken].enabledForCollateral,
+                "This transferFee token is not enabled" 
             );
         }
         //////////////////////////////////////////////////////

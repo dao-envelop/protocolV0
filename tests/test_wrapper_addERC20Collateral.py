@@ -17,7 +17,7 @@ chargeFeeAfter = 10
 royaltyBeneficiary = '0xbd7e5fb7525ed8583893ce1b1f93e21cc0cf02f6'
 zero_address = '0x0000000000000000000000000000000000000000'
 
-def test_wrapper_addERC20Collateral(accounts, erc721mock, wrapper, niftsy20, dai, weth):
+def test_wrapper_addERC20Collateral(accounts, erc721mock, wrapper, niftsy20, dai, weth, trmodel):
 	#make test data
 	makeNFTForTest(accounts, erc721mock, ORIGINAL_NFT_IDs)
 	wrapper.setFee(protokolFee, chargeFeeAfter, niftsy20, {"from": accounts[0]})

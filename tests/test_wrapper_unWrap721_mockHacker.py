@@ -18,7 +18,7 @@ royaltyBeneficiary = '0xbd7e5fb7525ed8583893ce1b1f93e21cc0cf02f6'
 zero_address = '0x0000000000000000000000000000000000000000'
 
 #unwrap 
-def test_wrapper_unWrap721_mockHacker(accounts, erc721mock, wrapper, niftsy20, dai, weth, TokenMock, mockHacker):
+def test_wrapper_unWrap721_mockHacker(accounts, erc721mock, wrapper, niftsy20, dai, weth, TokenMock, mockHacker, trmodel):
 	#make test data
 	makeNFTForTest(accounts, erc721mock, ORIGINAL_NFT_IDs)
 	wrapper.setFee(protokolFee, chargeFeeAfter, niftsy20, {"from": accounts[0]})
@@ -47,7 +47,7 @@ def test_wrapper_unWrap721_mockHacker(accounts, erc721mock, wrapper, niftsy20, d
 	for i in range(c):
 		wrapper.approve(accounts[i+2].address, tokenId, {"from": accounts[i+1]})
 		niftsy20.transfer(accounts[i + 1].address, TRANSFER_FEE, {"from": accounts[0]}) #add niftsy tokens to pay transfer fee
-		niftsy20.approve(wrapper, TRANSFER_FEE, {'from':accounts[i+1]})
+		niftsy20.approve(trmodel, TRANSFER_FEE, {'from':accounts[i+1]})
 		wrapper.transferFrom(accounts[i+1].address, accounts[i+2].address, tokenId, {"from": accounts[i+2]}) #make transfers
 		royalty_tokens += TRANSFER_FEE*nft[7]/100
 		backedTokens += TRANSFER_FEE - TRANSFER_FEE*nft[7]/100

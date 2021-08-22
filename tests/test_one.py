@@ -21,7 +21,7 @@ def test_721mock(accounts, erc721mock):
     erc721mock.transferFrom(accounts[0], accounts[1], ORIGINAL_NFT_IDs[0], {'from':accounts[0]})
     erc721mock.transferFrom(accounts[0], accounts[1], ORIGINAL_NFT_IDs[2], {'from':accounts[0]})
 
-def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20):
+def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20,trmodel):
     #Give approve
     erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[0], {'from':accounts[1]})
     wrapper.wrap721(
