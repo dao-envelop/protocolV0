@@ -256,7 +256,7 @@ def test_wrap_default_feeToken(accounts, erc721mock, wrapper, niftsy20, dai, tec
         accounts[2], #_royaltyBeneficiary
         ROAYLTY_PERCENT, #_royaltyPercent
         UNWRAP_FEE_THRESHOLD,
-        '0x0000000000000000000000000000000000000000',
+        '0x0000000000000000000000000000000000000000', #DEFAULT FEE TOKEN !!!!!!!!!!!!!!!!!!!!!!!1
         {'from':accounts[0]}
     )
     logging.info('getWrappedToken {}'.format(
