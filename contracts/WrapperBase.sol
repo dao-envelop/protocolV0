@@ -2,19 +2,24 @@
 // NIFTSY protocol for NFT. Wrapper - main protocol contract
 pragma solidity ^0.8.6;
 
-import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/IERC20.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/utils/SafeERC20.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/security/ReentrancyGuard.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.2.0/contracts/access/Ownable.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.2.0/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.2.0/contracts/token/ERC20/utils/SafeERC20.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.2.0/contracts/security/ReentrancyGuard.sol";
+import "./TechToken.sol";
+import "../interfaces/ITechToken.sol";
+import "../interfaces/IFeeRoyaltyCharger.sol";
+
+
 /**
  * @title ERC-721 Non-Fungible Token Wrapper
  * @dev For wrpap existing ERC721 and ERC1155(now only 721)
  */
-contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard {
+contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard, IFeeRoyaltyCharger {
     using SafeERC20 for IERC20;
 
-    
+    enum AssetType {UNDEFINED, ERC20, ERC721, ERC1155}
+
     struct NFT {
         address tokenContract;      //Address of wrapping token  contract
         uint256 tokenId;            //Wrapping tokenId
@@ -25,6 +30,15 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard {
         address royaltyBeneficiary; //Royalty payments receiver
         uint256 royaltyPercent;     //% from transferFee
         uint256 unwraptFeeThreshold;//unwrap possiple only after backedTokens achive this amount
+        address transferFeeToken;   //user can define transfer fee token contract from whitelist
+        AssetType asset;            //wrapped Asset type
+        uint256 balance;            //wrapping balance for erc 1155
+    }
+
+    struct ListItem { 
+        bool enabledForCollateral;
+        address transferFeeModel;
+        bool disabledForWrap;
     }
 
     
@@ -37,11 +51,17 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard {
     uint256 public protocolFeeRaised;
 
     address public projectToken;
+    address public protocolFeeToken;
     
+    uint256 public lastWrappedNFTId; 
+
     // Map from wrapped token id => NFT record 
     mapping(uint256 => NFT) public wrappedTokens; //Private in Production
 
-    uint256 public lastWrappedNFTId; 
+     // Map from conatrct address to  enabled-as-collateral or blacklisted 
+    mapping(address => ListItem) public partnersTokenList;
+
+    
 
     event Wrapped(
         address underlineContract, 
@@ -60,7 +80,8 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard {
         uint256 indexed wrappedTokenId, 
         address indexed royaltyBeneficiary,
         uint256 transferFee, 
-        uint256 royalty 
+        uint256 royalty,
+        address feeToken 
     );
 
     constructor(address _erc20) ERC721("Niftsy NFT Wrapper Protocol ALFA", "NIFTSY") {
@@ -69,12 +90,18 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard {
     }
 
     /**
+     * @dev DEPRICTAED method due
      * @dev Function for wrap existing ERC721 
      *
      * @param _underlineContract address of native NFT contract
      * @param _tokenId id of NFT that need to be wraped
      * @param _unwrapAfter Unix time value after that token can be unwrapped  
      * @param _transferFee transferFee amount of projectToken with decimals i.e. 20e18 
+     * @param _royaltyBeneficiary - address for royalty transfers
+     * @param _royaltyPercent - integer 1..100, not more then MAX_ROYALTY_PERCENT
+     * @param _unwraptFeeThreshold - token amounts in baccked fee for unwrap enable
+     * @param _transferFeeToken - token address for fee and royalty settlemnet. By default
+     * tech virtual project token 
      * @return uint256 id of new wrapped token that represent old
      */
     function wrap721(
@@ -84,7 +111,8 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard {
         uint256 _transferFee,
         address _royaltyBeneficiary,
         uint256 _royaltyPercent,
-        uint256 _unwraptFeeThreshold
+        uint256 _unwraptFeeThreshold,
+        address _transferFeeToken
     ) 
         external 
         payable
@@ -98,7 +126,7 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard {
             "Please call approve in your NFT contract"
         );
 
-        //2. Logik around transfer fee
+        //2. Logic around transfer fee
         if  (_transferFee > 0) {
             require(_royaltyPercent <= MAX_ROYALTY_PERCENT, "Royalty percent too big");     
 
@@ -114,12 +142,14 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard {
             "Too long Wrap"
         );
 
-        //4. 
-        require(
-            _unwraptFeeThreshold  <
-            IERC20(projectToken).totalSupply() * MAX_FEE_THRESHOLD_PERCENT / 100,
-            "Too much threshold"
-        );
+        //4. For custom trnasfer fee token lets check MAX_FEE_THRESHOLD_PERCENT
+        if  (_transferFeeToken != address(0) && _transferFeeToken != projectToken) { 
+            require(
+                _unwraptFeeThreshold  <
+                IERC20(_transferFeeToken).totalSupply() * MAX_FEE_THRESHOLD_PERCENT / 100,
+                "Too much threshold"
+            );
+        }
         //////////////////////////////////////////////////////
         //Protocol fee can be not zero in the future       //
         if  (_getProtocolFeeAmount() > 0) {
@@ -144,7 +174,11 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard {
             _transferFee,
             _royaltyBeneficiary,
             _royaltyPercent,
-            _unwraptFeeThreshold
+            _unwraptFeeThreshold,
+            _transferFeeToken,
+            AssetType.ERC721,
+            0
+
         );
         emit Wrapped(_underlineContract, _tokenId, lastWrappedNFTId);
         return lastWrappedNFTId;
@@ -209,14 +243,43 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard {
         }
         //Return backed tokens
         if  (nft.backedTokens > 0) {
-            IERC20(projectToken).transfer(msg.sender, nft.backedTokens);
+            if  (nft.transferFeeToken == address(0)) {
+                IERC20(projectToken).transfer(msg.sender, nft.backedTokens);
+            } else {
+                IERC20(nft.transferFeeToken).safeTransfer(msg.sender, nft.backedTokens);
+            }
         }
+        
         emit UnWrapped(
             _tokenId, 
             msg.sender, 
             nft.backedValue,
             nft.backedTokens 
         );
+    }
+
+    
+    /**
+     * @dev Function is part of transferFeeModel interface
+     * for charge fee in tech protokol Token 
+     *
+     */
+    function chargeTransferFeeAndRoyalty(
+        address from, 
+        address to, 
+        uint256 transferFee, 
+        uint256 royaltyPercent, 
+        address royaltyBeneficiary,
+        address _transferFeeToken
+    ) external
+      override 
+      returns (uint256 feeIncrement)
+    {
+        require(msg.sender == address(this), "Wrapper only");
+        uint256 rAmount = royaltyPercent * transferFee / 100;
+        ITechToken(projectToken).mint(address(this), transferFee - rAmount);
+        ITechToken(projectToken).mint(royaltyBeneficiary, rAmount);
+        return transferFee - rAmount;
     }
 
     
@@ -255,10 +318,26 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard {
     /////////////////////////////////////////////////////////////////////
     //                    Admin functions                              //
     /////////////////////////////////////////////////////////////////////
-    function setFee(uint256 _fee, uint256 _startDate) external onlyOwner {
+    function setFee(uint256 _fee, uint256 _startDate, address _protocolFeeToken) external onlyOwner {
         protocolFee = _fee;
         chargeFeeAfter = _startDate;
+        protocolFeeToken = _protocolFeeToken;
         emit NewFee(_fee, _startDate);
+    }
+
+    function editPartnersItem (
+        address _contract, 
+        bool _isCollateral, 
+        address _transferFeeModel, 
+        bool _isBlackListed 
+    ) 
+        external 
+        onlyOwner 
+    {
+        partnersTokenList[_contract] = ListItem(
+            _isCollateral, _transferFeeModel, _isBlackListed
+        );
+
     }
 
 
@@ -278,19 +357,31 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard {
             NFT storage nft = wrappedTokens[tokenId];
             //Transfer fee charge
             if  (nft.transferFee > 0) {
-                uint256 rAmount;
-                if (_chargeFee(from, nft.transferFee)) {
-                    //Royalty send   
-                    if  (nft.royaltyPercent > 0 ) {
-                        rAmount = nft.royaltyPercent * nft.transferFee / 100;
-                        IERC20(projectToken).transfer(
-                            nft.royaltyBeneficiary,
-                            rAmount
-                        );
-                    }
-                    nft.backedTokens += nft.transferFee - rAmount;
+                address feeCharger = partnersTokenList[nft.transferFeeToken].transferFeeModel;
+
+                // If there is no custom fee&royalty model then use
+                // tech virtual protokol token
+                if (feeCharger == address(0)) { 
+                    feeCharger = address(this); 
                 }
-                emit NiftsyProtocolTransfer(tokenId, nft.royaltyBeneficiary, nft.transferFee, rAmount);
+
+                uint256 feeinc = IFeeRoyaltyCharger(feeCharger).chargeTransferFeeAndRoyalty(
+                    from, 
+                    to, 
+                    nft.transferFee, 
+                    nft.royaltyPercent, 
+                    nft.royaltyBeneficiary,
+                    nft.transferFeeToken
+                ); 
+                nft.backedTokens += feeinc;
+                
+                emit NiftsyProtocolTransfer(
+                    tokenId, 
+                    nft.royaltyBeneficiary, 
+                    nft.transferFee, 
+                    nft.transferFee - feeinc, 
+                    nft.transferFeeToken
+                );
             }
         }
     }
@@ -303,10 +394,10 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard {
      */
     function _chargeFee(address _payer, uint256 _amount) internal returns(bool) {
         require(
-            IERC20(projectToken).balanceOf(_payer) >= _amount, 
+            IERC20(protocolFeeToken).balanceOf(_payer) >= _amount, 
                     "insufficient NIFTSY balance for fee"
         );
-        IERC20(projectToken).transferFrom(_payer, address(this), _amount);
+        IERC20(protocolFeeToken).transferFrom(_payer, address(this), _amount);
         return true;
     }
 

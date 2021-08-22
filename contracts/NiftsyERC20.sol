@@ -2,7 +2,7 @@
 // NIFTSY protocol ERC20
 pragma solidity ^0.8.6;
 
-import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/ERC20.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.2.0/contracts/token/ERC20/ERC20.sol";
 
 
 contract Niftsy is ERC20 {

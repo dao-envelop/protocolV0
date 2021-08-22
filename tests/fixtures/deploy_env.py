@@ -28,12 +28,26 @@ def niftsy20(accounts, Niftsy):
     yield erc20 
 
 @pytest.fixture(scope="module")
-def wrapper(accounts, WrapperWithERC20Collateral, niftsy20, dai, weth):
-    t = accounts[0].deploy(WrapperWithERC20Collateral, niftsy20.address)
+def techERC20(accounts, TechToken):
+    erc20 = accounts[0].deploy(TechToken)
+    yield erc20     
+
+@pytest.fixture(scope="module")
+def wrapper(accounts, WrapperWithERC20Collateral, techERC20, dai, weth):
+    t = accounts[0].deploy(WrapperWithERC20Collateral, techERC20.address)
     #niftsy20.addMinter(t.address, {'from':accounts[0]})
     t.setCollateralStatus(dai.address, True)
     t.setCollateralStatus(weth.address, True)
+    techERC20.addMinter(t.address, {'from': accounts[0]})
     yield t 
+
+@pytest.fixture(scope="module")
+def trmodel(accounts, TransferRoyaltyModel01, wrapper, niftsy20):
+    t = accounts[0].deploy(TransferRoyaltyModel01, wrapper.address)
+    wrapper.editPartnersItem(niftsy20.address, True, t.address, False,{'from': accounts[0]})
+    yield t 
+
+
 
 @pytest.fixture(scope="module")
 def mockHacker(accounts, MaliciousTokenMock):

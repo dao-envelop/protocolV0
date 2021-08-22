@@ -3,7 +3,7 @@
 pragma solidity ^0.8.6;
 
 import "./WrapperBase.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/utils/introspection/ERC165Checker.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.2.0/contracts/utils/introspection/ERC165Checker.sol";
 /**
  * @title ERC-721 Non-Fungible Token Wrapper 
  * @dev For wrpap existing ERC721 with ability add ERC20 collateral
@@ -23,7 +23,7 @@ contract WrapperWithERC20Collateral is WrapperBase {
     mapping(uint256 => ERC20Collateral[]) public erc20Collateral;
 
     // Map from collateral conatrct address to bool(enabled-as-collateral) 
-    mapping(address => bool) public enabledForCollateral;
+    //mapping(address => bool) public enabledForCollateral;
 
     event PartialUnWrapp(uint256 wrappedId, address owner);
     event SuspiciousFail(address failERC20, uint256 amount);
@@ -31,7 +31,7 @@ contract WrapperWithERC20Collateral is WrapperBase {
     event MaxCollateralCountChanged(uint256 oldValue, uint256 newValue);
 
     constructor (address _erc20) WrapperBase(_erc20) {
-        enabledForCollateral[projectToken] = true;
+        partnersTokenList[_erc20].enabledForCollateral = true;
     } 
 
     /**
@@ -50,7 +50,7 @@ contract WrapperWithERC20Collateral is WrapperBase {
         nonReentrant 
     {
         require(ownerOf(_wrappedTokenId) != address(0));
-        require(enabledForCollateral[_erc20], "This ERC20 is not enabled for collateral");
+        require(enabledForCollateral(_erc20), "This ERC20 is not enabled for collateral");
         require(
             IERC20(_erc20).balanceOf(msg.sender) >= _amount,
             "Low balance for add collateral"
@@ -97,7 +97,7 @@ contract WrapperWithERC20Collateral is WrapperBase {
      */
     function setCollateralStatus(address _erc20, bool _isEnabled) external onlyOwner {
         require(_erc20 != address(0), "No Zero Address");
-        enabledForCollateral[_erc20] = _isEnabled;
+        partnersTokenList[_erc20].enabledForCollateral = _isEnabled;
         emit CollateralStatusChanged(_erc20, _isEnabled);
     }
 
@@ -137,6 +137,10 @@ contract WrapperWithERC20Collateral is WrapperBase {
             }
         }
     } 
+
+    function enabledForCollateral(address _contract) public returns (bool) {
+        return partnersTokenList[_contract].enabledForCollateral;
+    }
 
     /**
      * @dev Helper function for check that _underlineContract supports 
