@@ -3,7 +3,7 @@
 pragma solidity ^0.8.6;
 
 import "./WrapperBase.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/utils/introspection/ERC165Checker.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.2.0/contracts/utils/introspection/ERC165Checker.sol";
 /**
  * @title ERC-721 Non-Fungible Token Wrapper 
  * @dev For wrpap existing ERC721 with ability add ERC20 collateral
@@ -23,13 +23,15 @@ contract WrapperWithERC20Collateral is WrapperBase {
     mapping(uint256 => ERC20Collateral[]) public erc20Collateral;
 
     // Map from collateral conatrct address to bool(enabled-as-collateral) 
-    mapping(address => bool) public enabledForCollateral;
+    //mapping(address => bool) public enabledForCollateral;
 
     event PartialUnWrapp(uint256 wrappedId, address owner);
     event SuspiciousFail(address failERC20, uint256 amount);
+    event CollateralStatusChanged(address erc20, bool newStatus);
+    event MaxCollateralCountChanged(uint256 oldValue, uint256 newValue);
 
     constructor (address _erc20) WrapperBase(_erc20) {
-        enabledForCollateral[projectToken] = true;
+        partnersTokenList[_erc20].enabledForCollateral = true;
     } 
 
     /**
@@ -39,9 +41,16 @@ contract WrapperWithERC20Collateral is WrapperBase {
      * @param _erc20 address of erc20 collateral for add
      * @param _amount amount erc20 collateral for add  
      */
-    function addERC20Collateral(uint256 _wrappedTokenId, address _erc20, uint256 _amount) external {
+    function addERC20Collateral(
+        uint256 _wrappedTokenId, 
+        address _erc20, 
+        uint256 _amount
+    ) 
+        external
+        nonReentrant 
+    {
         require(ownerOf(_wrappedTokenId) != address(0));
-        require(enabledForCollateral[_erc20], "This ERC20 is not enabled for collateral");
+        require(enabledForCollateral(_erc20), "This ERC20 is not enabled for collateral");
         require(
             IERC20(_erc20).balanceOf(msg.sender) >= _amount,
             "Low balance for add collateral"
@@ -88,7 +97,8 @@ contract WrapperWithERC20Collateral is WrapperBase {
      */
     function setCollateralStatus(address _erc20, bool _isEnabled) external onlyOwner {
         require(_erc20 != address(0), "No Zero Address");
-        enabledForCollateral[_erc20] = _isEnabled;
+        partnersTokenList[_erc20].enabledForCollateral = _isEnabled;
+        emit CollateralStatusChanged(_erc20, _isEnabled);
     }
 
     /**
@@ -98,6 +108,7 @@ contract WrapperWithERC20Collateral is WrapperBase {
      */
     function setMaxERC20CollateralCount(uint16 _count) external onlyOwner {
         MAX_ERC20_COUNT = _count;
+        emit MaxCollateralCountChanged(MAX_ERC20_COUNT, _count);
     }
     ////////////////////////////////////////////////
 
@@ -126,6 +137,10 @@ contract WrapperWithERC20Collateral is WrapperBase {
             }
         }
     } 
+
+    function enabledForCollateral(address _contract) public returns (bool) {
+        return partnersTokenList[_contract].enabledForCollateral;
+    }
 
     /**
      * @dev Helper function for check that _underlineContract supports 
@@ -197,15 +212,7 @@ contract WrapperWithERC20Collateral is WrapperBase {
         // can be expencive
         ERC20Collateral[] storage e = erc20Collateral[_tokenId];
         if (e.length > 0) { 
-            uint256 n = _getTransferBatchCount();
-            if (e.length <= n) {
-                n = 0;
-            }
-            else {
-                n = e.length - n;
-            } 
-            
-            for (uint256 i = e.length; i > n; i --){
+            for (uint256 i = e.length; i > 0; i --){
                 // we need this try for protect from malicious 
                 // erc20 contract that  can block unWrap NFT
                 try 
@@ -217,14 +224,12 @@ contract WrapperWithERC20Collateral is WrapperBase {
                     emit SuspiciousFail(e[i-1].erc20Token, e[i-1].amount);
                 }    
                 e.pop();
+                if (gasleft() <= 50000) {
+                    emit PartialUnWrapp(_tokenId, msg.sender);
+                    return false;
+                }
             }
 
-            // If not all erc20 collateral were transfered
-            // we just exit.  User can finish unwrap with next tx
-            if  (e.length > 0 ) {
-                emit PartialUnWrapp(_tokenId, msg.sender);
-                return false;
-            }
         }
         return true;
 
@@ -236,9 +241,9 @@ contract WrapperWithERC20Collateral is WrapperBase {
      * There is NO RISK  becouse we have MAX_ERC20_COUNT limitation
      * 
      */
-    function _getTransferBatchCount() internal view returns (uint256){
-        // It can be modified in future protocol version
-        return block.gaslimit / 50000; //average erc20 transfer cost 
-    }
+    // function _getTransferBatchCount() internal view returns (uint256){
+    //     // It can be modified in future protocol version
+    //     return block.gaslimit / 50000; //average erc20 transfer cost 
+    // }
 
 }

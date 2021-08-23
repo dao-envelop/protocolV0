@@ -2,8 +2,8 @@
 // NIFTSY protocol for NFT
 pragma solidity ^0.8.6;
 
-import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.2.0/contracts/access/Ownable.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.2.0/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
 //v0.0.1
 contract Token721Mock is ERC721URIStorage, Ownable {

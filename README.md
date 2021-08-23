@@ -1,8 +1,65 @@
 ## NIFTSY protocol
 Collateral-backed and price discovery cross-chain protocol to provide NFT with
- inner value and liquidity
+ inner value and liquidity.
+
+### Protocol Conracts
+`WrapperBase` - main protocol contract with Wrapp and UnWrapp functionality.  
+Features:
+ - ability add native chain collateral(ETH, BNB, ...);
+ - ability add each-transfer-accumulated fee;
+ - author royalty from each erc721 token transfer;  
+
+`WrapperWithERC20Collateral` - extending for `WrapperBase`, add features for 
+ability add whitelisted ERC20 collateral to wrapped NFT.
+
+### Tests
+We use Brownie framework for developing and unit test. For run tests
+first please [install it](https://eth-brownie.readthedocs.io/en/stable/install.html)
+
+```bash
+brownie pm install OpenZeppelin/openzeppelin-contracts@4.1.0
+brownie test
+```
+In `./tests` directory you can find test case file `long_test_wrapper_unWrap721_2.py` 
+which **is not** run with `brownie test` command becaus it take  along time (5..10 min).
+But for  run it please use : `brownie test ./tests/long_test_wrapper_unWrap721_2.py`
+
+
+Don't forget [ganache-cli](https://www.npmjs.com/package/ganache-cli)
 
 ### Deployments Info
+Deploy is very simple. You can find workflow in 
+[fixtures](./tests/fixtures/deploy_env.py) 
+
+### Deploy 20210627 Rinkeby ALFA-2-AUDIT
+#### WrapperWithERC20Collateral  
+https://rinkeby.etherscan.io/address/0xB9401FeB33fd7b13f549a1992A18E771a52A9e65#code
+
+#### Niftsy ERC20
+https://rinkeby.etherscan.io/address/0x1E991eA872061103560700683991A6cF88BA0028#code
+
+#### ERC721MOck
+https://rinkeby.etherscan.io/address/0x50FFDdCA76f4Eba021F701e6c400347A8c4bde55#code
+
+#### Gas Consumption Info
+```
+WrapperWithERC20Collateral <Contract>
+   ├─ constructor                -  avg: 3621979  low: 3621979  high: 3621979
+   ├─ wrap721                    -  avg:  327957  low:   23452  high:  375160
+   ├─ transferFrom               -  avg:  103571  low:   23486  high:  161086
+   ├─ unWrap721                  -  avg:  119225  low:   28401  high:  230525
+   ├─ addERC20Collateral         -  avg:   98746  low:   23263  high:  121598
+   ├─ approve                    -  avg:   46901  low:   46894  high:   46906
+   ├─ setFee                     -  avg:   48896  low:   22665  high:   48896
+   ├─ setCollateralStatus        -  avg:   43090  low:   23055  high:   43897
+   ├─ addNativeCollateral        -  avg:   27730  low:   22525  high:   28430
+   └─ setMaxERC20CollateralCount -  avg:   28255  low:   22535  high:   28255
+
+
+```
+
+----
+
 
 ### Deploy 20210627 Rinkeby ALFA
 #### WrapperWithERC20Collateral  
@@ -14,7 +71,7 @@ https://rinkeby.etherscan.io/address/0x1E991eA872061103560700683991A6cF88BA0028#
 #### ERC721MOck
 https://rinkeby.etherscan.io/address/0xB71e481C0EB22A3f6Bb54C11128bC673C47a68E5#code
 
-
+---
 
 ### Deploy 20210609 Rinkeby v1.0.1
 #### wrapper  
@@ -26,7 +83,7 @@ https://rinkeby.etherscan.io/address/0x1E991eA872061103560700683991A6cF88BA0028#
 #### ERC721MOck
 https://rinkeby.etherscan.io/address/0xB71e481C0EB22A3f6Bb54C11128bC673C47a68E5#code
 
-
+---
 
 #### 20210421 Testnet Binance Smart Chain
 ##### wrapper
@@ -47,3 +104,5 @@ https://rinkeby.etherscan.io/address/0x510CC3fB0E685Ff20768298d62b231a1A1df35c6#
 
 ##### ERC721MOck
 https://rinkeby.etherscan.io/address/0xB71e481C0EB22A3f6Bb54C11128bC673C47a68E5#code
+
+---
