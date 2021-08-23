@@ -1,7 +1,7 @@
 import pytest
 import logging
 from brownie import Wei, reverts, chain
-from makeTestData import makeNFTForTest, makeWrapNFT
+from makeTestData import makeNFTForTest, makeWrapNFT, _addErc20Collateral
 from checkData import checkWrappedNFT
 
 LOGGER = logging.getLogger(__name__)
@@ -17,7 +17,7 @@ chargeFeeAfter = 10
 royaltyBeneficiary = '0xbd7e5fb7525ed8583893ce1b1f93e21cc0cf02f6'
 zero_address = '0x0000000000000000000000000000000000000000'
 
-def test_wrapper_addERC20Collateral(accounts, erc721mock, wrapper, niftsy20, dai, weth):
+def test_wrapper_addERC20Collateral(accounts, erc721mock, wrapper, niftsy20, dai, weth, TokenMock):
 	#make test data
 	makeNFTForTest(accounts, erc721mock, ORIGINAL_NFT_IDs)
 	wrapper.setFee(protokolFee, chargeFeeAfter, {"from": accounts[0]})
@@ -114,4 +114,8 @@ def test_wrapper_addERC20Collateral(accounts, erc721mock, wrapper, niftsy20, dai
 	assert niftsy20.balanceOf(accounts[1]) == ERC20_COLLATERAL_AMOUNT
 	logging.info('after niftsy20.balanceOf(accounts[1]) = {}'.format(niftsy20.balanceOf(accounts[1])))
 	logging.info('after niftsy20.balanceOf(wrapper.address) = {}'.format(niftsy20.balanceOf(wrapper.address)))
+
+	#try to add erc20 collateral for non allowanced erc20
+	with reverts("To much ERC20 tokens in collatteral"):
+		dai1= _addErc20Collateral(accounts[0], accounts[1], wrapper, ERC20_COLLATERAL_AMOUNT, tokenId, TokenMock)
 
