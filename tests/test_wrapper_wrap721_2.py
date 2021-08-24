@@ -18,7 +18,7 @@ royaltyBeneficiary = '0xbd7e5fb7525ed8583893ce1b1f93e21cc0cf02f6'
 zero_address = '0x0000000000000000000000000000000000000000'
 
 #original nft contract is in blackList
-def test_wrap_with_protokolFee(accounts, erc721mock, wrapper, niftsy20, trmodel, pft, fakeERC721mock):
+def test_wrap_for_blocked_original_nft_contract(accounts, erc721mock, wrapper, niftsy20, trmodel, pft, fakeERC721mock):
 
 	#add contract in blackList
 	with reverts("Ownable: caller is not the owner"):
