@@ -44,7 +44,7 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard, IFeeRoyaltyC
     
     uint256 constant public MAX_ROYALTY_PERCENT = 50;
     uint256 constant public MAX_TIME_TO_UNWRAP = 365 days;
-    uint256 constant public MAX_FEE_THRESHOLD_PERCENT = 1; //percent from project token tottallSypply 
+    uint256 constant public MAX_FEE_THRESHOLD_PERCENT = 1; //percent from project token totalSupply 
 
     uint256 public protocolFee = 0;
     uint256 public chargeFeeAfter = type(uint256).max;
@@ -148,7 +148,7 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard, IFeeRoyaltyC
             "Too long Wrap"
         );
 
-        //4. For custom trnasfer fee token lets check MAX_FEE_THRESHOLD_PERCENT
+        //4. For custom transfer fee token lets check MAX_FEE_THRESHOLD_PERCENT
         if  (_transferFeeToken != address(0) && _transferFeeToken != projectToken) { 
             require(
                 _unwraptFeeThreshold  <
@@ -406,7 +406,7 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard, IFeeRoyaltyC
     function _chargeFee(address _payer, uint256 _amount) internal returns(bool) {
         require(
             IERC20(protocolFeeToken).balanceOf(_payer) >= _amount, 
-                    "insufficient NIFTSY balance for fee"
+                    "insufficient protocol fee token balance for fee"
         );
         IERC20(protocolFeeToken).transferFrom(_payer, address(this), _amount);
         return true;

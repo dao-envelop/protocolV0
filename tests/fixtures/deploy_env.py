@@ -12,6 +12,11 @@ def weth(accounts, TokenMock):
     yield weth
 
 @pytest.fixture(scope="module")
+def pft(accounts, TokenMock):
+    pft = accounts[0].deploy(TokenMock,"PF MOCK Token", "PFT")
+    yield pft
+
+@pytest.fixture(scope="module")
 def erc721mock(accounts, Token721Mock):
     """
     Simple NFT with URI
