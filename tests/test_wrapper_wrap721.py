@@ -140,8 +140,8 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20, trmodel):
 	with reverts("Ownable: caller is not the owner"):
 		wrapper.setFee(protokolFee, chargeFeeAfter, niftsy20,{"from": accounts[1]})
 	wrapper.setFee(protokolFee, chargeFeeAfter, niftsy20, {"from": accounts[0]})
-	#does not have niftsi token for protokol fee
-	with reverts("insufficient NIFTSY balance for fee"):
+	#does not have niftsy token for protokol fee
+	with reverts("insufficient protocol fee token balance for fee"):
 		wrapper.wrap721(
 			erc721mock.address, 
 			ORIGINAL_NFT_IDs[0], 

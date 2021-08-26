@@ -17,8 +17,8 @@ chargeFeeAfter = 100
 royaltyBeneficiary = '0xbd7e5fb7525ed8583893ce1b1f93e21cc0cf02f6'
 zero_address = '0x0000000000000000000000000000000000000000'
 
-#transferFee Contract is in blackList
-def test_wrap_with_transferFeeContract_in_blackList(accounts, erc721mock, wrapper, niftsy20, trmodel, pft, dai):
+#transferFee Contract is in blackList, it is client-side
+def test_wrap_with_transferFeeContract_in_blackList(accounts, erc721mock, wrapper,  trmodel, pft, dai):
 
 	#protocol fee is being taken
 	wrapper.setFee(protokolFee, chargeFeeAfter, pft.address, {"from": accounts[0]})
