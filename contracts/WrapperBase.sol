@@ -330,6 +330,7 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard, IFeeRoyaltyC
     //                    Admin functions                              //
     /////////////////////////////////////////////////////////////////////
     function setFee(uint256 _fee, uint256 _startDate, address _protocolFeeToken) external onlyOwner {
+        require(_protocolFeeToken != address(0), "No zero address");
         protocolFee = _fee;
         chargeFeeAfter = _startDate;
         protocolFeeToken = _protocolFeeToken;

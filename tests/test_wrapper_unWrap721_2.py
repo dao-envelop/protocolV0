@@ -21,7 +21,7 @@ zero_address = '0x0000000000000000000000000000000000000000'
 def test_wrapper_unWrap721_batch(accounts, erc721mock, wrapper, niftsy20, dai, weth, TokenMock):
 	#make test data
 	makeNFTForTest(accounts, erc721mock, ORIGINAL_NFT_IDs)
-	wrapper.setFee(protokolFee, chargeFeeAfter, {"from": accounts[0]})
+	wrapper.setFee(protokolFee, chargeFeeAfter, niftsy20,{"from": accounts[0]})
 	erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs[0], {'from':accounts[1]})
 	logging.info('balanceOf(wrapper.address) = {}'.format(niftsy20.balanceOf(wrapper.address)))
 	logging.info('balanceOf(royaltyBeneficiary) = {}'.format(niftsy20.balanceOf(royaltyBeneficiary)))
@@ -31,7 +31,7 @@ def test_wrapper_unWrap721_batch(accounts, erc721mock, wrapper, niftsy20, dai, w
 	unwrapAfter = chain.time() + 10
 	
 	before_balance = niftsy20.balanceOf(wrapper.address) 
-	makeWrapNFT(wrapper, erc721mock, ['originalTokenId'], [ORIGINAL_NFT_IDs[0]], accounts[1])
+	makeWrapNFT(wrapper, erc721mock, ['originalTokenId'], [ORIGINAL_NFT_IDs[0]], accounts[1], niftsy20)
 	assert niftsy20.balanceOf(accounts[1]) == 0
 	assert niftsy20.balanceOf(wrapper.address) == before_balance + protokolFee
 	assert wrapper.lastWrappedNFTId() == 1
