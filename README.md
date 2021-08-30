@@ -31,6 +31,24 @@ Don't forget [ganache-cli](https://www.npmjs.com/package/ganache-cli)
 Deploy is very simple. You can find workflow in 
 [fixtures](./tests/fixtures/deploy_env.py) 
 
+### Mainnet deploy
+**NIFTSY ERC20 token**
+https://etherscan.io/address/0x7728cd70b3dD86210e2bd321437F448231B81733#code
+
+
+
+### Deploy 20210830 Rinkeby Pre Prod Deploy
+**WrapperWithERC20Collateral**  
+https://rinkeby.etherscan.io/address/0x6d3e28b5Fa8d13A08Cbbf8151D86f77829977c34#code  
+
+**techERC20**
+https://rinkeby.etherscan.io/address/0xbbe47167666100eC33de9079c1EE7B150cCbD874#code  
+
+
+**TransferRoyaltyModel01**
+https://rinkeby.etherscan.io/address/0x64820a2cB3367C9b1416a101682e3CAc7E7392a9#code  
+
+
 ### Deploy 20210627 Rinkeby ALFA-2-AUDIT
 #### WrapperWithERC20Collateral  
 https://rinkeby.etherscan.io/address/0xB9401FeB33fd7b13f549a1992A18E771a52A9e65#code

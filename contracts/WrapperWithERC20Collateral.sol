@@ -3,7 +3,7 @@
 pragma solidity ^0.8.6;
 
 import "./WrapperBase.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.2.0/contracts/utils/introspection/ERC165Checker.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.3.1/contracts/utils/introspection/ERC165Checker.sol";
 /**
  * @title ERC-721 Non-Fungible Token Wrapper 
  * @dev For wrpap existing ERC721 with ability add ERC20 collateral
@@ -234,16 +234,5 @@ contract WrapperWithERC20Collateral is WrapperBase {
         return true;
 
     }
-
-     /**
-     * @dev Function returns max ERC20 transfers count before exceeds
-     * block gas limit. Function use very approximate estimation.
-     * There is NO RISK  becouse we have MAX_ERC20_COUNT limitation
-     * 
-     */
-    // function _getTransferBatchCount() internal view returns (uint256){
-    //     // It can be modified in future protocol version
-    //     return block.gaslimit / 50000; //average erc20 transfer cost 
-    // }
-
 }
+
