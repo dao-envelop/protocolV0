@@ -150,16 +150,18 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard, IFeeRoyaltyC
 
         //4. For custom transfer fee token lets check MAX_FEE_THRESHOLD_PERCENT
         if  (_transferFeeToken != address(0) && _transferFeeToken != projectToken) { 
+            require (
+                partnersTokenList[_transferFeeToken].enabledForCollateral,
+                "This transferFee token is not enabled" 
+            );
+
             require(
                 _unwraptFeeThreshold  <
                 IERC20(_transferFeeToken).totalSupply() * MAX_FEE_THRESHOLD_PERCENT / 100,
                 "Too much threshold"
             );
 
-            require (
-                partnersTokenList[_transferFeeToken].enabledForCollateral,
-                "This transferFee token is not enabled" 
-            );
+            
         }
         //////////////////////////////////////////////////////
         //Protocol fee can be not zero in the future       //
