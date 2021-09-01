@@ -136,7 +136,7 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard, IFeeRoyaltyC
         if  (_transferFee > 0) {
             if (_royaltyPercent > 0) {
                 require(_royaltyPercent <= MAX_ROYALTY_PERCENT, "Royalty percent too big");
-                _royaltyBeneficiary != address(0);
+                require(_royaltyBeneficiary != address(0), "Royalty to zero address");
             }
             
 
