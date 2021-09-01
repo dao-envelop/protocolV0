@@ -89,6 +89,7 @@ def test_wrapper_addERC20Collateral(accounts, erc721mock, wrapper, niftsy20, dai
 	weth.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
 	weth.approve(wrapper.address, ERC20_COLLATERAL_AMOUNT + 100, {"from": accounts[1]})
 	wrapper.addERC20Collateral(wrapper.lastWrappedNFTId(), weth.address, ERC20_COLLATERAL_AMOUNT, {"from": accounts[1]})
+	logging.info('coll = {}'.format(wrapper.getERC20Collateral(tokenId)))
 	assert len(wrapper.getERC20Collateral(tokenId)) == 2
 	assert wrapper.getERC20Collateral(tokenId)[1][0] == weth.address
 	assert wrapper.getERC20Collateral(tokenId)[1][1] == ERC20_COLLATERAL_AMOUNT

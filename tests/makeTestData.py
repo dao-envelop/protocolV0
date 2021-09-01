@@ -52,6 +52,7 @@ def makeWrapNFT(wrapper, erc721mock, fields, values, account, transferFeeContrac
     erc721mock.approve(wrapper.address, ORIGINAL_NFT_IDs_[0], {'from':account})
     
     wrapper.wrap721(
+        
         UNDERLINECONTRACT_, 
         ORIGINAL_NFT_IDs_[0], 
         UNWRAPAFTER_,

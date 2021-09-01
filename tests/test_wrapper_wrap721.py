@@ -137,6 +137,20 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20, trmodel):
             niftsy20,
 			{'from':accounts[1]})
 
+	#check ROYALTY_address again
+	with reverts("Royalty to zero address"):
+		wrapper.wrap721(
+			erc721mock.address, 
+			ORIGINAL_NFT_IDs[0], 
+			0,
+			1,
+			zero_address,
+			1,
+			niftsy20.totalSupply() * wrapper.MAX_FEE_THRESHOLD_PERCENT() / 100 + 1, 
+            niftsy20,
+			{'from':accounts[1]})
+
+
 	with reverts("Ownable: caller is not the owner"):
 		wrapper.setFee(protokolFee, chargeFeeAfter, niftsy20,{"from": accounts[1]})
 	wrapper.setFee(protokolFee, chargeFeeAfter, niftsy20, {"from": accounts[0]})
@@ -204,3 +218,6 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20, trmodel):
 		royaltyBeneficiary, 
 		ROAYLTY_PERCENT, 
 		UNWRAP_FEE_THRESHOLD)
+
+	logging.info('wrapper.tokenURI(wrapper.lastWrappedNFTId()) = {}'.format(wrapper.tokenURI(wrapper.lastWrappedNFTId())))
+	logging.info('wrapper.getWrappedToken(wrapper.lastWrappedNFTId()) = {}'.format(wrapper.getWrappedToken(wrapper.lastWrappedNFTId())))
