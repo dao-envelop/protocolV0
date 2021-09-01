@@ -134,7 +134,11 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard, IFeeRoyaltyC
 
         //2. Logic around transfer fee
         if  (_transferFee > 0) {
-            require(_royaltyPercent <= MAX_ROYALTY_PERCENT, "Royalty percent too big");     
+            if (_royaltyPercent > 0) {
+                require(_royaltyPercent <= MAX_ROYALTY_PERCENT, "Royalty percent too big");
+                _royaltyBeneficiary != address(0);
+            }
+            
 
         } else {
             require(_royaltyPercent == 0, "Royalty source is transferFee");
@@ -291,7 +295,9 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard, IFeeRoyaltyC
         require(msg.sender == address(this), "Wrapper only");
         uint256 rAmount = royaltyPercent * transferFee / 100;
         ITechToken(projectToken).mint(address(this), transferFee - rAmount);
-        ITechToken(projectToken).mint(royaltyBeneficiary, rAmount);
+        if (rAmount > 0) {
+            ITechToken(projectToken).mint(royaltyBeneficiary, rAmount);    
+        }
         return transferFee - rAmount;
     }
 
