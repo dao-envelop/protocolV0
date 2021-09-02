@@ -31,12 +31,21 @@ Don't forget [ganache-cli](https://www.npmjs.com/package/ganache-cli)
 Deploy is very simple. You can find workflow in 
 [fixtures](./tests/fixtures/deploy_env.py) 
 
-### Mainnet deploy
-**NIFTSY ERC20 token**
+### Ethereum Mainnet deploy ALFA 
+**NIFTSY ERC20 token**  
 https://etherscan.io/address/0x7728cd70b3dD86210e2bd321437F448231B81733#code
 
+**WrapperWithERC20Collateral**   
+https://etherscan.io/address/0xc2571eBbc8F2af4f832bB8a2D3A4b0932Ce24773#code
+
+**techERC20**  
+https://etherscan.io/address/0x6426Bc3F86E554f44bE7798c8D1f3482Fb7BB68C#code
+
+**TransferRoyaltyModel01**  
+https://etherscan.io/address/0x6664c8118284b3F5ECB47c2105cAa544Ab0Cf75B#code
 
 
+----
 ### Deploy 20210830 Rinkeby Pre Prod Deploy
 **WrapperWithERC20Collateral**  
 https://rinkeby.etherscan.io/address/0x6d3e28b5Fa8d13A08Cbbf8151D86f77829977c34#code  
@@ -49,29 +58,21 @@ https://rinkeby.etherscan.io/address/0xbbe47167666100eC33de9079c1EE7B150cCbD874#
 https://rinkeby.etherscan.io/address/0x64820a2cB3367C9b1416a101682e3CAc7E7392a9#code  
 
 
-### Deploy 20210627 Rinkeby ALFA-2-AUDIT
-#### WrapperWithERC20Collateral  
-https://rinkeby.etherscan.io/address/0xB9401FeB33fd7b13f549a1992A18E771a52A9e65#code
-
-#### Niftsy ERC20
-https://rinkeby.etherscan.io/address/0x1E991eA872061103560700683991A6cF88BA0028#code
-
-#### ERC721MOck
-https://rinkeby.etherscan.io/address/0x50FFDdCA76f4Eba021F701e6c400347A8c4bde55#code
 
 #### Gas Consumption Info
 ```
 WrapperWithERC20Collateral <Contract>
-   ├─ constructor                -  avg: 3621979  low: 3621979  high: 3621979
-   ├─ wrap721                    -  avg:  327957  low:   23452  high:  375160
-   ├─ transferFrom               -  avg:  103571  low:   23486  high:  161086
-   ├─ unWrap721                  -  avg:  119225  low:   28401  high:  230525
-   ├─ addERC20Collateral         -  avg:   98746  low:   23263  high:  121598
-   ├─ approve                    -  avg:   46901  low:   46894  high:   46906
-   ├─ setFee                     -  avg:   48896  low:   22665  high:   48896
-   ├─ setCollateralStatus        -  avg:   43090  low:   23055  high:   43897
-   ├─ addNativeCollateral        -  avg:   27730  low:   22525  high:   28430
-   └─ setMaxERC20CollateralCount -  avg:   28255  low:   22535  high:   28255
+   ├─ constructor                -  avg : 4145117  low: 4145117  high: 4145117
+   ├─ wrap721                    -  avg :  372649  low:   24713  high:  429754
+   ├─ transferFrom               -  avg :  114051  low:   23486  high:  177410
+   ├─ unWrap721                  -  avg :  122923  low:   28379  high:  233867
+   ├─ addERC20Collateral         -  avg :  103729  low:   29117  high:  123936
+   ├─ setFee                     -  avg :   67448  low:   23069  high:   70191
+   ├─ approve                    -  avg :   46901  low:   46894  high:   46906
+   ├─ setCollateralStatus        -  avg :   44723  low:   23077  high:   45254
+   ├─ editPartnersItem           -  avg :   37254  low:   14771  high:   44794
+   ├─ addNativeCollateral        -  avg :   29972  low:   22525  high:   43430
+   └─ setMaxERC20CollateralCount -  avg :   29588  low:   22535  high:   29588
 
 
 ```
@@ -89,19 +90,7 @@ https://rinkeby.etherscan.io/address/0x1E991eA872061103560700683991A6cF88BA0028#
 #### ERC721MOck
 https://rinkeby.etherscan.io/address/0xB71e481C0EB22A3f6Bb54C11128bC673C47a68E5#code
 
----
 
-### Deploy 20210609 Rinkeby v1.0.1
-#### wrapper  
-https://rinkeby.etherscan.io/address/0xfe6d84794169c3794d9842695b2969db96cb19ee#code
-
-#### Niftsy ERC20
-https://rinkeby.etherscan.io/address/0x1E991eA872061103560700683991A6cF88BA0028#code
-
-#### ERC721MOck
-https://rinkeby.etherscan.io/address/0xB71e481C0EB22A3f6Bb54C11128bC673C47a68E5#code
-
----
 
 #### 20210421 Testnet Binance Smart Chain
 ##### wrapper
