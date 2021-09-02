@@ -39,16 +39,16 @@ print(CHAIN)
 
 def main():
     print('Deployer account= {}'.format(accounts[0]))
-    techERC20 = TechToken.deploy({'from':accounts[0]})
-    wrapper   = WrapperWithERC20Collateral.deploy(techERC20.address,{'from':accounts[0]}) 
-    trmodel   = TransferRoyaltyModel01.deploy(wrapper.address,{'from':accounts[0]})
+    techERC20 = TechToken.deploy({'from':accounts[0], 'gas_price': '60 gwei'})
+    wrapper   = WrapperWithERC20Collateral.deploy(techERC20.address,{'from':accounts[0], 'gas_price': '60 gwei'}) 
+    trmodel   = TransferRoyaltyModel01.deploy(wrapper.address,{'from':accounts[0], 'gas_price': '60 gwei'})
 
     #Init
-    techERC20.addMinter(wrapper.address, {'from': accounts[0]})
+    techERC20.addMinter(wrapper.address, {'from': accounts[0], 'gas_price': '60 gwei'})
     if len(CHAIN.get('enabled_erc20', [])) > 0:
         print('Enabling collateral...')
         for erc in CHAIN.get('enabled_erc20', []):
-            wrapper.editPartnersItem(erc, True, trmodel.address, False,{'from': accounts[0]})
+            wrapper.editPartnersItem(erc, True, trmodel.address, False,{'from': accounts[0], 'gas_price': '60 gwei'})
     
     
 

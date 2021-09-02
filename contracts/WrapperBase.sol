@@ -2,10 +2,10 @@
 // NIFTSY protocol for NFT. Wrapper - main protocol contract
 pragma solidity ^0.8.6;
 
-import "OpenZeppelin/openzeppelin-contracts@4.3.1/contracts/access/Ownable.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.3.1/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.3.1/contracts/token/ERC20/utils/SafeERC20.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.3.1/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./TechToken.sol";
 import "../interfaces/ITechToken.sol";
 import "../interfaces/IFeeRoyaltyCharger.sol";

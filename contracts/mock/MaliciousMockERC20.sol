@@ -2,7 +2,7 @@
 // NIFTSY protocol for NFT
 pragma solidity ^0.8.6;
 import "../MinterRole.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.3.1/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract MaliciousTokenMock is ERC20 {
 

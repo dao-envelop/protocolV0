@@ -3,8 +3,8 @@
 pragma solidity ^0.8.6;
 
 import "../interfaces/IFeeRoyaltyCharger.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.3.1/contracts/token/ERC20/utils/SafeERC20.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.3.1/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 
 

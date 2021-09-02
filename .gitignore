@@ -10,4 +10,7 @@ flat.sol
 abi/
 flatsource/
 node_modules/
+hardhat*
+artifacts/
+cache/
 

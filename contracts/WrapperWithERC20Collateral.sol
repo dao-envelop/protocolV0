@@ -3,7 +3,7 @@
 pragma solidity ^0.8.6;
 
 import "./WrapperBase.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.3.1/contracts/utils/introspection/ERC165Checker.sol";
+import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 /**
  * @title ERC-721 Non-Fungible Token Wrapper 
  * @dev For wrpap existing ERC721 with ability add ERC20 collateral
