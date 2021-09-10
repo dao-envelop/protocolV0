@@ -45,7 +45,40 @@ https://etherscan.io/address/0x6426Bc3F86E554f44bE7798c8D1f3482Fb7BB68C#code
 https://etherscan.io/address/0x6664c8118284b3F5ECB47c2105cAa544Ab0Cf75B#code
 
 
+### Binance Smart Chain deploy ALFA
+**techERC20**   
+https://bscscan.com/address/0x6426Bc3F86E554f44bE7798c8D1f3482Fb7BB68C#code
+
+**WrapperWithERC20Collateral**  
+https://bscscan.com/address/0xc2571eBbc8F2af4f832bB8a2D3A4b0932Ce24773#code
+
+**TransferRoyaltyModel01**  
+https://bscscan.com/address/0x6664c8118284b3F5ECB47c2105cAa544Ab0Cf75B#code   
+
 ----
+### BSC Testnet
+**TechToken**  
+https://testnet.bscscan.com/address/0xCee6a757183004238aB6F4885435dE427e23D3E7#code  
+
+**WrapperWithERC20Collateral**  
+https://testnet.bscscan.com/address/0xF901970cDD8df7977f2850fd70B58E02ecA241F8#code  
+
+**TransferRoyaltyModel01** 
+https://testnet.bscscan.com/address/0x2D551c84949BAF16FB1A5A7f6b6961b287100a88#code  
+
+
+### Matic Polygon Testnet (Mumbai)
+**TechToken**  
+https://mumbai.polygonscan.com/address/0x136aC25c56b24e5E117D71ff74c62D8539d2Ee29#code  
+
+**WrapperWithERC20Collateral**  
+https://mumbai.polygonscan.com/address/0x109Cb1f5a4851104C9Db27188C8158035D3303C1#code  
+
+**TransferRoyaltyModel01**  
+https://mumbai.polygonscan.com/address/0x20e30c7c1295FCD1A78528078b83aaf16C5CE032#code  
+
+
+
 ### Deploy 20210830 Rinkeby Pre Prod Deploy
 **WrapperWithERC20Collateral**  
 https://rinkeby.etherscan.io/address/0x6d3e28b5Fa8d13A08Cbbf8151D86f77829977c34#code  
