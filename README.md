@@ -55,6 +55,17 @@ https://bscscan.com/address/0xc2571eBbc8F2af4f832bB8a2D3A4b0932Ce24773#code
 **TransferRoyaltyModel01**  
 https://bscscan.com/address/0x6664c8118284b3F5ECB47c2105cAa544Ab0Cf75B#code   
 
+
+### Polygon Mainnet
+**techERC20**  
+https://polygonscan.com/address/0x6426Bc3F86E554f44bE7798c8D1f3482Fb7BB68C#code  
+
+**WrapperWithERC20Collateral**   
+https://polygonscan.com/address/0xc2571eBbc8F2af4f832bB8a2D3A4b0932Ce24773#code  
+
+**TransferRoyaltyModel01**  
+https://polygonscan.com/address/0x6664c8118284b3F5ECB47c2105cAa544Ab0Cf75B#code
+
 ----
 ### BSC Testnet
 **TechToken**  
