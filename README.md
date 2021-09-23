@@ -46,6 +46,9 @@ https://etherscan.io/address/0x6664c8118284b3F5ECB47c2105cAa544Ab0Cf75B#code
 
 
 ### Binance Smart Chain deploy ALFA
+**NIFTSY BEP20 token**
+https://bscscan.com/address/0x7728cd70b3dD86210e2bd321437F448231B81733
+
 **techERC20**   
 https://bscscan.com/address/0x6426Bc3F86E554f44bE7798c8D1f3482Fb7BB68C#code
 
