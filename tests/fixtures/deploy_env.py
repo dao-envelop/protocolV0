@@ -67,7 +67,21 @@ def trmodel(accounts, TransferRoyaltyModel01, wrapper, niftsy20):
 def mockHacker(accounts, MaliciousTokenMock):
     h = accounts[0].deploy(MaliciousTokenMock,"Hacker Malicious Token", "KLR")
     yield h
- 
 
+@pytest.fixture(scope="module")
+def distributor(accounts, WrapperDistributor721, techERC20):
+    t = accounts[0].deploy(WrapperDistributor721, techERC20.address)
+    #niftsy20.addMinter(t.address, {'from':accounts[0]})
+    techERC20.addMinter(t.address, {'from': accounts[0]})
+    yield t  
+
+@pytest.fixture(scope="module")
+def ERC721Distr(accounts, ERC721Distribution):
+    """
+    Simple NFT with URI
+    """
+    b = accounts[0].deploy(ERC721Distribution, "Envelop Distribution NFT", "dNIFTSY")
+    #t.setURI(0, 'https://maxsiz.github.io/')
+    yield b
 
 
