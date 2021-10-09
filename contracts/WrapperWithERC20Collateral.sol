@@ -213,20 +213,25 @@ contract WrapperWithERC20Collateral is WrapperBase {
         ERC20Collateral[] storage e = erc20Collateral[_tokenId];
         if (e.length > 0) { 
             for (uint256 i = e.length; i > 0; i --){
-                // we need this try for protect from malicious 
-                // erc20 contract that  can block unWrap NFT
-                try 
-                    // We dont use SafeTransfer because try works only for  external function call
-                    // https://docs.soliditylang.org/en/v0.8.6/control-structures.html#try-catch
-                    IERC20(e[i-1].erc20Token).transfer(msg.sender,  e[i-1].amount)
-                {}
-                catch {
-                    emit SuspiciousFail(e[i-1].erc20Token, e[i-1].amount);
-                }    
-                e.pop();
-                if (gasleft() <= 50000) {
-                    emit PartialUnWrapp(_tokenId, msg.sender);
-                    return false;
+                if (e[i-1].amount > 0) {
+                    // we need this try for protect from malicious 
+                    // erc20 contract that  can block unWrap NFT
+                    try 
+                        // We dont use SafeTransfer because try works only for  external function call
+                        // https://docs.soliditylang.org/en/v0.8.6/control-structures.html#try-catch
+
+                        IERC20(e[i-1].erc20Token).transfer(msg.sender,  e[i-1].amount) {
+                            e[i-1].amount = 0;
+                    } catch {
+                        emit SuspiciousFail(e[i-1].erc20Token, e[i-1].amount);
+                    } 
+                    // comment string below due in some case it c can be very costly
+                    // https://docs.soliditylang.org/en/v0.8.9/types.html#array-members   
+                    //e.pop();
+                    if (gasleft() <= 30_000) {
+                        emit PartialUnWrapp(_tokenId, msg.sender);
+                        return false;
+                    }
                 }
             }
 

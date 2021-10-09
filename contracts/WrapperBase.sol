@@ -127,10 +127,10 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard, IFeeRoyaltyC
         );
 
         //1. ERC allowance
-        require(
-            IERC721(_underlineContract).getApproved(_tokenId) == address(this), 
-            "Please call approve in your NFT contract"
-        );
+        // require(
+        //     IERC721(_underlineContract).getApproved(_tokenId) == address(this), 
+        //     "Please call approve in your NFT contract"
+        // );
 
         //2. Logic around transfer fee
         if  (_transferFee > 0) {
@@ -251,7 +251,9 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard, IFeeRoyaltyC
         ///  Main UnWrap Logic                   //////
         ///////////////////////////////////////////////
         _burn(_tokenId);
-        IERC721(nft.tokenContract).transferFrom(address(this), msg.sender, nft.tokenId);
+        if (nft.asset == AssetType.ERC721) {
+            IERC721(nft.tokenContract).transferFrom(address(this), msg.sender, nft.tokenId);
+        }
         delete wrappedTokens[_tokenId];
         //Return backed ether
         if  (nft.backedValue > 0) {
@@ -307,7 +309,7 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard, IFeeRoyaltyC
      *
      * @param _tokenId id of protocol token (new wrapped token)
      */
-    function tokenURI(uint256 _tokenId) public view override returns (string memory) {
+    function tokenURI(uint256 _tokenId) public view override virtual returns (string memory) {
         NFT storage nft = wrappedTokens[_tokenId];
         return IERC721Metadata(nft.tokenContract).tokenURI(nft.tokenId);
     }

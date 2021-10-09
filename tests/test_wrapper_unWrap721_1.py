@@ -145,6 +145,6 @@ def test_wrapper_unWrap721_1(accounts, erc721mock, wrapper, niftsy20, dai, weth,
 	assert dai3.balanceOf(accounts[i+2].address) == ERC20_COLLATERAL_AMOUNT
 	assert dai4.balanceOf(accounts[i+2].address) == ERC20_COLLATERAL_AMOUNT
 	assert dai5.balanceOf(accounts[i+2].address) == ERC20_COLLATERAL_AMOUNT
-
-	assert len(wrapper.getERC20Collateral(tokenId)) == 0
+    # commented due new approach 20211009
+	#assert len(wrapper.getERC20Collateral(tokenId)) == 0
 	logging.info('wrapper.getERC20Collateral(tokenId) = {}'.format(wrapper.getERC20Collateral(tokenId)))
