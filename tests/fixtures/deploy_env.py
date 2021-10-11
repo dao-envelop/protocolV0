@@ -85,8 +85,8 @@ def ERC721Distr(accounts, ERC721Distribution):
     yield b
 
 @pytest.fixture(scope="module")
-def launcpad(accounts, distributor, LaunchpadWNFT):
-    l = accounts[0].deploy(LaunchpadWNFT, distributor.address, 0)
+def launcpad(accounts, distributor, LaunchpadWNFT, niftsy20):
+    l = accounts[0].deploy(LaunchpadWNFT, distributor.address, niftsy20.address, 0)
     yield l
 
 

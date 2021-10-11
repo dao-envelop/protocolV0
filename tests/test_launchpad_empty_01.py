@@ -7,12 +7,12 @@ ERC20_COLLATERAL_AMOUNT = 2e20
 UNWRAP_AFTER = 0
 COUNT=4
 zero_address = '0x0000000000000000000000000000000000000000'
-def test_distr(accounts,  distributor, weth, dai, launcpad):
+def test_distr(accounts,  distributor, niftsy20, dai, launcpad):
     RECEIVERS = [launcpad.address for x in range(COUNT)]
-    dai.approve(distributor, ERC20_COLLATERAL_AMOUNT * len(RECEIVERS), {'from':accounts[0]})
+    niftsy20.approve(distributor, ERC20_COLLATERAL_AMOUNT * len(RECEIVERS), {'from':accounts[0]})
     tx = distributor.WrapAndDistribEmpty(
         RECEIVERS,
-        [(dai.address,ERC20_COLLATERAL_AMOUNT)],
+        [(niftsy20.address,ERC20_COLLATERAL_AMOUNT)],
         UNWRAP_AFTER,
         {'from':accounts[0]}
     )
@@ -22,18 +22,18 @@ def test_distr(accounts,  distributor, weth, dai, launcpad):
     assert len(tx.events['Wrapped']) == len(RECEIVERS)
     assert distributor.balanceOf(launcpad)==COUNT
 
-def test_wrapped_props(accounts,  distributor, launcpad, dai):
+def test_wrapped_props(accounts,  distributor, launcpad, dai, niftsy20):
     for i in  range(distributor.balanceOf(launcpad)):
         logging.info('tokenId={}, erc20Balance={}'.format(
             distributor.tokenOfOwnerByIndex(launcpad, i),
-            distributor.getERC20CollateralBalance(distributor.tokenOfOwnerByIndex(launcpad, i), dai)
+            distributor.getERC20CollateralBalance(distributor.tokenOfOwnerByIndex(launcpad, i), niftsy20)
 
         ))
-        assert distributor.getERC20CollateralBalance(distributor.tokenOfOwnerByIndex(launcpad, i), dai)==ERC20_COLLATERAL_AMOUNT        
+        assert distributor.getERC20CollateralBalance(distributor.tokenOfOwnerByIndex(launcpad, i), niftsy20)==ERC20_COLLATERAL_AMOUNT        
 
-def test_set_price(accounts,  launcpad, distributor, dai):
-    launcpad.setPrice(dai, 3e16)
-    launcpad.setPrice(zero_address, 1e14)
+def test_set_price(accounts,  launcpad, distributor, dai, niftsy20):
+    launcpad.setPrice(dai, 3)
+    launcpad.setPrice(zero_address, 2)
     for i in  range(distributor.balanceOf(launcpad)):
         tid=distributor.tokenOfOwnerByIndex(launcpad, i)
         p1 = launcpad.getWNFTPrice(tid, dai)
@@ -44,7 +44,7 @@ def test_set_price(accounts,  launcpad, distributor, dai):
             Wei(p1).to('ether'), Wei(p2).to('ether')
         ))
 
-def test_claim_ERC20(accounts,  launcpad, distributor, dai):
+def test_claim_ERC20(accounts,  launcpad, distributor, dai, niftsy20):
     dai.approve(launcpad, 1e30)
     tx = launcpad.claimNFT(1, dai)
     assert distributor.balanceOf(accounts[0]) == 1

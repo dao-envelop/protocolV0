@@ -13,14 +13,16 @@ contract LaunchpadWNFT is Ownable, IERC721Receiver {
 
     address public wNFT;
     uint256 public enableAfter;
+    address public tradableCollateral;
     mapping(address => uint256) public priceForOneCollateralUnit;
 
     event PriceChanged(address tokenForPay, uint256 value, uint256 timestamp);
     event Payed(address tokenForPay, uint256 value, uint256 timestamp, uint256 wNFT);
 
 
-    constructor(address _wNFT, uint256 _enableAfter) {
+    constructor(address _wNFT, address _tradableCollateral, uint256 _enableAfter) {
         wNFT = _wNFT;
+        tradableCollateral = _tradableCollateral;
         enableAfter = _enableAfter;
 
     }
@@ -31,8 +33,8 @@ contract LaunchpadWNFT is Ownable, IERC721Receiver {
     function claimNFT(uint256 tokenId, address payWith) public payable {
         require(block.timestamp >= enableAfter, "Please wait for start date");
         require(priceForOneCollateralUnit[payWith] > 0,"Cant pay with this ERC20");
-        uint256 payAmount  = IWrapperCollateral(wNFT).getERC20CollateralBalance(tokenId, payWith)
-                / priceForOneCollateralUnit[payWith];
+        uint256 payAmount= IWrapperCollateral(wNFT).getERC20CollateralBalance(tokenId, tradableCollateral)
+                * priceForOneCollateralUnit[payWith];
         if (payWith != address(0)){
             IERC20(payWith).safeTransferFrom(msg.sender, address(this), payAmount);
         } else {
@@ -48,8 +50,8 @@ contract LaunchpadWNFT is Ownable, IERC721Receiver {
     }
 
     function getWNFTPrice(uint256 tokenId, address payWith) external view returns (uint256 payAmount) {
-        payAmount  = IWrapperCollateral(wNFT).getERC20CollateralBalance(tokenId, payWith)
-                / priceForOneCollateralUnit[payWith];
+        payAmount  = IWrapperCollateral(wNFT).getERC20CollateralBalance(tokenId, tradableCollateral)
+                * priceForOneCollateralUnit[payWith];
         return payAmount;        
     }
     
