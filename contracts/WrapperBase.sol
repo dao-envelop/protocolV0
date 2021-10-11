@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// NIFTSY protocol for NFT. Wrapper - main protocol contract
+// ENVELOP(NIFTSY) protocol for NFT. Wrapper - main protocol contract
 pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -84,7 +84,7 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard, IFeeRoyaltyC
         address feeToken 
     );
 
-    constructor(address _erc20) ERC721("Niftsy NFT Wrapper Protocol ALFA", "NIFTSY") {
+    constructor(address _erc20) ERC721("ENVELOP Wrapped NFT Distributor", "wNFT") {
         require(_erc20 != address(0), "ProjectToken cant be zero value");
         projectToken = _erc20; 
     }

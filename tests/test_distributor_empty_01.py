@@ -7,7 +7,7 @@ ERC20_COLLATERAL_AMOUNT = 2e16
 UNWRAP_AFTER = 0
 COUNT=40
 zero_address = '0x0000000000000000000000000000000000000000'
-def test_distr(accounts, ERC721Distr, distributor, weth, dai):
+def test_distr(accounts,  distributor, weth, dai):
     RECEIVERS = [accounts.add() for x in range(COUNT)]
     weth.approve(distributor, ERC20_COLLATERAL_AMOUNT * len(RECEIVERS), {'from':accounts[0]})
     dai.approve(distributor, ERC20_COLLATERAL_AMOUNT * len(RECEIVERS), {'from':accounts[0]})
@@ -17,8 +17,9 @@ def test_distr(accounts, ERC721Distr, distributor, weth, dai):
         UNWRAP_AFTER,
         {'from':accounts[0]}
     )
-    ids=[distributor.tokenURI(x['wrappedTokenId']) for x in tx.events['Wrapped']]
-    logging.info( ids)
+    #logging.info(tx.events)
+    #ids=[distributor.tokenURI(x['wrappedTokenId']) for x in tx.events['Wrapped']]
+    #logging.info(ids)
     assert len(tx.events['Wrapped']) == len(RECEIVERS)
     assert distributor.balanceOf(accounts[11])==1
 
@@ -30,7 +31,7 @@ def test_wrapped_props(accounts,  distributor, weth, dai):
     assert distributor.getERC20Collateral(5)[1][1] == ERC20_COLLATERAL_AMOUNT
 
 
-def test_unwrap(accounts, ERC721Distr, distributor, weth, dai):
+def test_unwrap(accounts,  distributor, weth, dai):
     # logging.info('{} {} {} {} {} {} {} {} {}'.format(
     #     accounts[10], accounts[11], accounts[12], accounts[13], accounts[14], accounts[15],
     #     accounts[16], accounts[17], accounts[18],

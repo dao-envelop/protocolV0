@@ -80,7 +80,7 @@ contract WrapperDistributor721 is WrapperWithERC20Collateral {
             }
             emit Wrapped(_original721, _tokenIds[i], lastWrappedNFTId);
             // Safe Emergency exit
-            if (gasleft() <= 30000) {
+            if (gasleft() <= 10_000) {
                 emit GasLimit(i + 1, _receivers[i]);
                 return;
             }   
@@ -137,7 +137,7 @@ contract WrapperDistributor721 is WrapperWithERC20Collateral {
             }
             emit Wrapped(address(0), 0, lastWrappedNFTId);
             // Safe Emergency exit
-            if (gasleft() <= 30000) {
+            if (gasleft() <= 10_000) {
                 emit GasLimit(i + 1, _receivers[i]);
                 return;
             }   
