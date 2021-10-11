@@ -84,4 +84,11 @@ def ERC721Distr(accounts, ERC721Distribution):
     #t.setURI(0, 'https://maxsiz.github.io/')
     yield b
 
+@pytest.fixture(scope="module")
+def launcpad(accounts, distributor, LaunchpadWNFT):
+    l = accounts[0].deploy(LaunchpadWNFT, distributor.address, 0)
+    yield l
+
+
+
 

@@ -29,7 +29,7 @@ contract LaunchpadWNFT is Ownable, IERC721Receiver {
     
 
     function claimNFT(uint256 tokenId, address payWith) public payable {
-
+        require(block.timestamp >= enableAfter, "Please wait for start date");
         require(priceForOneCollateralUnit[payWith] > 0,"Cant pay with this ERC20");
         uint256 payAmount  = IWrapperCollateral(wNFT).getERC20CollateralBalance(tokenId, payWith)
                 * priceForOneCollateralUnit[payWith];
@@ -43,10 +43,15 @@ contract LaunchpadWNFT is Ownable, IERC721Receiver {
                 s.transfer(msg.value - payAmount);
             }
         }
+        IWrapperCollateral(wNFT).transferFrom(address(this), msg.sender, tokenId);
         emit Payed(payWith, payAmount, block.timestamp, tokenId);
     }
 
-    
+    function getWNFTPrice(uint256 tokenId, address payWith) external view returns (uint256 payAmount) {
+        payAmount  = IWrapperCollateral(wNFT).getERC20CollateralBalance(tokenId, payWith)
+                * priceForOneCollateralUnit[payWith];
+        return payAmount;        
+    }
     
     function onERC721Received(address operator, address from, uint256 tokenId, bytes calldata data
     ) external override returns (bytes4) {
@@ -68,6 +73,8 @@ contract LaunchpadWNFT is Ownable, IERC721Receiver {
     function setPrice(address _erc20, uint256 _amount) external onlyOwner {
         priceForOneCollateralUnit[_erc20] = _amount;
     }
-
-
+  
+    function setEnableAfterDate(uint256 _enableAfter) external onlyOwner {
+        enableAfter = _enableAfter;
+    }
 }

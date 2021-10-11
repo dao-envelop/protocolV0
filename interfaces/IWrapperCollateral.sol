@@ -30,6 +30,7 @@ interface IWrapperCollateral is  IERC721Enumerable {
      */
     function getERC20CollateralBalance(uint256 _wrappedId, address _erc20) 
         external 
+        view
         returns (uint256); 
 
     /**
@@ -38,5 +39,5 @@ interface IWrapperCollateral is  IERC721Enumerable {
      *
      * @param _contract  collateral contarct
      */
-    function enabledForCollateral(address _contract) external returns (bool);
+    function enabledForCollateral(address _contract) external view returns (bool);
 }

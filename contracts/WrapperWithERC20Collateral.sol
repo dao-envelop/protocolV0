@@ -129,7 +129,7 @@ contract WrapperWithERC20Collateral is WrapperBase {
      * @param _wrappedId  new protocol NFT id from this contarct
      * @param _erc20 - collateral token address
      */
-    function getERC20CollateralBalance(uint256 _wrappedId, address _erc20) public returns (uint256) {
+    function getERC20CollateralBalance(uint256 _wrappedId, address _erc20) public view returns (uint256) {
         ERC20Collateral[] memory e = erc20Collateral[_wrappedId];
         for (uint256 i = 0; i < e.length; i ++) {
             if (e[i].erc20Token == _erc20) {
@@ -138,7 +138,7 @@ contract WrapperWithERC20Collateral is WrapperBase {
         }
     } 
 
-    function enabledForCollateral(address _contract) public returns (bool) {
+    function enabledForCollateral(address _contract) public view returns (bool) {
         return partnersTokenList[_contract].enabledForCollateral;
     }
 
