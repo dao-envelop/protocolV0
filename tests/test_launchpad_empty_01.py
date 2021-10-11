@@ -3,7 +3,7 @@ import logging
 from brownie import Wei, reverts, chain
 LOGGER = logging.getLogger(__name__)
 
-ERC20_COLLATERAL_AMOUNT = 2e16
+ERC20_COLLATERAL_AMOUNT = 2e20
 UNWRAP_AFTER = 0
 COUNT=4
 zero_address = '0x0000000000000000000000000000000000000000'
@@ -32,7 +32,7 @@ def test_wrapped_props(accounts,  distributor, launcpad, dai):
         assert distributor.getERC20CollateralBalance(distributor.tokenOfOwnerByIndex(launcpad, i), dai)==ERC20_COLLATERAL_AMOUNT        
 
 def test_set_price(accounts,  launcpad, distributor, dai):
-    launcpad.setPrice(dai, 3e10)
+    launcpad.setPrice(dai, 3e16)
     launcpad.setPrice(zero_address, 1e14)
     for i in  range(distributor.balanceOf(launcpad)):
         tid=distributor.tokenOfOwnerByIndex(launcpad, i)
