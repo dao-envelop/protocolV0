@@ -3,7 +3,7 @@ import logging
 from brownie import Wei, reverts, chain
 LOGGER = logging.getLogger(__name__)
 
-ERC20_COLLATERAL_AMOUNT = 2e20
+ERC20_COLLATERAL_AMOUNT = 100e18
 UNWRAP_AFTER = 0
 COUNT=4
 zero_address = '0x0000000000000000000000000000000000000000'
@@ -26,21 +26,20 @@ def test_wrapped_props(accounts,  distributor, launcpad, dai, niftsy20):
     for i in  range(distributor.balanceOf(launcpad)):
         logging.info('tokenId={}, erc20Balance={}'.format(
             distributor.tokenOfOwnerByIndex(launcpad, i),
-            distributor.getERC20CollateralBalance(distributor.tokenOfOwnerByIndex(launcpad, i), niftsy20)
-
+            Wei(distributor.getERC20CollateralBalance(distributor.tokenOfOwnerByIndex(launcpad, i), niftsy20)).to('ether')
         ))
         assert distributor.getERC20CollateralBalance(distributor.tokenOfOwnerByIndex(launcpad, i), niftsy20)==ERC20_COLLATERAL_AMOUNT        
 
 def test_set_price(accounts,  launcpad, distributor, dai, niftsy20):
-    launcpad.setPrice(dai, 3)
-    launcpad.setPrice(zero_address, 2)
+    launcpad.setPrice(dai, 3, 100)
+    launcpad.setPrice(zero_address, 2, 1000)
     for i in  range(distributor.balanceOf(launcpad)):
         tid=distributor.tokenOfOwnerByIndex(launcpad, i)
         p1 = launcpad.getWNFTPrice(tid, dai)
         p2 = launcpad.getWNFTPrice(tid, zero_address) #?????????????
         logging.info('tokenId={},\n erc20Balance={},\n priceErc20={},\n priceETH={}'.format(
             distributor.tokenOfOwnerByIndex(launcpad, i),
-            distributor.getERC20CollateralBalance(distributor.tokenOfOwnerByIndex(launcpad, i), dai),
+            distributor.getERC20CollateralBalance(distributor.tokenOfOwnerByIndex(launcpad, i), niftsy20),
             Wei(p1).to('ether'), Wei(p2).to('ether')
         ))
 

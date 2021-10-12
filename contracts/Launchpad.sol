@@ -11,12 +11,17 @@ import "../interfaces/IWrapperCollateral.sol";
 contract LaunchpadWNFT is Ownable, IERC721Receiver {
     using SafeERC20 for IERC20;
 
+    struct Price {
+        uint256 value;
+        uint256 decimals;
+    }
+
     address public wNFT;
     uint256 public enableAfter;
     address public tradableCollateral;
-    mapping(address => uint256) public priceForOneCollateralUnit;
+    mapping(address => Price) public priceForOneCollateralUnit;
 
-    event PriceChanged(address tokenForPay, uint256 value, uint256 timestamp);
+    event PriceChanged(address tokenForPay, uint256 value, uint256 decimals, uint256 timestamp);
     event Payed(address tokenForPay, uint256 value, uint256 timestamp, uint256 wNFT);
 
 
@@ -32,13 +37,13 @@ contract LaunchpadWNFT is Ownable, IERC721Receiver {
 
     function claimNFT(uint256 tokenId, address payWith) public payable {
         require(block.timestamp >= enableAfter, "Please wait for start date");
-        require(priceForOneCollateralUnit[payWith] > 0,"Cant pay with this ERC20");
+        require(priceForOneCollateralUnit[payWith].value > 0,"Cant pay with this ERC20");
         uint256 payAmount= IWrapperCollateral(wNFT).getERC20CollateralBalance(tokenId, tradableCollateral)
-                * priceForOneCollateralUnit[payWith];
+                * priceForOneCollateralUnit[payWith].value / priceForOneCollateralUnit[payWith].decimals;
         if (payWith != address(0)){
             IERC20(payWith).safeTransferFrom(msg.sender, address(this), payAmount);
         } else {
-            require(msg.value >= payAmount);
+            require(msg.value >= payAmount, "Received amount less then price");
             // Return change
             if  ((msg.value - payAmount) > 0) {
                 address payable s = payable(msg.sender);
@@ -51,7 +56,7 @@ contract LaunchpadWNFT is Ownable, IERC721Receiver {
 
     function getWNFTPrice(uint256 tokenId, address payWith) external view returns (uint256 payAmount) {
         payAmount  = IWrapperCollateral(wNFT).getERC20CollateralBalance(tokenId, tradableCollateral)
-                * priceForOneCollateralUnit[payWith];
+                * priceForOneCollateralUnit[payWith].value / priceForOneCollateralUnit[payWith].decimals;
         return payAmount;        
     }
     
@@ -72,8 +77,11 @@ contract LaunchpadWNFT is Ownable, IERC721Receiver {
         IERC20(_erc20).transfer(msg.sender, IERC20(_erc20).balanceOf(address(this)));
     }
 
-    function setPrice(address _erc20, uint256 _amount) external onlyOwner {
-        priceForOneCollateralUnit[_erc20] = _amount;
+    function setPrice(address _erc20, uint256 _amount, uint256 _decimals) external onlyOwner {
+        priceForOneCollateralUnit[_erc20] = Price({
+            value:  _amount,
+            decimals: _decimals
+        });
     }
   
     function setEnableAfterDate(uint256 _enableAfter) external onlyOwner {
