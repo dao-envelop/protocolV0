@@ -26,6 +26,15 @@ def erc721mock(accounts, Token721Mock):
     yield t    
 
 @pytest.fixture(scope="module")
+def erc721mock2(accounts, Token721Mock2):
+    """
+    Simple NFT with URI 2
+    """
+    t = accounts[0].deploy(Token721Mock2, "Simple NFT with URI 2", "XX2")
+    #t.setURI(0, 'https://maxsiz.github.io/')
+    yield t   
+
+@pytest.fixture(scope="module")
 def fakeERC721mock(accounts, Token721Mock):
     """
     Simple NFT with URI
