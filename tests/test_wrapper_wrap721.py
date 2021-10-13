@@ -34,7 +34,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20, trmodel):
             niftsy20,
 			{'from':accounts[1]})
 	#nonexist nft
-	with reverts("ERC721: approved query for nonexistent token"):
+	with reverts("ERC721: operator query for nonexistent token"):
 		wrapper.wrap721(
 			erc721mock.address, 
 			1, 
@@ -46,7 +46,7 @@ def test_simple_wrap(accounts, erc721mock, wrapper, niftsy20, trmodel):
             niftsy20,
 			{'from':accounts[1]})
 	#there is not allowance for wrapper.address
-	with reverts("Please call approve in your NFT contract"):
+	with reverts("ERC721: transfer caller is not owner nor approved"):
 		wrapper.wrap721(
 			erc721mock.address, 
 			ORIGINAL_NFT_IDs[0], 

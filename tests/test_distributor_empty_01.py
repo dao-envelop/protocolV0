@@ -20,6 +20,7 @@ def test_distr(accounts,  distributor, weth, dai):
     #logging.info(tx.events)
     #ids=[distributor.tokenURI(x['wrappedTokenId']) for x in tx.events['Wrapped']]
     #logging.info(ids)
+    logging.info('RECEIVERS = {}'.format(len(RECEIVERS)))
     assert len(tx.events['Wrapped']) == len(RECEIVERS)
     assert distributor.balanceOf(accounts[11])==1
 
