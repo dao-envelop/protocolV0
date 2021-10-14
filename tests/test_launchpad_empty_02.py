@@ -20,14 +20,20 @@ def test_distr(accounts,  distributor, niftsy20, dai, launcpad, ERC721Distr, wet
 
     niftsy20.approve(distributor, ERC20_COLLATERAL_AMOUNT * len(RECEIVERS), {'from':accounts[0]})
     weth.approve(distributor, ERC20_COLLATERAL_AMOUNT_WETH * len(RECEIVERS), {'from':accounts[0]})
-    tx = distributor.WrapAndDistrib721WithMint(
-        ERC721Distr.address, 
+
+    with reverts("Only for distributors"):
+        distributor.WrapAndDistribEmpty( 
         RECEIVERS,
-        ORIGINAL_TOKEN_IDs,
         [(niftsy20.address,ERC20_COLLATERAL_AMOUNT), (weth.address,ERC20_COLLATERAL_AMOUNT_WETH)],
         UNWRAP_AFTER,
-        {'from':accounts[0], 'value':ETH_AMOUNT}
-    )
+        {'from':accounts[1], 'value':ETH_AMOUNT})
+
+    tx = distributor.WrapAndDistribEmpty( 
+        RECEIVERS,
+        [(niftsy20.address,ERC20_COLLATERAL_AMOUNT), (weth.address,ERC20_COLLATERAL_AMOUNT_WETH)],
+        UNWRAP_AFTER,
+        {'from':accounts[0], 'value':ETH_AMOUNT})
+
     #logging.info(tx.events)
     #ids=[distributor.tokenURI(x['wrappedTokenId']) for x in tx.events['Wrapped']]
     #logging.info(ids)
@@ -36,7 +42,8 @@ def test_distr(accounts,  distributor, niftsy20, dai, launcpad, ERC721Distr, wet
     assert weth.balanceOf(distributor.address) == ERC20_COLLATERAL_AMOUNT_WETH * len(RECEIVERS)
     assert niftsy20.balanceOf(distributor.address) == ERC20_COLLATERAL_AMOUNT * len(RECEIVERS)
     assert distributor.balance() == '10 ether'
-    assert ERC721Distr.balanceOf(distributor.address) == COUNT
+    assert distributor.getWrappedToken(1)[0] == zero_address
+    assert distributor.getWrappedToken(1)[1] == 0
 
 def test_wrapped_props(accounts,  distributor, launcpad, dai, niftsy20, weth):
     for i in  range(distributor.balanceOf(launcpad)):
@@ -100,7 +107,6 @@ def test_claim_Ether(accounts,  launcpad, distributor, dai, niftsy20, weth, ERC7
     assert bbwD - ERC20_COLLATERAL_AMOUNT_WETH == weth.balanceOf(distributor)
 
     assert distributor.balanceOf(accounts[0]) == 0
-    assert ERC721Distr.balanceOf(accounts[0]) == 1
 
 
 # claim with token
@@ -155,28 +161,7 @@ def test_claim_token(accounts,  launcpad, distributor, dai, niftsy20, weth, ERC7
     assert bbwD - ERC20_COLLATERAL_AMOUNT_WETH == weth.balanceOf(distributor)
 
     assert distributor.balanceOf(accounts[0]) == 0
-    assert ERC721Distr.balanceOf(accounts[0]) == 2
 
-def test_withdraw(accounts, launcpad, dai):
-    with reverts("Ownable: caller is not the owner"):
-        launcpad.withdrawEther({"from": accounts[1]})
-
-    with reverts("Ownable: caller is not the owner"):
-        launcpad.withdrawTokens(dai,{"from": accounts[1]})
-
-    bbeL = launcpad.balance()  
-    bbe0 = accounts[0].balance()
-
-    bbDAI0 = dai.balanceOf(accounts[0])
-    bbDAIL = dai.balanceOf(launcpad)
-    
-    launcpad.withdrawEther({"from": accounts[0]})
-    launcpad.withdrawTokens(dai,{"from": accounts[0]})
-
-    assert dai.balanceOf(launcpad) == 0
-    assert launcpad.balance()  == 0
-    assert dai.balanceOf(accounts[0]) == bbDAI0 + bbDAIL
-    assert accounts[0].balance() == bbeL + bbe0
 
     #оплата эфиром
     #-  достаточно эфира/недостаточно

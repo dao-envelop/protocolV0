@@ -10,6 +10,13 @@ zero_address = '0x0000000000000000000000000000000000000000'
 def test_distr(accounts,  distributor, niftsy20, dai, launcpad):
     RECEIVERS = [launcpad.address for x in range(COUNT)]
     niftsy20.approve(distributor, ERC20_COLLATERAL_AMOUNT * len(RECEIVERS), {'from':accounts[0]})
+    with reverts("Only for distributors"):
+        distributor.WrapAndDistribEmpty(
+        RECEIVERS,
+        [(niftsy20.address,ERC20_COLLATERAL_AMOUNT)],
+        UNWRAP_AFTER,
+        {'from':accounts[1]}
+        )
     tx = distributor.WrapAndDistribEmpty(
         RECEIVERS,
         [(niftsy20.address,ERC20_COLLATERAL_AMOUNT)],

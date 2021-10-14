@@ -58,3 +58,7 @@ def test_unwrap(accounts,  distributor, weth, dai):
     assert dai.balanceOf(accounts[5]) == ERC20_COLLATERAL_AMOUNT
     logging.info(tx.events)
 
+def test_distr_set(accounts,  distributor):
+    with reverts("Ownable: caller is not the owner"):
+        distributor.setDistributorState(accounts[1], True, {"from": accounts[1]})
+
