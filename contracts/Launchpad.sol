@@ -41,6 +41,7 @@ contract LaunchpadWNFT is Ownable, IERC721Receiver {
         uint256 payAmount= IWrapperCollateral(wNFT).getERC20CollateralBalance(tokenId, tradableCollateral)
                 * priceForOneCollateralUnit[payWith].value / priceForOneCollateralUnit[payWith].decimals;
         if (payWith != address(0)){
+            require(msg.value == 0, "No need ether");
             IERC20(payWith).safeTransferFrom(msg.sender, address(this), payAmount);
         } else {
             require(msg.value >= payAmount, "Received amount less then price");

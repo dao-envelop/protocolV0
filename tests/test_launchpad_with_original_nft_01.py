@@ -124,11 +124,13 @@ def test_claim_token(accounts,  launcpad, distributor, dai, niftsy20, weth, ERC7
     dai.transfer(accounts[0], payAmount, {"from": accounts[1]})
     bbDAI0 = dai.balanceOf(accounts[0])
     bbeL = launcpad.balance()
-    launcpad.claimNFT(2, dai, {"value": '1 ether'})
-
+    with reverts("No need ether"):
+        launcpad.claimNFT(2, dai, {"value": '1 ether'})
+    launcpad.claimNFT(2, dai, {"from": accounts[0]})
     assert dai.balanceOf(accounts[0]) == bbDAI0 - launcpad.getWNFTPrice(2, dai)
     assert dai.balanceOf(launcpad) == launcpad.getWNFTPrice(2, dai)
-    assert launcpad.balance() == bbeL + Wei('1 ether')
+    #assert launcpad.balance() == bbeL + Wei('1 ether')
+    assert launcpad.balance() == bbeL 
     assert distributor.balanceOf(launcpad) == COUNT - 2
     assert distributor.balanceOf(accounts[0]) == 1
 
