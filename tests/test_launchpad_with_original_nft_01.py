@@ -175,8 +175,23 @@ def test_withdraw(accounts, launcpad, dai):
     assert dai.balanceOf(accounts[0]) == bbDAI0 + bbDAIL
     assert accounts[0].balance() == bbeL + bbe0
 
+def test_distr_UNWRAP_AFTER(accounts,  distributor, niftsy20, dai, launcpad, ERC721Distr, weth):
+    RECEIVERS = []
+    RECEIVERS = [launcpad.address, launcpad.address]
+    ORIGINAL_TOKEN_IDs = [11, 12]
+    UNWRAP_AFTER = 10e18
+    niftsy20.approve(distributor, ERC20_COLLATERAL_AMOUNT*2, {'from':accounts[0]})
+    weth.approve(distributor, ERC20_COLLATERAL_AMOUNT_WETH*2, {'from':accounts[0]})
+    tx = distributor.WrapAndDistrib721WithMint(
+        ERC721Distr.address, 
+        RECEIVERS,
+        ORIGINAL_TOKEN_IDs,
+        [(niftsy20.address,ERC20_COLLATERAL_AMOUNT), (weth.address,ERC20_COLLATERAL_AMOUNT_WETH)],
+        UNWRAP_AFTER,
+        {'from':accounts[0], 'value':ETH_AMOUNT}
+    )
 
-
+    launcpad.claimNFT(12, dai)
 
     #оплата эфиром
     #-  достаточно эфира/недостаточно
