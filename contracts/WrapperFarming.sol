@@ -31,6 +31,9 @@ contract WrapperFarming is WrapperWithERC20Collateral {
     mapping(address => RewardSettings[]) public rewardSettings;
     mapping(uint256 => NFTReward) public rewards;
 
+    event SettingsChanged(address farmingToken, uint256 slotId);
+    event Harvest(uint256 tokenId, address farmingToken, uint256 amount);
+
     constructor (address _erc20, address _defaultRewardToken, RewardSettings[] memory _settings ) 
         WrapperWithERC20Collateral(_erc20) 
     {
@@ -45,7 +48,6 @@ contract WrapperFarming is WrapperWithERC20Collateral {
 
     }
     
-
 
     /// !!!!For gas safe this low levelfunction has NO any check before wrap
     /// So you have NO warranty to do Unwrap well
@@ -109,7 +111,7 @@ contract WrapperFarming is WrapperWithERC20Collateral {
                     break;
                 }
             }
-
+            emit Harvest(_wrappedTokenId, _erc20, rewardAmount);
         }
     }
 
@@ -147,6 +149,15 @@ contract WrapperFarming is WrapperWithERC20Collateral {
         return rewardAccrued; 
     }
 
+    function getRewardSettings(address _farmingTokenAddress)
+        external 
+        view 
+        returns (RewardSettings[] memory settings) 
+    {
+        settings = rewardSettings[_farmingTokenAddress];
+        return settings;
+    }
+
     ////////////////////////////////////////////////////////////////
     //////////     Admins                                     //////
     ////////////////////////////////////////////////////////////////
@@ -157,9 +168,11 @@ contract WrapperFarming is WrapperWithERC20Collateral {
         uint256 _period, 
         uint256 _percent
     ) external onlyOwner {
+        
         require(rewardSettings[_erc20].length > 0, "There is no settings for this token");
         RewardSettings[] storage set = rewardSettings[_erc20];
         set[_settingsSlotId].period = _period;
+        emit SettingsChanged(_erc20, _settingsSlotId);
     }
 
     function addRewardSettingsSlot(
@@ -168,12 +181,14 @@ contract WrapperFarming is WrapperWithERC20Collateral {
         uint256 _period, 
         uint256 _percent
     ) external onlyOwner {
+
         require(rewardSettings[_erc20].length < MAX_SETTINGS_SLOTS - 1, "Too much settings slot");
         RewardSettings[] storage set = rewardSettings[_erc20];
         set.push(RewardSettings({
             period: _period,
             rewardPercent: _percent
         }));
+        emit SettingsChanged(_erc20, _settingsSlotId);
     }
     ////////////////////////////////////////////////////////////////
 

@@ -1,4 +1,5 @@
 import pytest
+from brownie import chain
 
 ############ Mocks ########################
 @pytest.fixture(scope="module")
@@ -91,5 +92,22 @@ def launcpad(accounts, distributor, LaunchpadWNFT, niftsy20):
     yield l
 
 
+@pytest.fixture(scope="module")
+def farming(accounts, WrapperFarming, techERC20, niftsy20):
+    t = accounts[0].deploy(
+        WrapperFarming, 
+        techERC20.address, 
+        niftsy20.address,
+        [
+            (100, 1000),
+            (200, 2000),
+            (300, 3000),
+            (400, 4000)
+        ]
+    )
+    #niftsy20.addMinter(t.address, {'from':accounts[0]})
+    techERC20.addMinter(t.address, {'from': accounts[0]})
+
+    yield t  
 
 
