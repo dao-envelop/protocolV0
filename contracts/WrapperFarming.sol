@@ -33,6 +33,7 @@ contract WrapperFarming is WrapperWithERC20Collateral {
 
     event SettingsChanged(address farmingToken, uint256 slotId);
     event Harvest(uint256 tokenId, address farmingToken, uint256 amount);
+    event Staked(uint256 tokenId, address farmingToken, uint256 amount);
 
     constructor (address _erc20, address _defaultRewardToken, RewardSettings[] memory _settings ) 
         WrapperWithERC20Collateral(_erc20) 
@@ -95,6 +96,7 @@ contract WrapperFarming is WrapperWithERC20Collateral {
         // 4. Register farming
         NFTReward storage r = rewards[lastWrappedNFTId];
         r.stakedDate = block.timestamp;
+        emit Staked(lastWrappedNFTId, _erc20Collateral.erc20Token, _erc20Collateral.amount);
     }
 
     function harvest(uint256 _wrappedTokenId, address _erc20) public {
