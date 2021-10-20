@@ -103,7 +103,9 @@ contract WrapperFarming is WrapperWithERC20Collateral {
             for (uint256 i = 0; i < e.length; i ++) {
                 if (e[i].erc20Token == _erc20) {
                     e[i].amount += rewardAmount;
-                    thisNFTReward.harvestedAmount += rewardAmount;  
+                    //thisNFTReward.harvestedAmount += rewardAmount;
+                    // Reset date for lazy ReStake  
+                    thisNFTReward.stakedDate = block.timestamp;
                     break;
                 }
             }
@@ -197,17 +199,7 @@ contract WrapperFarming is WrapperWithERC20Collateral {
         emit SettingsChanged(_erc20, set.length-1);
     }
     ////////////////////////////////////////////////////////////////
-
     
-    // function tokenURI(uint256 _tokenId) public view override returns (string memory) {
-    //     NFT storage nft = wrappedTokens[_tokenId];
-    //     if (nft.tokenContract != address(0)) {
-    //         return IERC721Metadata(nft.tokenContract).tokenURI(nft.tokenId);
-    //     } else {
-    //         return ERC721.tokenURI(_tokenId);
-    //     }    
-    // }
-
     /**
      * @dev Function returns tokenURI of **underline original token** 
      *
@@ -216,11 +208,17 @@ contract WrapperFarming is WrapperWithERC20Collateral {
     function tokenURI(uint256 _tokenId) public view virtual override 
         returns (string memory) 
     {
-        return string(abi.encodePacked(
+        NFT storage nft = wrappedTokens[_tokenId];
+        if (nft.tokenContract != address(0)) {
+            return IERC721Metadata(nft.tokenContract).tokenURI(nft.tokenId);
+        } else {
+            return string(abi.encodePacked(
             _baseURI(),
             uint160(address(this)).toHexString(),
             "/", _tokenId.toString())
-        );
+            );
+        }    
+        
     }
 }
 
