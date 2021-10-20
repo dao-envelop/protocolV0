@@ -96,18 +96,15 @@ def launcpad(accounts, distributor, LaunchpadWNFT, niftsy20):
 def farming(accounts, WrapperFarming, techERC20, niftsy20):
     t = accounts[0].deploy(
         WrapperFarming, 
-        techERC20.address, 
-        niftsy20.address,
-        [
-            (100, 1000),
-            (200, 2000),
-            (300, 3000),
-            (400, 4000)
-        ]
+        techERC20.address,
+        niftsy20 
     )
     #niftsy20.addMinter(t.address, {'from':accounts[0]})
     techERC20.addMinter(t.address, {'from': accounts[0]})
-
+    t.addRewardSettingsSlot(niftsy20, 100, 1000, {'from': accounts[0]})
+    t.addRewardSettingsSlot(niftsy20, 200, 2000, {'from': accounts[0]})
+    t.addRewardSettingsSlot(niftsy20, 300, 3000, {'from': accounts[0]})
+    t.addRewardSettingsSlot(niftsy20, 400, 4000, {'from': accounts[0]})
     yield t  
 
 

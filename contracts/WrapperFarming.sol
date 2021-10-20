@@ -14,6 +14,8 @@ import "../interfaces/IERC721Mintable.sol";
 contract WrapperFarming is WrapperWithERC20Collateral {
     using SafeERC20 for IERC20;
     using ERC165Checker for address;
+    using Strings for uint160;
+    using Strings for uint256;
     
     struct RewardSettings {
         uint256 period;
@@ -26,6 +28,7 @@ contract WrapperFarming is WrapperWithERC20Collateral {
     }
 
     uint8 public MAX_SETTINGS_SLOTS = 10;
+    address public defaultFarmingToken;
     
     // from farming token address  to settings(reward points) 
     mapping(address => RewardSettings[]) public rewardSettings;
@@ -35,18 +38,10 @@ contract WrapperFarming is WrapperWithERC20Collateral {
     event Harvest(uint256 tokenId, address farmingToken, uint256 amount);
     event Staked(uint256 tokenId, address farmingToken, uint256 amount);
 
-    constructor (address _erc20, address _defaultRewardToken, RewardSettings[] memory _settings ) 
+    constructor (address _erc20, address _defaultFarmingToken ) 
         WrapperWithERC20Collateral(_erc20) 
     {
-        require (_settings.length <= MAX_SETTINGS_SLOTS, "Too many seeting items");
-        RewardSettings[] storage set = rewardSettings[_defaultRewardToken];
-        for (uint8 i = 0; i < _settings.length; i ++) {
-            set.push(RewardSettings({
-                period: _settings[i].period,
-                rewardPercent: _settings[i].rewardPercent
-            }));
-        }
-
+        defaultFarmingToken = _defaultFarmingToken;
     }
     
 
@@ -65,7 +60,6 @@ contract WrapperFarming is WrapperWithERC20Collateral {
             address(this), 
             _erc20Collateral.amount
         );
-
 
         // 2.Mint wrapped NFT for receiver and populate storage
         lastWrappedNFTId += 1;
@@ -126,23 +120,19 @@ contract WrapperFarming is WrapperWithERC20Collateral {
         } 
         for (uint8 i = 0; i < rewardSettings[_erc20].length; i ++) {
             if (rewardSettings[_erc20][i].period <= timeInStake 
-                &&  rewardSettings[_erc20][i + 1].period < timeInStake) {
+                &&  rewardSettings[_erc20][i + 1].period > timeInStake) {
                 // Case when  user have reward apprpriate current stake time
                 rewardAccrued = rewardSettings[_erc20][i].rewardPercent
-                * getERC20CollateralBalance(_tokenId, _erc20) 
-                / 10000;
+                * getERC20CollateralBalance(_tokenId, _erc20)  / 10000;
                 break;
             } else {
-                if (
-                    //Case when next slot is last
-                    (i + 2 == rewardSettings[_erc20].length) 
-                    //Case when nex slot is last
-                    || (rewardSettings[_erc20][i + 2].period == 0)
-                    ) {
-                    // Case when user have MAX  percent (last possible setting slot)
+                //Case when next slot is last
+                if (i + 2 == rewardSettings[_erc20].length) {
+                    // Case when user have MAX  percent (last  setting slot)
                     rewardAccrued = rewardSettings[_erc20][i + 1].rewardPercent
                     * getERC20CollateralBalance(_tokenId, _erc20) 
                     / 10000;
+                    break;
                 }
             }
         }
@@ -158,6 +148,21 @@ contract WrapperFarming is WrapperWithERC20Collateral {
     {
         settings = rewardSettings[_farmingTokenAddress];
         return settings;
+    }
+
+    function name() public view virtual override(ERC721) returns (string memory) {
+        return 'ENVELOP wNFT Farming';
+    }
+
+    /**
+     * @dev See {IERC721Metadata-symbol}.
+     */
+    function symbol() public view virtual override(ERC721) returns (string memory) {
+        return 'wNFTF';
+    }
+
+    function _baseURI() internal view  override(ERC721) returns (string memory) {
+        return 'https://envelop.is/distribmetadata/';
     }
 
     ////////////////////////////////////////////////////////////////
@@ -179,7 +184,6 @@ contract WrapperFarming is WrapperWithERC20Collateral {
 
     function addRewardSettingsSlot(
         address _erc20, 
-        uint256 _settingsSlotId, 
         uint256 _period, 
         uint256 _percent
     ) external onlyOwner {
@@ -190,27 +194,33 @@ contract WrapperFarming is WrapperWithERC20Collateral {
             period: _period,
             rewardPercent: _percent
         }));
-        emit SettingsChanged(_erc20, _settingsSlotId);
+        emit SettingsChanged(_erc20, set.length-1);
     }
     ////////////////////////////////////////////////////////////////
 
-    function _baseURI() internal view  override(ERC721) returns (string memory) {
-        return 'https://envelop.is/distribmetadata/';
-    }
-
+    
+    // function tokenURI(uint256 _tokenId) public view override returns (string memory) {
+    //     NFT storage nft = wrappedTokens[_tokenId];
+    //     if (nft.tokenContract != address(0)) {
+    //         return IERC721Metadata(nft.tokenContract).tokenURI(nft.tokenId);
+    //     } else {
+    //         return ERC721.tokenURI(_tokenId);
+    //     }    
+    // }
 
     /**
      * @dev Function returns tokenURI of **underline original token** 
      *
      * @param _tokenId id of protocol token (new wrapped token)
      */
-    function tokenURI(uint256 _tokenId) public view override returns (string memory) {
-        NFT storage nft = wrappedTokens[_tokenId];
-        if (nft.tokenContract != address(0)) {
-            return IERC721Metadata(nft.tokenContract).tokenURI(nft.tokenId);
-        } else {
-            return ERC721.tokenURI(_tokenId);
-        }    
+    function tokenURI(uint256 _tokenId) public view virtual override 
+        returns (string memory) 
+    {
+        return string(abi.encodePacked(
+            _baseURI(),
+            uint160(address(this)).toHexString(),
+            "/", _tokenId.toString())
+        );
     }
 }
 

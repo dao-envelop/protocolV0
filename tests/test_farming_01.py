@@ -8,11 +8,12 @@ UNWRAP_AFTER = 0
 zero_address = '0x0000000000000000000000000000000000000000'
 def test_settings(accounts,  farming, niftsy20, dai):
     setting = farming.getRewardSettings(niftsy20)
+    logging.info('Settings={}'.format(setting))
     assert len(setting) == 4
     assert setting[0][1]==1000
 
 def test_stake(accounts,  farming, niftsy20, dai):
-    niftsy20.approve(farming, STAKED_AMOUNT)
+    niftsy20.approve(farming, STAKED_AMOUNT,{'from':accounts[0]})
     tx = farming.WrapForFarming(
         accounts[1],
         (niftsy20.address, STAKED_AMOUNT),
@@ -21,9 +22,63 @@ def test_stake(accounts,  farming, niftsy20, dai):
     )
     assert farming.getAvailableRewardAmount(farming.lastWrappedNFTId(), niftsy20) == 0
 
+def test_check_uri(accounts,  farming, niftsy20, dai):
+    logging.info(farming.tokenURI(farming.lastWrappedNFTId()))
+    assert str(farming.tokenURI(farming.lastWrappedNFTId())).lower() == 'https://envelop.is/distribmetadata/'+str(farming.address).lower()+'/'+str(farming.lastWrappedNFTId())    
+
 def test_check_reward(accounts,  farming, niftsy20):
-    chain.sleep(100)
+    logging.info('chain.time()={}'.format(chain.time()))
+    logging.info('tokenId={}, {}'.format(
+        farming.lastWrappedNFTId(),
+        farming.getWrappedToken(farming.lastWrappedNFTId())
+    ))
+    chain.mine(10)
+    chain.sleep(110)
+    logging.info('timeInStake()={}'.format(
+        chain.time() - farming.rewards(farming.lastWrappedNFTId())[0]
+    ))
+
+    logging.info('getERC20CollateralBalance({},{})={}'.format(
+        farming.lastWrappedNFTId(),
+        niftsy20,
+        farming.getERC20CollateralBalance(farming.lastWrappedNFTId(), niftsy20)
+    ))
+    logging.info('farming.getAvailableRewardAmount()={}'.format(
+        Wei(farming.getAvailableRewardAmount(farming.lastWrappedNFTId(), niftsy20)).to('ether')
+
+    ))
+
+    chain.mine(10)
+    chain.sleep(1100)
+    logging.info('timeInStake()={}'.format(
+        chain.time() - farming.rewards(farming.lastWrappedNFTId())[0]
+    ))
+
+    logging.info('getERC20CollateralBalance({},{})={}'.format(
+        farming.lastWrappedNFTId(),
+        niftsy20,
+        farming.getERC20CollateralBalance(farming.lastWrappedNFTId(), niftsy20)
+    ))
+    
+    logging.info('farming.getAvailableRewardAmount()={}'.format(
+        Wei(farming.getAvailableRewardAmount(farming.lastWrappedNFTId(), niftsy20)).to('ether')
+
+    ))
     assert farming.getAvailableRewardAmount(farming.lastWrappedNFTId(), niftsy20) > 0
 
-def test_harves(accounts,  farming, niftsy20):
-    farming.harvest(farming.lastWrappedNFTId(), niftsy20.address)
+def test_harvest(accounts,  farming, niftsy20):
+    farming.harvest(farming.lastWrappedNFTId(), niftsy20.address, {'from':accounts[0]})
+    logging.info('getERC20CollateralBalance({},{})={}'.format(
+        farming.lastWrappedNFTId(),
+        niftsy20,
+        Wei(farming.getERC20CollateralBalance(farming.lastWrappedNFTId(), niftsy20)).to('ether')
+        
+    ))
+
+def test_withdraw(accounts,  farming, niftsy20):
+    # Send token for rewards
+    niftsy20.transfer(farming, 100e18, {'from':accounts[0]})
+    collateral = farming.getERC20CollateralBalance(farming.lastWrappedNFTId(), niftsy20)
+    tx = farming.unWrap721(farming.lastWrappedNFTId(), {'from':accounts[1]})
+    logging.info(tx.events)
+    assert niftsy20.balanceOf(accounts[1]) == collateral    
