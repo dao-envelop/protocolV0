@@ -21,7 +21,7 @@ def test_stake(accounts,  farming, niftsy20, dai):
     farming.WrapForFarming(
         accounts[0],
         (niftsy20.address, STAKED_AMOUNT),
-        0,
+         chain.time() + 1000,
         {'from':accounts[0]}
     )
     
@@ -30,10 +30,10 @@ def test_stake(accounts,  farming, niftsy20, dai):
     assert farming.getWrappedToken(1)[0] == zero_address
     assert farming.getWrappedToken(1)[1] == 0
     assert farming.ownerOf(1) == accounts[0]
-    assert farming.getWrappedToken(1)[4] <= chain.time() + 100
+    assert farming.getWrappedToken(1)[4] <= chain.time() + 1000
     assert niftsy20.balanceOf(farming) == STAKED_AMOUNT
     assert farming.getERC20CollateralBalance(1, niftsy20) == STAKED_AMOUNT
-    assert farming.rewards(1)[0] <= chain.time() + 100
+    assert farming.rewards(1)[0] <= chain.time() + 1000
     assert farming.rewards(1)[0] > 0
     assert farming.totalSupply() == 1
 
@@ -46,9 +46,16 @@ def test_check_uri(accounts,  farming, niftsy20, dai):
 
 def test_check_reward(accounts,  farming, niftsy20):
     
-    chain.sleep(1100)
+    chain.sleep(200)
     chain.mine(10)
+    assert farming.getCurrenntAPYByTokenId(1, niftsy20) < farming.getPlanAPYByTokenId(1, niftsy20)
+    logging.info('getCurrenntAPYByTokenId = {}'.format(farming.getCurrenntAPYByTokenId(1, niftsy20)))
+    logging.info('getPlanAPYByTokenId = {}'.format(farming.getPlanAPYByTokenId(1, niftsy20)))
 
+
+
+    chain.sleep(800)
+    chain.mine(10)
 
 
     #logging.info('getCurrenntAPYByTokenId_1 = {}'.format(farming.getCurrenntAPYByTokenId(1, niftsy20)))
