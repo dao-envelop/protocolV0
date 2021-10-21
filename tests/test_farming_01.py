@@ -74,6 +74,7 @@ def test_harvest(accounts,  farming, niftsy20):
         Wei(farming.getERC20CollateralBalance(farming.lastWrappedNFTId(), niftsy20)).to('ether')
         
     ))
+    assert farming.getAvailableRewardAmount(farming.lastWrappedNFTId(), niftsy20) == 0
 
 def test_withdraw(accounts,  farming, niftsy20):
     # Send token for rewards

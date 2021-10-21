@@ -27,6 +27,7 @@ contract WrapperFarming is WrapperWithERC20Collateral {
         uint256 harvestedAmount;
     }
 
+    bool public isDepricated;
     uint8 public MAX_SETTINGS_SLOTS = 10;
     address public defaultFarmingToken;
     
@@ -54,6 +55,7 @@ contract WrapperFarming is WrapperWithERC20Collateral {
     ) public payable 
     {
         require(_receiver != address(0), "No zero address");
+        require(!isDepricated, "Pool is depricated for new stakes");
         // 1.topup wrapper contract with erc20 that would be added in collateral
         IERC20(_erc20Collateral.erc20Token).safeTransferFrom(
             msg.sender, 
@@ -103,7 +105,9 @@ contract WrapperFarming is WrapperWithERC20Collateral {
             for (uint256 i = 0; i < e.length; i ++) {
                 if (e[i].erc20Token == _erc20) {
                     e[i].amount += rewardAmount;
-                    thisNFTReward.harvestedAmount += rewardAmount;  
+                    //thisNFTReward.harvestedAmount += rewardAmount;
+                    // Reset date for lazy ReStake  
+                    thisNFTReward.stakedDate = block.timestamp;
                     break;
                 }
             }
@@ -113,32 +117,26 @@ contract WrapperFarming is WrapperWithERC20Collateral {
 
     function getAvailableRewardAmount(uint256 _tokenId, address _erc20) public view returns (uint256 rewardAccrued) {
         uint256 timeInStake = block.timestamp - rewards[_tokenId].stakedDate;
-        if (rewardSettings[_erc20][0].period > timeInStake) {
-            //case when time too short
-            rewardAccrued = 0;
-            return rewardAccrued;
-        } 
-        for (uint8 i = 0; i < rewardSettings[_erc20].length; i ++) {
-            if (rewardSettings[_erc20][i].period <= timeInStake 
-                &&  rewardSettings[_erc20][i + 1].period > timeInStake) {
-                // Case when  user have reward apprpriate current stake time
-                rewardAccrued = rewardSettings[_erc20][i].rewardPercent
-                * getERC20CollateralBalance(_tokenId, _erc20)  / 10000;
-                break;
-            } else {
-                //Case when next slot is last
-                if (i + 2 == rewardSettings[_erc20].length) {
-                    // Case when user have MAX  percent (last  setting slot)
-                    rewardAccrued = rewardSettings[_erc20][i + 1].rewardPercent
-                    * getERC20CollateralBalance(_tokenId, _erc20) 
-                    / 10000;
-                    break;
-                }
-            }
-        }
-        rewardAccrued -= rewards[_tokenId].harvestedAmount;
-
+        rewardAccrued = _getPercentByPeriod(timeInStake, _erc20)
+            * getERC20CollateralBalance(_tokenId, _erc20)  / 10000;
         return rewardAccrued; 
+    }
+
+    function getCurrenntAPYByTokenId(uint256 _tokenId, address _erc20) public view returns (uint256 percents) {
+        uint256 timeInStake = block.timestamp - rewards[_tokenId].stakedDate;
+        percents = _getPercentByPeriod(timeInStake, _erc20);
+        return percents; 
+    }
+
+    function getPlanAPYByTokenId(uint256 _tokenId, address _erc20) public view returns (uint256 percents) {
+        uint256 timeInStake;
+        if (wrappedTokens[_tokenId].unwrapAfter <= rewards[_tokenId].stakedDate) {
+              timeInStake = block.timestamp - rewards[_tokenId].stakedDate;
+            } else {
+              timeInStake = wrappedTokens[_tokenId].unwrapAfter - rewards[_tokenId].stakedDate;
+            }
+        percents = _getPercentByPeriod(timeInStake, _erc20);
+        return percents; 
     }
 
     function getRewardSettings(address _farmingTokenAddress)
@@ -196,18 +194,13 @@ contract WrapperFarming is WrapperWithERC20Collateral {
         }));
         emit SettingsChanged(_erc20, set.length-1);
     }
-    ////////////////////////////////////////////////////////////////
 
+    function setPoolState(bool _isDepricate) external onlyOwner {
+        isDepricated = _isDepricate;
+    }
     
-    // function tokenURI(uint256 _tokenId) public view override returns (string memory) {
-    //     NFT storage nft = wrappedTokens[_tokenId];
-    //     if (nft.tokenContract != address(0)) {
-    //         return IERC721Metadata(nft.tokenContract).tokenURI(nft.tokenId);
-    //     } else {
-    //         return ERC721.tokenURI(_tokenId);
-    //     }    
-    // }
-
+    
+    
     /**
      * @dev Function returns tokenURI of **underline original token** 
      *
@@ -216,11 +209,46 @@ contract WrapperFarming is WrapperWithERC20Collateral {
     function tokenURI(uint256 _tokenId) public view virtual override 
         returns (string memory) 
     {
-        return string(abi.encodePacked(
+        NFT storage nft = wrappedTokens[_tokenId];
+        if (nft.tokenContract != address(0)) {
+            return IERC721Metadata(nft.tokenContract).tokenURI(nft.tokenId);
+        } else {
+            return string(abi.encodePacked(
             _baseURI(),
             uint160(address(this)).toHexString(),
             "/", _tokenId.toString())
-        );
+            );
+        }    
+        
+    }
+
+
+    ////////////////////////////////////////////////////////////////
+    //    Internals                                           //////
+    ////////////////////////////////////////////////////////////////
+    function _getPercentByPeriod(uint256 _period, address _erc20) internal view returns (uint256 percents) {
+        if (rewardSettings[_erc20][0].period > _period) {
+            //case when time too short
+            percents = 0;
+            return percents;
+        } 
+        for (uint8 i = 0; i < rewardSettings[_erc20].length; i ++) {
+            if (rewardSettings[_erc20][i].period <= _period 
+                &&  rewardSettings[_erc20][i + 1].period > _period) {
+                // Case when  user have reward apprpriate current stake time
+                percents = rewardSettings[_erc20][i].rewardPercent;
+                break;
+            } else {
+                //Case when next slot is last
+                if (i + 2 == rewardSettings[_erc20].length) {
+                    // Case when user have MAX  percent (last  setting slot)
+                    percents = rewardSettings[_erc20][i + 1].rewardPercent;
+                    break;
+                }
+            }
+        }
+        return percents;
+
     }
 }
 
