@@ -166,9 +166,9 @@ def test_check_reward(accounts,  farming, niftsy20):
 
 def test_harvest(accounts,  farming, niftsy20):
     collateral = farming.getERC20CollateralBalance(2, niftsy20)
-    logging.info('col = {}'.format(collateral))
-    logging.info('avail = {}'.format(farming.getAvailableRewardAmount(2, niftsy20)))
-    logging.info('rasch = {}'.format(farming.getRewardSettings(niftsy20)[3][1]*farming.getERC20CollateralBalance(2, niftsy20)/10000))
+    #logging.info('col = {}'.format(collateral))
+    #logging.info('avail = {}'.format(farming.getAvailableRewardAmount(2, niftsy20)))
+    #logging.info('rasch = {}'.format(farming.getRewardSettings(niftsy20)[3][1]*farming.getERC20CollateralBalance(2, niftsy20)/10000))
     rewards = farming.rewards(2)
     farming.harvest(2, niftsy20.address, {'from':accounts[1]})
     logging.info('getERC20CollateralBalance({},{})={}'.format(
@@ -217,6 +217,16 @@ def test_withdraw(accounts,  farming, niftsy20):
     collateral = farming.getERC20CollateralBalance(2, niftsy20)
     bba1 = niftsy20.balanceOf(accounts[1])
     niftsy20.transfer(farming, 100e18, {'from':accounts[0]})
+    bbc = niftsy20.balanceOf(farming)
     tx = farming.unWrap721(2, {'from':accounts[1]})
     logging.info(tx.events)
     assert niftsy20.balanceOf(accounts[1]) == collateral + bba1
+
+    chain.sleep(110)
+    chain.mine(10)
+
+    assert farming.getAvailableRewardAmount(2, niftsy20) == 0
+    assert farming.getAvailableRewardAmount(1, niftsy20) == 0
+
+    assert farming.balanceOf(accounts[1]) == 0
+    assert niftsy20.balanceOf(farming) == bbc - collateral
