@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // ENVELOP (NIFTSY) protocol for NFT. Wrapper & Farming contract
-pragma solidity ^0.8.6;
+pragma solidity 0.8.7;
 
 import "./WrapperWithERC20Collateral.sol";
 import "../interfaces/IERC721Mintable.sol";
@@ -98,6 +98,7 @@ contract WrapperFarming is WrapperWithERC20Collateral {
     function harvest(uint256 _wrappedTokenId, address _erc20) public {
         // We dont need chec ownership because reward will  be added to wNFT
         // And unWrap this nft can only owner
+        require(ownerOf(_wrappedTokenId) == msg.sender, "Only for wNFT holder");
         uint256 rewardAmount = getAvailableRewardAmount(_wrappedTokenId, _erc20);
         if (rewardAmount > 0) {
             NFTReward storage thisNFTReward = rewards[_wrappedTokenId]; 
@@ -131,6 +132,7 @@ contract WrapperFarming is WrapperWithERC20Collateral {
     function getPlanAPYByTokenId(uint256 _tokenId, address _erc20) public view returns (uint256 percents) {
         uint256 timeInStake;
         if (wrappedTokens[_tokenId].unwrapAfter <= rewards[_tokenId].stakedDate) {
+              // Case when first harvest was done  after unwrapAfter
               timeInStake = block.timestamp - rewards[_tokenId].stakedDate;
             } else {
               timeInStake = wrappedTokens[_tokenId].unwrapAfter - rewards[_tokenId].stakedDate;

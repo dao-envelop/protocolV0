@@ -67,7 +67,9 @@ def test_check_reward(accounts,  farming, niftsy20):
     assert farming.getAvailableRewardAmount(farming.lastWrappedNFTId(), niftsy20) > 0
 
 def test_harvest(accounts,  farming, niftsy20):
-    farming.harvest(farming.lastWrappedNFTId(), niftsy20.address, {'from':accounts[0]})
+    with reverts("Only for wNFT holder"):
+        farming.harvest(farming.lastWrappedNFTId(), niftsy20.address, {'from':accounts[0]})
+    farming.harvest(farming.lastWrappedNFTId(), niftsy20.address, {'from':accounts[1]})    
     logging.info('getERC20CollateralBalance({},{})={}'.format(
         farming.lastWrappedNFTId(),
         niftsy20,
