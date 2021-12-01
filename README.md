@@ -44,6 +44,9 @@ https://etherscan.io/address/0x6426Bc3F86E554f44bE7798c8D1f3482Fb7BB68C#code
 **TransferRoyaltyModel01**  
 https://etherscan.io/address/0x6664c8118284b3F5ECB47c2105cAa544Ab0Cf75B#code
 
+**Farming**  
+https://etherscan.com/address/0xD5E1cDfCf6A9fdc68997a90E8B5ee962e536a0D8#code  
+
 
 ### Binance Smart Chain deploy ALFA
 **NIFTSY BEP20 token**
@@ -58,6 +61,8 @@ https://bscscan.com/address/0xc2571eBbc8F2af4f832bB8a2D3A4b0932Ce24773#code
 **TransferRoyaltyModel01**  
 https://bscscan.com/address/0x6664c8118284b3F5ECB47c2105cAa544Ab0Cf75B#code   
 
+**Farming**  
+https://bscscan.com/address/0xD5E1cDfCf6A9fdc68997a90E8B5ee962e536a0D8#code  
 
 ### Polygon Mainnet
 **techERC20**  
@@ -68,6 +73,18 @@ https://polygonscan.com/address/0xc2571eBbc8F2af4f832bB8a2D3A4b0932Ce24773#code
 
 **TransferRoyaltyModel01**  
 https://polygonscan.com/address/0x6664c8118284b3F5ECB47c2105cAa544Ab0Cf75B#code
+
+**Farming**  
+https://polygonscan.com/address/0xD5E1cDfCf6A9fdc68997a90E8B5ee962e536a0D8#code  
+
+**NIFTSY ERC20 token***  
+https://polygonscan.io/address/0x432cdbC749FD96AA35e1dC27765b23fDCc8F5cf1#code
+
+
+### Avalanche Mainnet
+**techERC20**  
+https://snowtrace.io/address/0x6426Bc3F86E554f44bE7798c8D1f3482Fb7BB68C#code  
+
 
 ----
 ### BSC Testnet

@@ -73,8 +73,8 @@ print(CHAIN)
 
 def main():
     print('Deployer account= {}'.format(accounts[0]))
-    techERC20 = TechToken.deploy({'from':accounts[0]})
-    #techERC20 = TechToken.at('0x6426Bc3F86E554f44bE7798c8D1f3482Fb7BB68C')
+    #techERC20 = TechToken.deploy({'from':accounts[0]})
+    techERC20 = TechToken.at('0x6426Bc3F86E554f44bE7798c8D1f3482Fb7BB68C')
     wrapper   = WrapperWithERC20Collateral.deploy(techERC20.address,{'from':accounts[0]}) 
     #wrapper = WrapperWithERC20Collateral.at('0xc2571eBbc8F2af4f832bB8a2D3A4b0932Ce24773')
     trmodel   = TransferRoyaltyModel01.deploy(wrapper.address,{'from':accounts[0]})
@@ -100,7 +100,7 @@ def main():
     print('https://{}/address/{}#code'.format(CHAIN['explorer_base'],wrapper))
     print('https://{}/address/{}#code'.format(CHAIN['explorer_base'],trmodel))
 
-    if  web3.eth.chainId in [1,4]:
+    if  web3.eth.chainId in [1,4, 43114]:
         TechToken.publish_source(techERC20);
         TransferRoyaltyModel01.publish_source(trmodel);
         WrapperWithERC20Collateral.publish_source(wrapper);
