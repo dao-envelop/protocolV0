@@ -77,12 +77,12 @@ def distributor(accounts, WrapperDistributor721, techERC20):
     yield t  
 
 @pytest.fixture(scope="module")
-def ERC721Distr(accounts, ERC721Distribution, distributor):
+def ERC721Distr(accounts, EnvelopERC721, distributor):
     """
     Simple NFT with URI
     """
-    b = accounts[0].deploy(ERC721Distribution, "Envelop Distribution NFT", "dNIFTSY")
-    b.setMinterStatus(distributor.address, True, {"from": accounts[0]})
+    b = accounts[0].deploy(EnvelopERC721, "Envelop orginal NFT721", "ENVELOP", "https://envelop.is/metadata/")
+    b.setMinter(distributor.address, {"from": accounts[0]})
     #t.setURI(0, 'https://maxsiz.github.io/')
     yield b
 
@@ -107,4 +107,20 @@ def farming(accounts, WrapperFarming, techERC20, niftsy20):
     t.addRewardSettingsSlot(niftsy20, 400, 4000, {'from': accounts[0]})
     yield t  
 
+@pytest.fixture(scope="module")
+def original721(accounts, EnvelopERC721):
+    """
+    Simple NFT with URI
+    """
+    b = accounts[0].deploy(EnvelopERC721, "Envelop orginal NFT721", "ENVELOP", "https://envelop.is/metadata/")
+    #t.setURI(0, 'https://maxsiz.github.io/')
+    yield b
 
+@pytest.fixture(scope="module")
+def multiminter(accounts, MultiMinter721):
+    """
+    Simple NFT with URI
+    """
+    b = accounts[0].deploy(MultiMinter721)
+    #t.setURI(0, 'https://maxsiz.github.io/')
+    yield b
