@@ -87,7 +87,8 @@ def test_check_reward(accounts,  farming, niftsy20):
 
     farming.unWrap721(1, {"from": accounts[0]})
     bba1 = niftsy20.balanceOf(accounts[0])
-    farming.harvest(1, niftsy20)
+    with reverts("ERC721: owner query for nonexistent token"):
+        farming.harvest(1, niftsy20)
     assert bba1 == niftsy20.balanceOf(accounts[0])
     assert farming.rewards(1)[1] == 0
 
@@ -163,7 +164,8 @@ def test_harvest(accounts,  farming, niftsy20):
 
     #after unwrap try again harvest
     bba1 = niftsy20.balanceOf(accounts[1])
-    farming.harvest(1, niftsy20)
+    with reverts("ERC721: owner query for nonexistent token"):
+        farming.harvest(1, niftsy20)
     assert bba1 == niftsy20.balanceOf(accounts[1])
     assert farming.rewards(1)[1] == 0
 

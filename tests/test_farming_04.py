@@ -82,7 +82,9 @@ def test_harvest(accounts,  farming, niftsy20):
     logging.info('avail = {}'.format(farming.getAvailableRewardAmount(1, niftsy20)))
     logging.info('rasch = {}'.format(farming.getRewardSettings(niftsy20)[3][1]*farming.getERC20CollateralBalance(1, niftsy20)/10000))
     rewards = farming.rewards(1)
-    farming.harvest(1, niftsy20.address, {'from':accounts[1]})
+    with reverts("Only for wNFT holder"):
+        farming.harvest(1, niftsy20.address, {'from':accounts[1]})
+    farming.harvest(1, niftsy20.address, {'from':accounts[0]})
     logging.info('getERC20CollateralBalance({},{})={}'.format(
         1,
         niftsy20,
@@ -105,7 +107,8 @@ def test_new_farming(accounts,  farming, niftsy20):
     logging.info('avail = {}'.format(farming.getAvailableRewardAmount(1, niftsy20)))
     logging.info('rasch = {}'.format(farming.getRewardSettings(niftsy20)[0][1]*farming.getERC20CollateralBalance(1, niftsy20)/10000))
     rewards = farming.rewards(1)
-    farming.harvest(1, niftsy20.address, {'from':accounts[1]})
+
+    farming.harvest(1, niftsy20.address, {'from':accounts[0]})
     logging.info('getERC20CollateralBalance({},{})={}'.format(
         1,
         niftsy20,

@@ -8,6 +8,7 @@ ERC20_COLLATERAL_AMOUNT = 2e16
 UNWRAP_AFTER = 0
 
 def test_ERC721Distr(accounts, ERC721Distr):
+    ERC721Distr.setMinter(accounts[0], {"from": accounts[0]})
     ERC721Distr.mint(accounts[0], 0, {'from':accounts[0]})
     logging.info(ERC721Distr.tokenURI(0))
     assert ERC721Distr.tokenURI(0) == ERC721Distr.baseURI() + '0'
@@ -17,7 +18,7 @@ def test_distr(accounts, ERC721Distr, distributor, weth, dai):
     RECEIVERS = [accounts.add() for x in ORIGINAL_NFT_IDs]
     weth.approve(distributor, ERC20_COLLATERAL_AMOUNT * len(ORIGINAL_NFT_IDs), {'from':accounts[0]})
     dai.approve(distributor, ERC20_COLLATERAL_AMOUNT * len(ORIGINAL_NFT_IDs), {'from':accounts[0]})
-    ERC721Distr.setMinterStatus(distributor, True)
+    ERC721Distr.setMinter(distributor.address, {"from": accounts[0]})
     tx = distributor.WrapAndDistrib721WithMint(
         ERC721Distr.address, 
         RECEIVERS,

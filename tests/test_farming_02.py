@@ -49,6 +49,7 @@ def test_stake(accounts,  farming, niftsy20, dai):
         chain.time() + 100,
         {'from':accounts[0]}
     )
+    logging.info(farming.lastWrappedNFTId() )
 
     niftsy20.approve(farming, STAKED_AMOUNT,{'from':accounts[0]})
     farming.WrapForFarming(
@@ -57,6 +58,8 @@ def test_stake(accounts,  farming, niftsy20, dai):
         chain.time() + 100,
         {'from':accounts[0]}
     )
+
+    logging.info(farming.lastWrappedNFTId() )
 
     assert farming.getAvailableRewardAmount(1, niftsy20) == 0
     assert farming.getAvailableRewardAmount(2, niftsy20) == 0
@@ -108,7 +111,9 @@ def test_check_reward(accounts,  farming, niftsy20):
 
     farming.unWrap721(1, {"from": accounts[1]})
     bba1 = niftsy20.balanceOf(accounts[1])
-    farming.harvest(1, niftsy20)
+    
+    with reverts("ERC721: owner query for nonexistent token"):
+        farming.harvest(1, niftsy20, {"from": accounts[1]})
     assert bba1 == niftsy20.balanceOf(accounts[1])
     assert farming.rewards(1)[1] == 0
 
@@ -184,7 +189,8 @@ def test_harvest(accounts,  farming, niftsy20):
 
     #after unwrap try again harvest
     bba1 = niftsy20.balanceOf(accounts[1])
-    farming.harvest(1, niftsy20)
+    with reverts("ERC721: owner query for nonexistent token"):
+        farming.harvest(1, niftsy20)
     assert bba1 == niftsy20.balanceOf(accounts[1])
     assert farming.rewards(1)[1] == 0
 
