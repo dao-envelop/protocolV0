@@ -50,10 +50,20 @@ def test_set_price(accounts,  launcpadWL, distributor, dai, niftsy20):
             Wei(p1).to('ether'), Wei(p2).to('ether')
         ))
 
-def test_claim_ERC20(accounts,  launcpadWL, distributor, dai, niftsy20):
-    dai.approve(launcpadWL, 1e30)
-    tx = launcpadWL.claimNFT(1, dai)
-    assert distributor.balanceOf(accounts[0]) == 1
-    assert dai.balanceOf(launcpadWL)==launcpadWL.getWNFTPrice(1, dai)
+def test_claim_WL(accounts,  launcpadWL, distributor, dai, niftsy20, whitelist):
+    with reverts("White list is NOT active"):
+        launcpadWL.claimNFT(1,{'from':accounts[0]})
+    launcpadWL.setAllocationList(whitelist)
+    with reverts("Too low allocation"):
+        launcpadWL.claimNFT(1,{'from':accounts[0]})
+    whitelist.increaseAllocation(accounts[0], niftsy20, ERC20_COLLATERAL_AMOUNT)
+    whitelist.setOperator(launcpadWL, True)
+    assert launcpadWL.getAvailableAllocation(accounts[0]) == ERC20_COLLATERAL_AMOUNT
+    tx  = launcpadWL.claimNFT(1,{'from':accounts[0]})
+    assert launcpadWL.getAvailableAllocation(accounts[0]) == 0
+
+    # tx = launcpadWL.claimNFT(1, dai)
+    # assert distributor.balanceOf(accounts[0]) == 1
+    # assert dai.balanceOf(launcpadWL)==launcpadWL.getWNFTPrice(1, dai)
 
 

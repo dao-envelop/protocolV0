@@ -97,6 +97,11 @@ def launcpadWL(accounts, distributor, LaunchpadWNFTV1, niftsy20):
     yield l
 
 @pytest.fixture(scope="module")
+def whitelist(accounts, WLAllocation):
+    l = accounts[0].deploy(WLAllocation)
+    yield l    
+
+@pytest.fixture(scope="module")
 def farming(accounts, WrapperFarming, techERC20, niftsy20):
     t = accounts[0].deploy(
         WrapperFarming, 
