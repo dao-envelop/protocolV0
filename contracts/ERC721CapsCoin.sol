@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 //v0.0.1
-contract EnvelopERC721 is ERC721Enumerable, Ownable {
+contract CapsCoinERC721 is ERC721Enumerable, Ownable {
     using Strings for uint256;
     using Strings for uint160;
     

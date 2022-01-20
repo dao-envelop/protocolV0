@@ -228,7 +228,7 @@ contract WrapperWithERC20Collateral is WrapperBase {
                     // comment string below due in some case it c can be very costly
                     // https://docs.soliditylang.org/en/v0.8.9/types.html#array-members   
                     //e.pop();
-                    if (gasleft() <= 10_000) {
+                    if (gasleft() <= 1_000) {
                         emit PartialUnWrapp(_tokenId, msg.sender);
                         return false;
                     }
