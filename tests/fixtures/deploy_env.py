@@ -1,6 +1,6 @@
 import pytest
 from brownie import chain
-
+zero_address = '0x0000000000000000000000000000000000000000'
 ############ Mocks ########################
 @pytest.fixture(scope="module")
 def dai(accounts, TokenMock):
@@ -94,6 +94,11 @@ def launcpad(accounts, distributor, LaunchpadWNFT, niftsy20):
 @pytest.fixture(scope="module")
 def launcpadWL(accounts, distributor, LaunchpadWNFTV1, niftsy20):
     l = accounts[0].deploy(LaunchpadWNFTV1, distributor.address, niftsy20.address, 0)
+    yield l
+
+@pytest.fixture(scope="module")
+def launcpadWLNative(accounts, distributor, LaunchpadWNFTV1, niftsy20):
+    l = accounts[0].deploy(LaunchpadWNFTV1, distributor.address, zero_address, 0)
     yield l
 
 @pytest.fixture(scope="module")
