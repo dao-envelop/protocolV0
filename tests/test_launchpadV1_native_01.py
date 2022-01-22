@@ -58,9 +58,9 @@ def test_claim_WL(accounts,  launcpadWLNative, distributor, dai, niftsy20, white
     launcpadWLNative.setAllocationList(whitelist)
     with reverts("Too low allocation"):
         launcpadWLNative.claimNFT(1,{'from':accounts[0]})
-    whitelist.increaseAllocation(accounts[0], zero_address, NATIVE_COLLATERAL_AMOUNT * 10e18)
+    whitelist.increaseAllocation(accounts[0], zero_address, NATIVE_COLLATERAL_AMOUNT * 1e18)
     whitelist.setOperator(launcpadWLNative, True)
-    assert launcpadWLNative.getAvailableAllocation(accounts[0]) == NATIVE_COLLATERAL_AMOUNT * 10e18
+    assert launcpadWLNative.getAvailableAllocation(accounts[0]) == NATIVE_COLLATERAL_AMOUNT * 1e18
     tx  = launcpadWLNative.claimNFT(1,{'from':accounts[0]})
     assert launcpadWLNative.getAvailableAllocation(accounts[0]) == 0
 
