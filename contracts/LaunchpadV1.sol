@@ -36,7 +36,13 @@ contract LaunchpadWNFTV1 is Ownable, IERC721Receiver {
 
     function claimNFT(uint256 tokenId) public {
         require(allocationList != address(0), "White list is NOT active");
-        uint256 collateralBalance = IWrapperCollateral(wNFT).getERC20CollateralBalance(tokenId, tradableCollateral);
+        uint256 collateralBalance;
+        if (tradableCollateral == address(0)){
+            (collateralBalance,) = IWrapperCollateral(wNFT).getTokenValue(tokenId);
+        } else {
+            collateralBalance = IWrapperCollateral(wNFT).getERC20CollateralBalance(tokenId, tradableCollateral);    
+        } 
+        
         require(
             IWLAllocation(allocationList).availableAllocation(msg.sender, tradableCollateral) >= collateralBalance,
             "Too low allocation"

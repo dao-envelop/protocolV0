@@ -33,6 +33,14 @@ interface IWrapperCollateral is  IERC721Enumerable {
         view
         returns (uint256); 
 
+     /**
+     * @dev Function returns tuple with accumulated amounts of 
+     * native chain collateral(eth, bnb,..) and transfer Fee 
+     *
+     * @param _tokenId id of protocol token (new wrapped token)
+     */
+    function getTokenValue(uint256 _tokenId) external view returns (uint256, uint256);
+
     /**
      * @dev Function returns true is `_contract` ERC20 is 
      * enabled for add in colleteral of wrapped token 
