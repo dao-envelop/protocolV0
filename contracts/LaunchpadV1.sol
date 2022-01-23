@@ -36,13 +36,7 @@ contract LaunchpadWNFTV1 is Ownable, IERC721Receiver {
 
     function claimNFT(uint256 tokenId) public {
         require(allocationList != address(0), "White list is NOT active");
-        uint256 collateralBalance;
-        if (tradableCollateral == address(0)){
-            (collateralBalance,) = IWrapperCollateral(wNFT).getTokenValue(tokenId);
-        } else {
-            collateralBalance = IWrapperCollateral(wNFT).getERC20CollateralBalance(tokenId, tradableCollateral);    
-        } 
-        
+        uint256 collateralBalance = _getCollateralBalance(tokenId);
         require(
             IWLAllocation(allocationList).availableAllocation(msg.sender, tradableCollateral) >= collateralBalance,
             "Too low allocation"
@@ -73,9 +67,9 @@ contract LaunchpadWNFTV1 is Ownable, IERC721Receiver {
     }
 
     function getWNFTPrice(uint256 tokenId, address payWith) external view returns (uint256 payAmount) {
-        payAmount  = IWrapperCollateral(wNFT).getERC20CollateralBalance(tokenId, tradableCollateral)
+        payAmount  = _getCollateralBalance(tokenId)
                 * priceForOneCollateralUnit[payWith].value / priceForOneCollateralUnit[payWith].decimals;
-        return payAmount;        
+        //return payAmount;        
     }
 
     function getAvailableAllocation(address _user) external view returns(uint256) {
@@ -113,5 +107,13 @@ contract LaunchpadWNFTV1 is Ownable, IERC721Receiver {
 
     function setAllocationList(address _contract) external onlyOwner {
         allocationList = _contract;
+    }
+    //////////////////////////////////////////////////////////////
+    function _getCollateralBalance(uint256 tokenId) internal view returns (uint256 collateralBalance) {
+        if (tradableCollateral == address(0)){
+            (collateralBalance,) = IWrapperCollateral(wNFT).getTokenValue(tokenId);
+        } else {
+            collateralBalance = IWrapperCollateral(wNFT).getERC20CollateralBalance(tokenId, tradableCollateral);    
+        }
     }
 }
