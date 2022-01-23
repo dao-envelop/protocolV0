@@ -49,8 +49,7 @@ contract LaunchpadWNFTV1 is Ownable, IERC721Receiver {
     function claimNFT(uint256 tokenId, address payWith) public payable {
         require(block.timestamp >= enableAfter, "Please wait for start date");
         require(priceForOneCollateralUnit[payWith].value > 0,"Cant pay with this ERC20");
-        uint256 payAmount= IWrapperCollateral(wNFT).getERC20CollateralBalance(tokenId, tradableCollateral)
-                * priceForOneCollateralUnit[payWith].value / priceForOneCollateralUnit[payWith].decimals;
+        uint256 payAmount= getWNFTPrice(tokenId, payWith);
         if (payWith != address(0)){
             require(msg.value == 0, "No need ether");
             IERC20(payWith).safeTransferFrom(msg.sender, address(this), payAmount);
@@ -66,10 +65,9 @@ contract LaunchpadWNFTV1 is Ownable, IERC721Receiver {
         emit Payed(payWith, payAmount, block.timestamp, tokenId);
     }
 
-    function getWNFTPrice(uint256 tokenId, address payWith) external view returns (uint256 payAmount) {
+    function getWNFTPrice(uint256 tokenId, address payWith) public view returns (uint256 payAmount) {
         payAmount  = _getCollateralBalance(tokenId)
                 * priceForOneCollateralUnit[payWith].value / priceForOneCollateralUnit[payWith].decimals;
-        //return payAmount;        
     }
 
     function getAvailableAllocation(address _user) external view returns(uint256) {
