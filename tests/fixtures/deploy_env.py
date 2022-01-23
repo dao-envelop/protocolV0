@@ -102,9 +102,10 @@ def launcpadWLNative(accounts, distributor, LaunchpadWNFTV1, niftsy20):
     yield l
 
 @pytest.fixture(scope="module")
-def whitelist(accounts, WLAllocation, launcpadWL):
+def whitelist(accounts, WLAllocation, launcpadWL, launcpadWLNative):
     l = accounts[0].deploy(WLAllocation)
     l.setOperator(launcpadWL.address, True, {"from": accounts[0]})
+    l.setOperator(launcpadWLNative.address, True, {"from": accounts[0]})
     yield l    
 
 @pytest.fixture(scope="module")
