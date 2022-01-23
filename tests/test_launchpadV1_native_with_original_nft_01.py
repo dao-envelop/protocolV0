@@ -55,10 +55,10 @@ def test_set_price(accounts,  launcpadWLNative, distributor, dai, niftsy20):
             distributor.getERC20CollateralBalance(distributor.tokenOfOwnerByIndex(launcpadWLNative, i), niftsy20),
             Wei(p1).to('ether'), Wei(p2).to('ether')
         ))
-    assert launcpadWLNative.getWNFTPrice(1, dai) == distributor.getERC20CollateralBalance(1, niftsy20) * launcpadWLNative.priceForOneCollateralUnit(dai)[0]/launcpadWLNative.priceForOneCollateralUnit(dai)[1]
+    assert launcpadWLNative.getWNFTPrice(1, dai) == distributor.getTokenValue(1)[0] * launcpadWLNative.priceForOneCollateralUnit(dai)[0]/launcpadWLNative.priceForOneCollateralUnit(dai)[1]
 
 # claim with ether
-'''def test_claim_Ether(accounts,  launcpadWLNative, distributor, dai, niftsy20, weth, ERC721Distr):
+def test_claim_Ether(accounts,  launcpadWLNative, distributor, dai, niftsy20, weth, ERC721Distr):
     #not enough ether
     with reverts("Received amount less then price"):
         launcpadWLNative.claimNFT(1, zero_address, {"value": '0.000001 ether'})
@@ -75,7 +75,6 @@ def test_set_price(accounts,  launcpadWLNative, distributor, dai, niftsy20):
 
     #unwrap claimed token
     bbe0 = accounts[0].balance()
-    bbn0 = niftsy20.balanceOf(accounts[0])
     bbw0 = weth.balanceOf(accounts[0])
     
     bbeD = distributor.balance()
@@ -85,12 +84,8 @@ def test_set_price(accounts,  launcpadWLNative, distributor, dai, niftsy20):
     distributor.unWrap721(1)
 
     assert bbe0 + Wei(ETH_AMOUNT)/COUNT == accounts[0].balance()
-    assert bbn0 + ERC20_COLLATERAL_AMOUNT == niftsy20.balanceOf(accounts[0])
-    assert bbw0 + ERC20_COLLATERAL_AMOUNT_WETH == weth.balanceOf(accounts[0])
 
     assert bbeD - Wei(ETH_AMOUNT)/COUNT == distributor.balance()
-    assert bbnD - ERC20_COLLATERAL_AMOUNT == niftsy20.balanceOf(distributor)
-    assert bbwD - ERC20_COLLATERAL_AMOUNT_WETH == weth.balanceOf(distributor)
 
     assert distributor.balanceOf(accounts[0]) == 0
     assert ERC721Distr.balanceOf(accounts[0]) == 1
@@ -130,22 +125,14 @@ def test_claim_token(accounts,  launcpadWLNative, distributor, dai, niftsy20, we
 
     #unwrap claimed token
     bbe0 = accounts[0].balance()
-    bbn0 = niftsy20.balanceOf(accounts[0])
-    bbw0 = weth.balanceOf(accounts[0])
     
     bbeD = distributor.balance()
-    bbnD = niftsy20.balanceOf(distributor)
-    bbwD = weth.balanceOf(distributor)
 
     distributor.unWrap721(2)
 
     assert bbe0 + Wei(ETH_AMOUNT)/COUNT == accounts[0].balance()
-    assert bbn0 + ERC20_COLLATERAL_AMOUNT == niftsy20.balanceOf(accounts[0])
-    assert bbw0 + ERC20_COLLATERAL_AMOUNT_WETH == weth.balanceOf(accounts[0])
 
     assert bbeD - Wei(ETH_AMOUNT)/COUNT == distributor.balance()
-    assert bbnD - ERC20_COLLATERAL_AMOUNT == niftsy20.balanceOf(distributor)
-    assert bbwD - ERC20_COLLATERAL_AMOUNT_WETH == weth.balanceOf(distributor)
 
     assert distributor.balanceOf(accounts[0]) == 0
     assert ERC721Distr.balanceOf(accounts[0]) == 2
@@ -154,22 +141,13 @@ def test_withdraw(accounts, launcpadWLNative, dai):
     with reverts("Ownable: caller is not the owner"):
         launcpadWLNative.withdrawEther({"from": accounts[1]})
 
-    with reverts("Ownable: caller is not the owner"):
-        launcpadWLNative.withdrawTokens(dai,{"from": accounts[1]})
-
     bbeL = launcpadWLNative.balance()  
     bbe0 = accounts[0].balance()
-
-    bbDAI0 = dai.balanceOf(accounts[0])
-    bbDAIL = dai.balanceOf(launcpadWLNative)
     
     launcpadWLNative.withdrawEther({"from": accounts[0]})
-    launcpadWLNative.withdrawTokens(dai,{"from": accounts[0]})
 
-    assert dai.balanceOf(launcpadWLNative) == 0
     assert launcpadWLNative.balance()  == 0
-    assert dai.balanceOf(accounts[0]) == bbDAI0 + bbDAIL
-    assert accounts[0].balance() == bbeL + bbe0'''
+    assert accounts[0].balance() == bbeL + bbe0
 
 def test_claim_WL(accounts,  launcpadWLNative, distributor, dai, niftsy20, whitelist, ERC721Distr):
     with reverts("White list is NOT active"):
