@@ -20,20 +20,14 @@ def test_distr(accounts,  distributor, niftsy20, dai, launcpadWL, ERC721Distr, w
 
     niftsy20.approve(distributor, ERC20_COLLATERAL_AMOUNT * len(RECEIVERS), {'from':accounts[0]})
     weth.approve(distributor, ERC20_COLLATERAL_AMOUNT_WETH * len(RECEIVERS), {'from':accounts[0]})
-
-    with reverts("Only for distributors"):
-        distributor.WrapAndDistribEmpty( 
+    tx = distributor.WrapAndDistrib721WithMint(
+        ERC721Distr.address, 
         RECEIVERS,
+        ORIGINAL_TOKEN_IDs,
         [(niftsy20.address,ERC20_COLLATERAL_AMOUNT), (weth.address,ERC20_COLLATERAL_AMOUNT_WETH)],
         UNWRAP_AFTER,
-        {'from':accounts[1], 'value':ETH_AMOUNT})
-
-    tx = distributor.WrapAndDistribEmpty( 
-        RECEIVERS,
-        [(niftsy20.address,ERC20_COLLATERAL_AMOUNT), (weth.address,ERC20_COLLATERAL_AMOUNT_WETH)],
-        UNWRAP_AFTER,
-        {'from':accounts[0], 'value':ETH_AMOUNT})
-
+        {'from':accounts[0], 'value':ETH_AMOUNT}
+    )
     #logging.info(tx.events)
     #ids=[distributor.tokenURI(x['wrappedTokenId']) for x in tx.events['Wrapped']]
     #logging.info(ids)
@@ -42,8 +36,7 @@ def test_distr(accounts,  distributor, niftsy20, dai, launcpadWL, ERC721Distr, w
     assert weth.balanceOf(distributor.address) == ERC20_COLLATERAL_AMOUNT_WETH * len(RECEIVERS)
     assert niftsy20.balanceOf(distributor.address) == ERC20_COLLATERAL_AMOUNT * len(RECEIVERS)
     assert distributor.balance() == '10 ether'
-    assert distributor.getWrappedToken(1)[0] == zero_address
-    assert distributor.getWrappedToken(1)[1] == 0
+    assert ERC721Distr.balanceOf(distributor.address) == COUNT
 
 def test_wrapped_props(accounts,  distributor, launcpadWL, dai, niftsy20, weth):
     for i in  range(distributor.balanceOf(launcpadWL)):
@@ -107,6 +100,7 @@ def test_claim_Ether(accounts,  launcpadWL, distributor, dai, niftsy20, weth, ER
     assert bbwD - ERC20_COLLATERAL_AMOUNT_WETH == weth.balanceOf(distributor)
 
     assert distributor.balanceOf(accounts[0]) == 0
+    assert ERC721Distr.balanceOf(accounts[0]) == 1
 
 
 # claim with token
@@ -161,69 +155,27 @@ def test_claim_token(accounts,  launcpadWL, distributor, dai, niftsy20, weth, ER
     assert bbwD - ERC20_COLLATERAL_AMOUNT_WETH == weth.balanceOf(distributor)
 
     assert distributor.balanceOf(accounts[0]) == 0
+    assert ERC721Distr.balanceOf(accounts[0]) == 2
 
-
-# claim with allocation
-def test_claim_allocation(accounts,  launcpadWL, distributor, dai, niftsy20, weth, ERC721Distr, whitelist):
-    with reverts("White list is NOT active"):
-        launcpadWL.claimNFT(3, {"from": accounts[1]})
+def test_withdraw(accounts, launcpadWL, dai):
+    with reverts("Ownable: caller is not the owner"):
+        launcpadWL.withdrawEther({"from": accounts[1]})
 
     with reverts("Ownable: caller is not the owner"):
-        launcpadWL.setAllocationList(whitelist.address, {"from": accounts[1]})
+        launcpadWL.withdrawTokens(dai,{"from": accounts[1]})
 
-    launcpadWL.setAllocationList(whitelist.address, {"from": accounts[0]})
+    bbeL = launcpadWL.balance()  
+    bbe0 = accounts[0].balance()
 
-    with reverts("Too low allocation"):
-        launcpadWL.claimNFT(3, {"from": accounts[1]})
-
-    with reverts("Trusted operators only"):
-        whitelist.increaseAllocation(accounts[1], weth.address, ERC20_COLLATERAL_AMOUNT_WETH, {"from": accounts[1]})
-
-    whitelist.increaseAllocation(accounts[1], weth.address, ERC20_COLLATERAL_AMOUNT_WETH, {"from": accounts[0]})
-
-    #there is allocation, but not tradable token
-    with reverts("Too low allocation"):
-        launcpadWL.claimNFT(3, {"from": accounts[1]})
-
-    #there is allocation in tradable token
-    whitelist.increaseAllocation(accounts[1], niftsy20.address, 3*ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-    launcpadWL.claimNFT(3, {"from": accounts[1]})
-
-    assert distributor.ownerOf(3) == accounts[1]
-    assert whitelist.availableAllocation(accounts[1], niftsy20.address) == 2*ERC20_COLLATERAL_AMOUNT
-    assert whitelist.availableAllocation(accounts[1], weth.address) == ERC20_COLLATERAL_AMOUNT_WETH
-
-    with reverts("Trusted operators only"):
-        whitelist.spendAllocation(accounts[1], niftsy20.address, 1, {"from": accounts[2]})
-
-    with reverts("Trusted operators only"):
-        whitelist.decreaseAllocation(accounts[1], niftsy20.address, 1, {"from": accounts[2]})
-
-    whitelist.decreaseAllocation(accounts[1], niftsy20.address, 1.5*ERC20_COLLATERAL_AMOUNT, {"from": accounts[0]})
-    assert whitelist.availableAllocation(accounts[1], niftsy20.address) == 0.5*ERC20_COLLATERAL_AMOUNT
-    with reverts("Too low allocation"):
-        launcpadWL.claimNFT(4, {"from": accounts[1]})
-
-def test_claim_allocation_1(accounts,  launcpadWL, distributor, dai, niftsy20, weth, ERC721Distr, whitelist):
-    with reverts("Trusted operators only"):
-        whitelist.increaseAllocationBatch([accounts[2], accounts[3]], niftsy20.address, [ERC20_COLLATERAL_AMOUNT, 2*ERC20_COLLATERAL_AMOUNT], {"from": accounts[1]})
-
-    with reverts("Non equal arrays"):
-        whitelist.increaseAllocationBatch([accounts[2], accounts[3]], niftsy20.address, [2*ERC20_COLLATERAL_AMOUNT], {"from": accounts[0]})
-
-    whitelist.increaseAllocationBatch([accounts[2], accounts[3]], niftsy20.address, [ERC20_COLLATERAL_AMOUNT, 2*ERC20_COLLATERAL_AMOUNT], {"from": accounts[0]})
-    assert whitelist.availableAllocation(accounts[2], niftsy20.address) == ERC20_COLLATERAL_AMOUNT
-    assert whitelist.availableAllocation(accounts[3], niftsy20.address) == 2*ERC20_COLLATERAL_AMOUNT
-
+    bbDAI0 = dai.balanceOf(accounts[0])
+    bbDAIL = dai.balanceOf(launcpadWL)
     
-    with reverts("Trusted operators only"):
-        whitelist.decreaseAllocationBatch([accounts[2], accounts[3]], niftsy20.address, [ERC20_COLLATERAL_AMOUNT, 2*ERC20_COLLATERAL_AMOUNT], {"from": accounts[1]})
+    launcpadWL.withdrawEther({"from": accounts[0]})
+    launcpadWL.withdrawTokens(dai,{"from": accounts[0]})
 
-    with reverts("Non equal arrays"):
-        whitelist.decreaseAllocationBatch([accounts[2], accounts[3]], niftsy20.address, [2*ERC20_COLLATERAL_AMOUNT], {"from": accounts[0]})
-
-    whitelist.decreaseAllocationBatch([accounts[2], accounts[3]], niftsy20.address, [0.4*ERC20_COLLATERAL_AMOUNT, ERC20_COLLATERAL_AMOUNT], {"from": accounts[0]})
-    assert whitelist.availableAllocation(accounts[2], niftsy20.address) == 0.6*ERC20_COLLATERAL_AMOUNT
-    assert whitelist.availableAllocation(accounts[3], niftsy20.address) == ERC20_COLLATERAL_AMOUNT
+    assert dai.balanceOf(launcpadWL) == 0
+    assert launcpadWL.balance()  == 0
+    assert dai.balanceOf(accounts[0]) == bbDAI0 + bbDAIL
+    assert accounts[0].balance() == bbeL + bbe0
 
 
