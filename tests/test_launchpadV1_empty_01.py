@@ -40,14 +40,17 @@ def test_wrapped_props(accounts,  distributor, launcpadWL, dai, niftsy20):
 def test_set_price(accounts,  launcpadWL, distributor, dai, niftsy20):
     launcpadWL.setPrice(dai, 3, 100)
     launcpadWL.setPrice(zero_address, 2, 1000)
+    launcpadWL.setPrice(niftsy20, 2, 200)
+
     for i in  range(distributor.balanceOf(launcpadWL)):
         tid=distributor.tokenOfOwnerByIndex(launcpadWL, i)
         p1 = launcpadWL.getWNFTPrice(tid, dai)
         p2 = launcpadWL.getWNFTPrice(tid, zero_address) #?????????????
-        logging.info('tokenId={},\n erc20Balance={},\n priceErc20={},\n priceETH={}'.format(
+        p3 = launcpadWL.getWNFTPrice(tid, niftsy20) #?????????????
+        logging.info('tokenId={},\n erc20Balance={},\n priceErc20={},\n priceETH={}, \n priceNiftsy={}'.format(
             distributor.tokenOfOwnerByIndex(launcpadWL, i),
             distributor.getERC20CollateralBalance(distributor.tokenOfOwnerByIndex(launcpadWL, i), niftsy20),
-            Wei(p1).to('ether'), Wei(p2).to('ether')
+            Wei(p1).to('ether'), Wei(p2).to('ether'),  Wei(p3).to('ether')
         ))
 
 def test_claim_WL(accounts,  launcpadWL, distributor, dai, niftsy20, whitelist):
@@ -62,8 +65,13 @@ def test_claim_WL(accounts,  launcpadWL, distributor, dai, niftsy20, whitelist):
     tx  = launcpadWL.claimNFT(1,{'from':accounts[0]})
     assert launcpadWL.getAvailableAllocation(accounts[0]) == 0
 
-    # tx = launcpadWL.claimNFT(1, dai)
-    # assert distributor.balanceOf(accounts[0]) == 1
-    # assert dai.balanceOf(launcpadWL)==launcpadWL.getWNFTPrice(1, dai)
+    logging.info('{}'.format(launcpadWL.getWNFTPrice(2, niftsy20)))
+    logging.info(niftsy20.balanceOf(accounts[0]))
+    niftsy20.approve(launcpadWL,launcpadWL.getWNFTPrice(2, niftsy20), {"from": accounts[0]})
+    logging.info(niftsy20.allowance(accounts[0], launcpadWL ))
+
+    tx = launcpadWL.claimNFT(2, niftsy20)
+    assert distributor.balanceOf(accounts[0]) == 2
+    assert niftsy20.balanceOf(launcpadWL)==launcpadWL.getWNFTPrice(3, niftsy20.address)
 
 
