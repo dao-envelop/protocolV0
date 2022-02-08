@@ -134,9 +134,10 @@ def original721(accounts, EnvelopERC721):
 
 @pytest.fixture(scope="module")
 def multiminter(accounts, MultiMinter721):
-    """
-    Simple NFT with URI
-    """
     b = accounts[0].deploy(MultiMinter721)
-    #t.setURI(0, 'https://maxsiz.github.io/')
+    yield b
+
+@pytest.fixture(scope="module")
+def multiwrapper(accounts, MultiWrapper721):
+    b = accounts[0].deploy(MultiWrapper721)
     yield b

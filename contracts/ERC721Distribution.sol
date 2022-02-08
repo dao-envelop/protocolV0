@@ -12,7 +12,7 @@ contract EnvelopERC721 is ERC721Enumerable, Ownable {
     using Strings for uint160;
     
     address public wrapperMinter;
-    string  public baseurl;
+    string  internal baseurl;
     
     constructor(
         string memory name_,
@@ -47,8 +47,6 @@ contract EnvelopERC721 is ERC721Enumerable, Ownable {
      * - The caller must own `tokenId` or be an approved operator.
      */
     function burn(uint256 tokenId) public virtual {
-        //solhint-disable-next-line max-line-length
-        require(wrapperMinter == msg.sender, "Trusted address only");
         require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721Burnable: caller is not owner nor approved");
         _burn(tokenId);
     }
@@ -61,24 +59,6 @@ contract EnvelopERC721 is ERC721Enumerable, Ownable {
         baseurl = _baseurl;
     }
 
-    /**
-     * @dev See {ERC721-_beforeTokenTransfer}.
-     *
-     * Requirements:
-     *
-     * - the contract must not be paused.
-     */
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal virtual override {
-        super._beforeTokenTransfer(from, to, tokenId);
-
-        //DUMMY
-        require(true, "ERC721Pausable: token transfer while paused");
-    }
-    
     
     function baseURI() external view  returns (string memory) {
         return _baseURI();

@@ -70,6 +70,10 @@ contract LaunchpadWNFTV1 is Ownable, IERC721Receiver {
                 * priceForOneCollateralUnit[payWith].value / priceForOneCollateralUnit[payWith].decimals;
     }
 
+    function getTradableCollateralBalance(uint256 tokenId) public view returns (uint256 bal) {
+        bal  = _getCollateralBalance(tokenId);
+    }
+
     function getAvailableAllocation(address _user) external view returns(uint256) {
         require(allocationList != address(0), "White list is NOT active");
         return  IWLAllocation(allocationList).availableAllocation(_user, tradableCollateral);
