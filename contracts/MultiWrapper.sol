@@ -31,7 +31,7 @@ contract MultiWrapper721 is Ownable, ERC721Holder {
 
     }
 
-    function WrapAndDistrib721Bathc(
+    function WrapAndDistrib721Batch(
         address _original721, 
         address[] memory _receivers,
         uint256[] memory _tokenIds, 
@@ -96,7 +96,7 @@ contract MultiWrapper721 is Ownable, ERC721Holder {
         }
     }
 
-    function AddManyCollateralToBathc(
+    function AddManyCollateralToBatch(
         uint256[] memory _tokenIds, 
         ERC20Collateral[] memory _forAdd
     ) public payable 
@@ -132,7 +132,7 @@ contract MultiWrapper721 is Ownable, ERC721Holder {
     //  !!!! No topup inside function
     //  Please do it before
     //  No ether  can be added this way
-    function AddOneCollateralToBathc(
+    function AddOneCollateralToBatch(
         uint256[] memory _tokenIds, 
         ERC20Collateral[] memory _forAdd
     ) public payable 

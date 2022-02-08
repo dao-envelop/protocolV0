@@ -4,7 +4,7 @@ from brownie import Wei, reverts, chain
 LOGGER = logging.getLogger(__name__)
 
 ORIGINAL_NFT_IDs = [1,2,3,4,5,6,7,8,9]
-UNWRAP_AFTER = 0
+UNWRAP_AFTER = chain.time() + 100
 ERC20_COLLATERAL_AMOUNT = 20e18
 
 def test_ERC721Distr(accounts, original721):
@@ -17,7 +17,7 @@ def test_multiwrap(accounts, original721, multiwrapper, distributor, niftsy20, d
     #global RECEIVERS
     RECEIVERS = [accounts[1] for x in ORIGINAL_NFT_IDs]
     with reverts("Only for distributors"):
-        multiwrapper.WrapAndDistrib721Bathc(
+        multiwrapper.WrapAndDistrib721Batch(
             original721, 
             RECEIVERS, 
             ORIGINAL_NFT_IDs,
@@ -34,7 +34,7 @@ def test_multiwrap(accounts, original721, multiwrapper, distributor, niftsy20, d
     multiwrapper.claimNFT(original721,ORIGINAL_NFT_IDs[0], {'from':accounts[0]})
     assert original721.balanceOf(accounts[0]) == 1  
     original721.transferFrom(accounts[0], multiwrapper, ORIGINAL_NFT_IDs[0], {'from':accounts[0]})
-    tx = multiwrapper.WrapAndDistrib721Bathc(
+    tx = multiwrapper.WrapAndDistrib721Batch(
             original721, 
             RECEIVERS, 
             ORIGINAL_NFT_IDs,
@@ -44,3 +44,14 @@ def test_multiwrap(accounts, original721, multiwrapper, distributor, niftsy20, d
         )
     #assert len(tx.events['Transfer']) == len(ORIGINAL_NFT_IDs)
     assert distributor.balanceOf(RECEIVERS[1])==len(ORIGINAL_NFT_IDs)
+
+    with reverts("Cant unwrap before day X"):
+        distributor.unWrap721(1, {"from": accounts[1]})
+
+    #move date 
+    chain.sleep(100)
+    chain.mine()
+
+    distributor.unWrap721(1, {"from": accounts[1]})
+
+    assert original721.ownerOf(1) == accounts[1]
