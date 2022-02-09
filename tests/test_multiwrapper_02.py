@@ -3,7 +3,7 @@ import logging
 from brownie import Wei, reverts, chain
 LOGGER = logging.getLogger(__name__)
 
-ORIGINAL_NFT_IDs = [1,2,3,4,5,6,7,8,9]
+ORIGINAL_NFT_IDs = [1,2,3,4,5,6,7,8,9, 10]
 UNWRAP_AFTER = chain.time() + 100
 ERC20_COLLATERAL_AMOUNT = 20e18
 
@@ -45,4 +45,15 @@ def test_multiwrap(accounts, original721, multiwrapper, distributor, niftsy20, d
 
     distributor.setCollateralStatus(dai,True, {'from':accounts[0]})
 
-    multiwrapper.AddManyCollateralToBatch(ORIGINAL_NFT_IDs, ERC20_COLLATERAL, {"from": accounts[0]})
+    with reverts("Only for distributors"):
+        multiwrapper.AddManyCollateralToBatch(ORIGINAL_NFT_IDs, ERC20_COLLATERAL, {"from": accounts[1]})
+
+    multiwrapper.AddManyCollateralToBatch(ORIGINAL_NFT_IDs, ERC20_COLLATERAL, {"from": accounts[0], "value": "1 ether"})
+
+    assert Wei(distributor.getERC20CollateralBalance(1, niftsy20.address)) == Wei(ERC20_COLLATERAL_AMOUNT)
+    assert distributor.getERC20CollateralBalance(1, dai.address) == Wei(ERC20_COLLATERAL_AMOUNT)
+    assert distributor.getWrappedToken(1)[2] == Wei("1 ether")/len(ORIGINAL_NFT_IDs)
+
+    assert niftsy20.balanceOf(distributor.address) == ERC20_COLLATERAL_AMOUNT*len(ORIGINAL_NFT_IDs)
+    assert dai.balanceOf(distributor.address) == ERC20_COLLATERAL_AMOUNT*len(ORIGINAL_NFT_IDs)
+    assert distributor.balance() == "1 ether"
