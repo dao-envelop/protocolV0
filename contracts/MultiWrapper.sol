@@ -52,7 +52,7 @@ contract MultiWrapper721 is Ownable, ERC721Holder {
             // Set approve from this  multiwraper to distributor
             IERC20(_forDistrib[i].erc20Token).approve(
                 address(wrapper), 
-                IERC20(_forDistrib[i].erc20Token).balanceOf(msg.sender)
+                IERC20(_forDistrib[i].erc20Token).balanceOf(address(this))
             );
         }
 
@@ -109,6 +109,12 @@ contract MultiWrapper721 is Ownable, ERC721Holder {
                 address(this), 
                 _forAdd[i].amount * _tokenIds.length
             );
+
+             // Set approve from this  multiwraper to distributor
+            IERC20(_forAdd[i].erc20Token).approve(
+                address(wrapper), 
+                IERC20(_forAdd[i].erc20Token).balanceOf(address(this))
+            );
         }
 
         uint256 etherPerwNFT = msg.value / _tokenIds.length; // native blockchain asset
@@ -135,7 +141,7 @@ contract MultiWrapper721 is Ownable, ERC721Holder {
     function AddOneCollateralToBatch(
         uint256[] memory _tokenIds, 
         ERC20Collateral[] memory _forAdd
-    ) public payable 
+    ) public 
     {
         require(distributors[msg.sender], "Only for distributors");
         require(_tokenIds.length == _forAdd.length, "Not equal arrays");
