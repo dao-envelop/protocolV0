@@ -49,9 +49,6 @@ def test_multiwrap(accounts, original721, multiwrapper, distributor, niftsy20, d
         multiwrapper.AddOneCollateralToBatch(ORIGINAL_NFT_IDs, ERC20_COLLATERAL, {"from": accounts[1]})
 
     multiwrapper.AddOneCollateralToBatch(ORIGINAL_NFT_IDs, ERC20_COLLATERAL, {"from": accounts[0]})
-    logging.info(distributor.getERC20CollateralBalance(ORIGINAL_NFT_IDs[0], niftsy20.address))
-    logging.info(distributor.getERC20CollateralBalance(ORIGINAL_NFT_IDs[1], dai.address))
-    logging.info(distributor.getERC20CollateralBalance(ORIGINAL_NFT_IDs[2], niftsy20.address))
 
     assert distributor.getERC20CollateralBalance(ORIGINAL_NFT_IDs[0], niftsy20.address) == Wei(ERC20_COLLATERAL_AMOUNT)
     assert distributor.getERC20CollateralBalance(ORIGINAL_NFT_IDs[1], dai.address) == Wei(ERC20_COLLATERAL_AMOUNT)

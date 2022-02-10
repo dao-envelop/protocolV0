@@ -159,9 +159,7 @@ contract MultiWrapper721 is Ownable, ERC721Holder {
                 address(wrapper), 
                 IERC20(_forAdd[i].erc20Token).allowance(address(this), address(wrapper))+_forAdd[i].amount
             );
-        }
-
-        for (uint8 i = 0; i < _tokenIds.length; i ++) {
+            
             // 3.Add erc20 collateral
             wrapper.addERC20Collateral(
                 _tokenIds[i], 
