@@ -146,6 +146,21 @@ contract MultiWrapper721 is Ownable, ERC721Holder {
         require(distributors[msg.sender], "Only for distributors");
         require(_tokenIds.length == _forAdd.length, "Not equal arrays");
 
+        for (uint8 i = 0; i < _forAdd.length; i ++) {
+            IERC20(_forAdd[i].erc20Token).safeTransferFrom(
+                msg.sender, 
+                address(this), 
+                _forAdd[i].amount
+            );
+
+             // Set approve from this  multiwraper to distributor
+
+            IERC20(_forAdd[i].erc20Token).approve(
+                address(wrapper), 
+                IERC20(_forAdd[i].erc20Token).allowance(address(this), address(wrapper))+_forAdd[i].amount
+            );
+        }
+
         for (uint8 i = 0; i < _tokenIds.length; i ++) {
             // 3.Add erc20 collateral
             wrapper.addERC20Collateral(
