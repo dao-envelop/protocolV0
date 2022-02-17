@@ -27,6 +27,11 @@ def erc721mock(accounts, Token721Mock):
     yield t    
 
 @pytest.fixture(scope="module")
+def originalNFT721(accounts, OrigNFT):
+    u = accounts[0].deploy(OrigNFT, "Simple NFT with default uri", "XXX", 'https://envelop.is/metadata/')
+    yield u    
+
+@pytest.fixture(scope="module")
 def fakeERC721mock(accounts, Token721Mock):
     """
     Simple NFT with URI

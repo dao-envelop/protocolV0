@@ -1,14 +1,12 @@
 // SPDX-License-Identifier: MIT
-// ENVELOP protocol for NFT
-pragma solidity 0.8.11;
+pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "../interfaces/IWrapper.sol";
 
-//v0.0.1
-contract OriginalNFT is ERC721Enumerable, Ownable {
+
+contract OrigNFT is ERC721Enumerable, Ownable {
     using Strings for uint256;
     using Strings for uint160;
     
@@ -22,7 +20,15 @@ contract OriginalNFT is ERC721Enumerable, Ownable {
     ) 
         ERC721(name_, symbol_)  
     {
-        baseurl = _baseurl;
+        baseurl = baseurl = string(
+            abi.encodePacked(
+                _baseurl,
+                block.chainid.toString(),
+                "/",
+                uint160(address(this)).toHexString(),
+                "/"
+            )
+        );
     }
 
     function mint(address _to) external {
