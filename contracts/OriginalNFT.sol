@@ -39,8 +39,4 @@ contract OrigNFT is ERC721Enumerable, Ownable {
     function baseURI() external view  returns (string memory) {
         return baseurl;
     }
-
-    function tokenURI(uint256 _tokenId) public view override returns (string memory) {
-        return baseurl;
-    }
 }
