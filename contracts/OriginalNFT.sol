@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.6;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 
-contract OrigNFT is ERC721Enumerable, Ownable {
+contract OrigNFT is ERC721Enumerable {
     using Strings for uint256;
     using Strings for uint160;
     
@@ -20,7 +19,7 @@ contract OrigNFT is ERC721Enumerable, Ownable {
     ) 
         ERC721(name_, symbol_)  
     {
-        baseurl = baseurl = string(
+        baseurl = string(
             abi.encodePacked(
                 _baseurl,
                 block.chainid.toString(),
@@ -38,5 +37,12 @@ contract OrigNFT is ERC721Enumerable, Ownable {
     
     function baseURI() external view  returns (string memory) {
         return baseurl;
+    }
+
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+
+        string memory baseURI = baseurl;
+        return bytes(baseurl).length > 0 ? string(abi.encodePacked(baseurl, tokenId.toString())) : "";
     }
 }
