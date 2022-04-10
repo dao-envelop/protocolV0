@@ -220,9 +220,9 @@ contract WrapperWithERC20Collateral is WrapperBase {
                         // We dont use SafeTransfer because try works only for  external function call
                         // https://docs.soliditylang.org/en/v0.8.6/control-structures.html#try-catch
 
-                        IERC20(e[i-1].erc20Token).transfer(msg.sender,  e[i-1].amount) {
-                            e[i-1].amount = 0;
-                    } catch {
+                        IERC20(e[i-1].erc20Token).transfer(msg.sender,  e[i-1].amount) 
+                    {}
+                    catch {
                         emit SuspiciousFail(e[i-1].erc20Token, e[i-1].amount);
                     } 
                     // comment string below due in some case it c can be very costly
