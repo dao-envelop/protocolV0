@@ -12,17 +12,19 @@ interface IWrapperDistributor is  IWrapperCollateral {
         uint256[] memory _tokenIds, 
         ERC20Collateral[] memory _forDistrib,
         uint256 _unwrapAfter
-    ) public payable;
+    ) external payable;
 
     function WrapAndDistribEmpty(
         address[] memory _receivers,
         ERC20Collateral[] memory _forDistrib,
         uint256 _unwrapAfter
-    ) public payable; 
+    ) external payable; 
 
     function setDistributorState(address _user, bool _state) external;
 
-    function transferOwnership(address newOwner) public;
+    function transferOwnership(address newOwner) external;
+
+    function distributors(address _distributor) external view returns(bool);
     
     
 }

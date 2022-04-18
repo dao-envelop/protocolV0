@@ -5,7 +5,7 @@ pragma solidity 0.8.10;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "./IWrapperDistributor.sol";
+import "../interfaces/IWrapperDistributor.sol";
 
 /**
  * @title ERC-721 Non-Fungible Token Wrapper 
@@ -14,7 +14,8 @@ import "./IWrapperDistributor.sol";
 contract DistribManager is Ownable {
     using SafeERC20 for IERC20;
     
-    mapping(address => bool) public validDistributors;
+    // mapping from address to block timestamp
+    mapping(address => uint256) public validDistributors;
     IWrapperDistributor public wrapper;
 
     constructor (address distribContracr) 
