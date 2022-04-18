@@ -45,6 +45,10 @@ contract MultiMinter721 is Ownable {
     function setDistributorState(address _user, bool _state) external onlyOwner {
         distributors[_user] = _state;
     }
+
+    function revokeOwnership(address _contract) external onlyOwner {
+        IERC721Mintable(_contract).transferOwnership(owner());
+    }
     ////////////////////////////////////////////////////////////////
 
    
