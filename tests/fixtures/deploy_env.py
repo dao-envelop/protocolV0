@@ -146,3 +146,8 @@ def multiminter(accounts, MultiMinter721):
 def multiwrapper(accounts, MultiWrapper721):
     b = accounts[0].deploy(MultiWrapper721)
     yield b
+
+@pytest.fixture(scope="module")
+def distrManager(accounts, DistribManager, distributor):
+    dm = accounts[0].deploy(DistribManager, distributor.address)
+    yield dm

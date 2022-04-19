@@ -39,6 +39,7 @@ contract DistribManager is Ownable, ReentrancyGuard {
     constructor (address distribContract) 
     {
         wrapper = IWrapperDistributor(distribContract);
+        validDistributors[address(this)] = type(uint256).max;
     }
 
     function buyTicket(uint256 _tarifIndex) public nonReentrant {
