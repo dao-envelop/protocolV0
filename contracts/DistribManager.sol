@@ -9,8 +9,8 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "../interfaces/IWrapperDistributor.sol";
 
 /**
- * @title ERC-721 Non-Fungible Token Wrapper 
- * @dev For multiMint erc721
+ * @title Distributor Manager contract 
+ * @dev For sell Distributore Role membership
  */
 contract DistribManager is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
