@@ -25,6 +25,7 @@ interface IWrapperDistributor is  IWrapperCollateral {
     function transferOwnership(address newOwner) external;
 
     function distributors(address _distributor) external view returns(bool);
+    function lastWrappedNFTId() external view returns(uint256);
     
     
 }
