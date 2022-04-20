@@ -36,13 +36,10 @@ contract OrigNFT is ERC721Enumerable {
     }
     
     function baseURI() external view  returns (string memory) {
-        return baseurl;
+        return _baseURI();
     }
 
-    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
-        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
-
-        string memory baseURI = baseurl;
-        return bytes(baseurl).length > 0 ? string(abi.encodePacked(baseurl, tokenId.toString())) : "";
+    function _baseURI() internal view  override returns (string memory) {
+        return baseurl;
     }
 }
