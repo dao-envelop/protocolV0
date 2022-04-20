@@ -120,7 +120,7 @@ contract DistribManager is Ownable, ReentrancyGuard {
         ticketsOnSale[_index].ticketValidPeriod = _ticketValidPeriod;
     }
 
-    function revokeOwnership(address _contract) external onlyOwner {
+    function revokeOwnership() external onlyOwner {
         wrapper.transferOwnership(owner());
     }
 
