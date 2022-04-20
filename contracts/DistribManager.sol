@@ -74,7 +74,13 @@ contract DistribManager is Ownable, ReentrancyGuard {
         );
 
         // Save/update ticket record
-        validDistributors[msg.sender] = block.timestamp + ticketsOnSale[_tarifIndex].ticketValidPeriod;
+        if (validDistributors[msg.sender] > block.timestamp) {
+            // update active ticket
+            validDistributors[msg.sender] += ticketsOnSale[_tarifIndex].ticketValidPeriod;    
+        } else {
+            validDistributors[msg.sender] = block.timestamp + ticketsOnSale[_tarifIndex].ticketValidPeriod;    
+        } 
+        
 
         // Add to distributor role
         wrapper.setDistributorState(msg.sender, true);
