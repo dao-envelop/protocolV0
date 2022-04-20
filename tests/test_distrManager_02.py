@@ -112,6 +112,7 @@ def test_distr(accounts, ERC721Distr, distributor, weth, dai, distrManager):
     dai.approve(distrManager, ERC20_COLLATERAL_AMOUNT*2, {'from':accounts[1]})
     block_time = chain.time()
     distrManager.buyTicket(0, {'from':accounts[1]})
+    assert distributor.balanceOf(accounts[1]) == 3
 
     assert distrManager.validDistributors(accounts[1]) == old_ticket_time+TICKET_VALID
 
@@ -148,7 +149,17 @@ def test_distr(accounts, ERC721Distr, distributor, weth, dai, distrManager):
             {'from':accounts[1]}
         )
 
-    #
+    #buy ticket again - previous ticket is invalid
+    dai.transfer(accounts[1], ERC20_COLLATERAL_AMOUNT*2)
+    dai.approve(distrManager, ERC20_COLLATERAL_AMOUNT*2, {'from':accounts[1]})
+    block_time = chain.time()
+    distrManager.buyTicket(0, {'from':accounts[1]})
+
+    assert distributor.balanceOf(accounts[1]) == 4
+    assert distributor.distributors(accounts[1]) == True
+
+
+    #change owner for distributor contract
     with reverts("Ownable: caller is not the owner"):
         distrManager.revokeOwnership({"from": accounts[1]})
 
