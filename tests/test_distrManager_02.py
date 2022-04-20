@@ -51,7 +51,37 @@ def test_distr(accounts, ERC721Distr, distributor, weth, dai, distrManager):
     assert distributor.getERC20Collateral(1)[0][1] == ERC20_COLLATERAL_AMOUNT
 
 
+    #нескольких дистрибьюторов так добавить, поменяв цену
+
+    #add second distributor
+    with reverts("Ownable: caller is not the owner"):
+        distrManager.editTarif(0, dai.address, ERC20_COLLATERAL_AMOUNT*2, TIMELOCK, TICKET_VALID, {"from": accounts[1]})
+    distrManager.editTarif(0, dai.address, ERC20_COLLATERAL_AMOUNT*2, TIMELOCK, TICKET_VALID, {"from": accounts[0]})
+
+    dai.transfer(accounts[2], ERC20_COLLATERAL_AMOUNT*2)
+    dai.approve(distrManager, ERC20_COLLATERAL_AMOUNT*2, {'from':accounts[2]})
+    block_time = chain.time()
+    distrManager.buyTicket(0, {'from':accounts[2]})
+
+    wnft = distributor.getWrappedToken(2)
+    assert wnft[0] == zero_address
+    assert wnft[1] == 0
+    assert wnft[2] == 0
+    assert wnft[3] == 0
+    assert wnft[4] == block_time + TIMELOCK
+    assert wnft[5] == 0
+    assert wnft[6] == zero_address
+    assert wnft[7] == 0
+    assert wnft[8] == 0
+    assert wnft[9] == zero_address
+    assert wnft[10] == 0
+    assert wnft[11] == 0
+    assert distributor.getERC20Collateral(2)[0][0] == dai.address
+    assert distributor.getERC20Collateral(2)[0][1] == 2*ERC20_COLLATERAL_AMOUNT
+
+    assert distrManager.validDistributors(accounts[1],0) == 
 
 
-
+    #я еще купил билет, когда предыдущий истек
+    #я купил 2 билета и оба действующие
 
