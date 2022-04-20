@@ -47,8 +47,9 @@ def test_distr(accounts, ERC721Distr, distributor, weth, dai, distrManager):
     assert wnft[9] == zero_address
     assert wnft[10] == 0
     assert wnft[11] == 0
-    assert distributor.getERC20Collateral(1)[0] == dai.address
-    assert distributor.getERC20Collateral(1)[1] == ERC20_COLLATERAL_AMOUNT
+    assert distributor.getERC20Collateral(1)[0][0] == dai.address
+    assert distributor.getERC20Collateral(1)[0][1] == ERC20_COLLATERAL_AMOUNT
+
 
 
 
