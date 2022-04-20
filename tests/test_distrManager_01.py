@@ -8,7 +8,7 @@ TIMELOCK = 3600*24*30*12
 TICKET_VALID = 3600*24*30
 
 def test_init(accounts, distrManager, dai):
-    distrManager.addTarif((dai, ERC20_COLLATERAL_AMOUNT, TIMELOCK, TICKET_VALID ) , {'from':accounts[]})
+    distrManager.addTarif((dai, ERC20_COLLATERAL_AMOUNT, TIMELOCK, TICKET_VALID ) , {'from':accounts[0]})
     assert distrManager.ticketsOnSale(0)[0] == dai.address
 
 def test_buy(accounts, distrManager, dai, distributor):
