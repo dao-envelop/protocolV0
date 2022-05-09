@@ -1,9 +1,9 @@
 from brownie import *
 import json
 
-#private_key='721fd469cc7604dcc6ab618e4055822216d977cd14deeae23e6e452c82da9ae9'
+#private_key='???'
 #0-0xE71978b1696a972b1a8f724A4eBDB906d9dA0885
-private_key='2cdbeadae3122f6b30a67733fd4f0fb6c27ccd85c3c68de97c8ff534c87603c8'
+private_key='???'
 accounts.add(private_key)
 
 def main():
