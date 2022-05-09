@@ -3,7 +3,7 @@ import json
 
 if web3.eth.chainId != 56 and web3.eth.chainId != 1 :
     # Rinkeby
-    private_key='2cdbeadae3122f6b30a67733fd4f0fb6c27ccd85c3c68de97c8ff534c87603c8'
+    private_key='???'
 else:
     # Mainnet
     private_key=input('PLease input private key for deployer address..:')
