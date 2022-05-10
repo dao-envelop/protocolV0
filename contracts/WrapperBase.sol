@@ -43,7 +43,7 @@ contract WrapperBase is ERC721Enumerable, Ownable, ReentrancyGuard, IFeeRoyaltyC
 
     
     uint256 constant public MAX_ROYALTY_PERCENT = 50;
-    uint256 constant public MAX_TIME_TO_UNWRAP = 365 days;
+    uint256 constant public MAX_TIME_TO_UNWRAP = 100 * 365 days;
     uint256 constant public MAX_FEE_THRESHOLD_PERCENT = 1; //percent from project token totalSupply 
 
     uint256 public protocolFee = 0;
