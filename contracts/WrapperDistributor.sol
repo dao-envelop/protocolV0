@@ -153,7 +153,7 @@ contract WrapperDistributor721 is WrapperWithERC20Collateral {
     }
     ////////////////////////////////////////////////////////////////
 
-    function _baseURI() internal view  override(ERC721) returns (string memory) {
+    function _baseURI() internal view  override(ERC721) virtual returns (string memory) {
         return 'https://envelop.is/distribmetadata/';
     }
 

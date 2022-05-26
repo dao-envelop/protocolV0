@@ -82,6 +82,13 @@ def distributor(accounts, WrapperDistributor721, techERC20):
     yield t  
 
 @pytest.fixture(scope="module")
+def saft(accounts, WrapperDistributor721Saft, techERC20):
+    t = accounts[0].deploy(WrapperDistributor721Saft, 'http://custombase/', techERC20.address)
+    #niftsy20.addMinter(t.address, {'from':accounts[0]})
+    techERC20.addMinter(t.address, {'from': accounts[0]})
+    yield t      
+
+@pytest.fixture(scope="module")
 def ERC721Distr(accounts, EnvelopERC721, distributor):
     """
     Simple NFT with URI
