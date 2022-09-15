@@ -1,6 +1,7 @@
 ## NIFTSY protocol
 Collateral-backed and price discovery cross-chain protocol to provide NFT with
- inner value and liquidity.
+ inner value and liquidity.  
+ https://envelop.is  
 
 ### Protocol Conracts
 `WrapperBase` - main protocol contract with Wrapp and UnWrapp functionality.  
@@ -82,8 +83,7 @@ https://polygonscan.com/address/0x6664c8118284b3F5ECB47c2105cAa544Ab0Cf75B#code
 https://polygonscan.com/address/0xD5E1cDfCf6A9fdc68997a90E8B5ee962e536a0D8#code  
 
 **NIFTSY ERC20 token***  
-https://polygonscan.io/address/0x432cdbC749FD96AA35e1dC27765b23fDCc8F5cf1#code
-
+https://polygonscan.com/address/0x432cdbC749FD96AA35e1dC27765b23fDCc8F5cf1
 
 ### Avalanche Mainnet
 **techERC20**  

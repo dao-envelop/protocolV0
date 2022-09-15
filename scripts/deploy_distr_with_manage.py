@@ -74,8 +74,12 @@ elif web3.eth.chainId in  [85, 86]:
 def main():
     #techERC20 = TechToken.deploy(tx_params)
     techERC20 = TechToken.at('0x6426Bc3F86E554f44bE7798c8D1f3482Fb7BB68C')
-    distributor   = WrapperDistributor721.deploy(techERC20.address, tx_params) 
-    #distributor = WrapperDistributor721.at('')
+    distributor   = WrapperDistributor721Saft.deploy(
+        'https://api.envelop.is/metadata/',
+        techERC20.address, 
+        tx_params
+    ) 
+    #distributor = WrapperDistributor721Saft.at('')
     trmodel = TransferRoyaltyModel01.deploy(distributor.address,tx_params)
    
     manager = DistribManager.deploy(distributor, tx_params) 
@@ -90,7 +94,7 @@ def main():
     # Print addresses for quick access from console
     print("----------Deployment artifacts-------------------")
     print("techERC20 = TechToken.at('{}')".format(techERC20.address))
-    print("distributor = WrapperDistributor721.at('{}')".format(distributor.address))
+    print("distributor = WrapperDistributor721Saft.at('{}')".format(distributor.address))
     print("trmodel = TransferRoyaltyModel01.at('{}')".format(trmodel.address))
     print("manager = DistribManager.at('{}')".format(manager.address))
     
@@ -101,7 +105,7 @@ def main():
 
     if  web3.eth.chainId in [1,4,56]:
         TransferRoyaltyModel01.publish_source(trmodel);
-        WrapperDistributor721.publish_source(distributor);
+        WrapperDistributor721Saft.publish_source(distributor);
         DistribManager.publish_source(manager)
 
 
