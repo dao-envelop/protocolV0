@@ -40,6 +40,13 @@ BSC_MAIN_ERC20_COLLATERAL_TOKENS = [
 BSC_TESTNET_ERC20_COLLATERAL_TOKENS = []
 POLYGON_MAIN_ERC20_COLLATERAL_TOKENS = []
 AVALANCHE_MAIN_ERC20_COLLATERAL_TOKENS = []
+EVMOS_TESTNET_ERC20_COLLATERAL_TOKENS = [
+'0xc7F296aF2E3698B4157BDBA573bdcbcE6D3e3660' # NIFTSY
+]
+
+HARMONY_TESTNET_ERC20_COLLATERAL_TOKENS = [
+'0x136aC25c56b24e5E117D71ff74c62D8539d2Ee29' # NIFTSY
+]
 
 
 
@@ -54,9 +61,11 @@ CHAIN = {
     86:{'explorer_base': 'https://www.gatescan.org',},
     97:{'explorer_base':'testnet.bscscan.com', 'enabled_erc20': BSC_TESTNET_ERC20_COLLATERAL_TOKENS},
     137:{'explorer_base':'polygonscan.com', 'enabled_erc20': POLYGON_MAIN_ERC20_COLLATERAL_TOKENS},
+    9000:{'explorer_base':'evm.evmos.dev', 'enabled_erc20': EVMOS_TESTNET_ERC20_COLLATERAL_TOKENS},
     80001:{'explorer_base':'mumbai.polygonscan.com', },  
     43114:{'explorer_base':'cchain.explorer.avax.network', 'enabled_erc20': AVALANCHE_MAIN_ERC20_COLLATERAL_TOKENS},
     43113:{'explorer_base':'cchain.explorer.avax-test.network', },
+    1666700000:{'explorer_base':'explorer.pops.one', 'enabled_erc20': EVMOS_TESTNET_ERC20_COLLATERAL_TOKENS},
 
 }.get(web3.eth.chainId, {'explorer_base':'io'})
 
@@ -69,17 +78,32 @@ if web3.eth.chainId in  [1,4]:
 elif web3.eth.chainId in  [65, 66]:    
     tx_params={'from':accounts[0], 'allow_revert': True}    
 elif web3.eth.chainId in  [85, 86]:
-    tx_params={'from':accounts[0], 'allow_revert': True,'gas_price': '5 gwei', 'gas_limit': 1e8} 
+    tx_params={'from':accounts[0], 'allow_revert': True,'gas_price': '5 gwei', 'gas_limit': 1e8}
+else: 
+    tx_params={'from':accounts[0]}    
 
 def main():
-    #techERC20 = TechToken.deploy(tx_params)
-    techERC20 = TechToken.at('0x6426Bc3F86E554f44bE7798c8D1f3482Fb7BB68C')
+    techERC20 = TechToken.deploy(tx_params)
+    #techERC20 = TechToken.at('0x6426Bc3F86E554f44bE7798c8D1f3482Fb7BB68C')
     distributor   = WrapperDistributor721Saft.deploy(
         'https://api.envelop.is/metadata/',
         techERC20.address, 
         tx_params
     ) 
     #distributor = WrapperDistributor721Saft.at('')
+    erc721 = EnvelopERC721.deploy(
+        'Envelop Simple ERC721',
+        'Envelop',
+        'https://api.envelop.is/metadata/',
+        tx_params
+    )
+    erc721 = OrigNFT.deploy(
+        'Envelop Common ERC721 Collection',
+        'Envelop',
+        'https://api.envelop.is/metadata/',
+        tx_params
+    )
+    erc721.setMinter(distributor.address, tx_params)
     trmodel = TransferRoyaltyModel01.deploy(distributor.address,tx_params)
    
     manager = DistribManager.deploy(distributor, tx_params) 
@@ -97,11 +121,13 @@ def main():
     print("distributor = WrapperDistributor721Saft.at('{}')".format(distributor.address))
     print("trmodel = TransferRoyaltyModel01.at('{}')".format(trmodel.address))
     print("manager = DistribManager.at('{}')".format(manager.address))
+    print("erc721 = EnvelopERC721.at('{}')".format(erc721.address))
     
     
     print('https://{}/address/{}#code'.format(CHAIN['explorer_base'],distributor))
     print('https://{}/address/{}#code'.format(CHAIN['explorer_base'],trmodel))
     print('https://{}/address/{}#code'.format(CHAIN['explorer_base'],manager))
+    print('https://{}/address/{}#code'.format(CHAIN['explorer_base'],erc721))
 
     if  web3.eth.chainId in [1,4,56]:
         TransferRoyaltyModel01.publish_source(trmodel);
