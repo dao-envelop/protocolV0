@@ -3,6 +3,16 @@ Collateral-backed and price discovery cross-chain protocol to provide NFT with
  inner value and liquidity.  
  https://envelop.is  
 
+---
+
+## Community Fork Notice
+This protocol version is a **community fork**, which means:
+1. No business license of DAO Envelop and/or any other DAOs, legal entities, partnerships, or associations, as well as business licenses of individual developers, applies to it.
+2. The license of this fork is the MIT-License.
+3. The creator of this community fork is DAO Envelop.
+4. Date of creation: 2022-04-19
+5. More information about DAO: http://dao.envelop.is
+---
 ### Protocol Conracts
 `WrapperBase` - main protocol contract with Wrapp and UnWrapp functionality.  
 Features:
