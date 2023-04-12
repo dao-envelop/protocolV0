@@ -14,8 +14,7 @@ This protocol version is a **community fork**, which means:
 5. More information about DAO: http://dao.envelop.is
 ---
 ### Protocol Conracts
-`WrapperBase` - main protocol contract with Wrapp and UnWrapp functionality.  
-Features:
+`WrapperBase` - WrapperBase - main protocol contract with Wrap and UnWrap functionality.  Main features:
  - ability add native chain collateral(ETH, BNB, ...);
  - ability add each-transfer-accumulated fee;
  - author royalty from each erc721 token transfer;  
